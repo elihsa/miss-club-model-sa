@@ -62,7 +62,7 @@ function handler(req, res) {
       const { data, error } = await supabase.storage
         .from('videos')
         .upload(uploadPath, fileData, {
-          contentType: fileMimeType,
+          contentType: fileMimeType && fileMimeType !== 'application/octet-stream' ? fileMimeType : getMimeType(fileName),
           cacheControl: '3600',
           upsert: false
         });
@@ -85,6 +85,23 @@ function handler(req, res) {
   });
 
   req.pipe(bb);
+}
+
+function getMimeType(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  const mimeTypes = {
+    'png': 'image/png',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'webp': 'image/webp',
+    'gif': 'image/gif',
+    'mp4': 'video/mp4',
+    'mov': 'video/quicktime',
+    'pdf': 'application/pdf',
+    'doc': 'application/msword',
+    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  };
+  return mimeTypes[ext] || 'application/octet-stream';
 }
 
 module.exports = handler;
