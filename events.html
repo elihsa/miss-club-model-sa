@@ -489,14 +489,143 @@ document.addEventListener('submit', async (e) => {
   </p>
 </section>
 
+<!-- EVENT CREATION SECTION (Admin) -->
+<section class="event-creation" id="eventCreation" style="display:none; padding: 40px; background: var(--dark); border-top: 1px solid var(--gold-dark);">
+  <h2>Create New Event</h2>
+  <p>Admin only: Create a new event with description and poster.</p>
+  <form id="eventCreationForm" enctype="multipart/form-data">
+    <div class="form-group">
+      <label>Event Name *</label>
+      <input type="text" name="name" required placeholder="e.g., Miss Club Model SA Gala 2026">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Event Date *</label>
+        <input type="date" name="date" required>
+      </div>
+      <div class="form-group">
+        <label>Event Time</label>
+        <input type="time" name="time">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Location *</label>
+      <input type="text" name="location" required placeholder="e.g., Sun City, South Africa">
+    </div>
+    <div class="form-group">
+      <label>Event Description</label>
+      <textarea name="description" placeholder="Describe the event, schedule, highlights, ticket info, etc..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Poster Image</label>
+      <div class="file-upload" onclick="document.getElementById('posterUpload').click()">
+        <p>Click to upload poster image</p>
+        <input type="file" id="posterUpload" name="poster" accept="image/*" style="display:none" onchange="handlePosterPreview(this)">
+        <div class="file-name" id="posterFileName"></div>
+        <img id="posterPreview" class="preview-thumb" style="display:none;">
+      </div>
+    </div>
+    <div class="form-message" id="eventCreationMessage"></div>
+    <button type="submit" class="submit-btn">Create Event</button>
+  </form>
+  <p style="margin-top:15px; color:#888; font-size:0.9rem;">
+    <a href="#" onclick="toggleEventCreation(); return false;" style="color:var(--gold);">← Back to Events</a>
+  </p>
+</section>
+
 <script type="text/javascript">
-// Toggle organizer form visibility
-function toggleOrganizerForm() {
-  const form = document.getElementById('organizerForm');
+// Toggle event creation form
+function toggleEventCreation() {
+  const form = document.getElementById('eventCreation');
+  const btn = document.getElementById('toggleEventCreationBtn');
   if (form.style.display === 'none') {
     form.style.display = 'block';
-    document.querySelector('.btn').textContent = '← Back to Events';
+    if (btn) btn.textContent = '← Back to Events';
   } else {
+    form.style.display = 'none';
+    if (btn) btn.textContent = 'Create New Event';
+  }
+}
+
+// Handle poster preview
+function handlePosterPreview(input) {
+  const preview = document.getElementById('posterPreview');
+  const nameEl = document.getElementById('posterFileName');
+  const file = input.files[0];
+  if (!file) return;
+
+  nameEl.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+// Event creation form submission
+document.addEventListener('submit', async (e) => {
+  const form = e.target;
+  if (!form.id || form.id !== 'eventCreationForm') return;
+  
+  e.preventDefault();
+  const message = document.getElementById('eventCreationMessage');
+  const submitBtn = form.querySelector('.submit-btn');
+  message.className = 'form-message';
+  message.textContent = 'Creating event...';
+  submitBtn.disabled = true;
+
+  try {
+    const formData = new FormData(form);
+    // Send as JSON (Supabase doesn't handle multipart directly for events)
+    const data = Object.fromEntries(formData);
+    // Note: File upload would need separate handling
+    // For now, we'll just send the text data
+    const cleanData = { ...data };
+    delete cleanData.poster; // Remove file from JSON
+    
+    const response = await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cleanData)
+    });
+    
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      message.className = 'form-message success';
+      message.textContent = '✓ Event created successfully!';
+      form.reset();
+      document.getElementById('posterPreview').style.display = 'none';
+      document.getElementById('posterFileName').textContent = '';
+      
+      // Reload events
+      setTimeout(() => location.reload(), 1500);
+    } else {
+      throw new Error(result.message || 'Failed to create event');
+    }
+  } catch (err) {
+    message.className = 'form-message error';
+    message.textContent = '✗ ' + err.message;
+    submitBtn.disabled = false;
+  }
+});
+
+// Add toggle button to events page
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.createElement('button');
+  btn.id = 'toggleEventCreationBtn';
+  btn.className = 'btn';
+  btn.textContent = 'Create New Event';
+  btn.onclick = toggleEventCreation;
+  btn.style.marginTop = '20px';
+  
+  const grid = document.getElementById('eventsGrid');
+  if (grid) {
+    grid.parentNode.insertBefore(btn, grid.nextSibling);
+  }
+});
+</script>
     form.style.display = 'none';
     document.querySelector('.btn').textContent = 'I want to host one of your events at my club →';
   }
