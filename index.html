@@ -210,6 +210,7 @@
     <li><a href="#event">Event</a></li>
     <li><a href="#candidates">Candidates</a></li>
     <li><a href="#apply">Apply</a></li>
+    <li><a href="#venue-partner">Venue Partner</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
@@ -438,6 +439,79 @@
   </form>
 </div>
 
+<!-- BECOME A VENUE PARTNER SECTION -->
+<section class="apply" id="venue-partner" style="background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 100%);">
+  <div class="content">
+    <h2>Become a Venue Partner</h2>
+    <p>Host Miss Club Model SA events at your venue. We're always looking for elegant, professional spaces that align with our brand of elegance and empowerment.</p>
+
+    <div class="form-container">
+      <form id="venueForm" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" name="full_name" required placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" name="email" required placeholder="you@domain.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" name="phone" required placeholder="+27 XX XXX XXXX">
+          </div>
+          <div class="form-group">
+            <label>Venue Name *</label>
+            <input type="text" name="venue_name" required placeholder="e.g., The Grand Ballroom, Sun City">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Venue Location *</label>
+          <input type="text" name="venue_location" required placeholder="City, Province (e.g., Cape Town, Western Cape)">
+        </div>
+        <div class="form-group">
+          <label>Venue Address</label>
+          <textarea name="venue_address" placeholder="Full physical address"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Website URL</label>
+            <input type="url" name="website_url" placeholder="https://yourvenue.co.za">
+          </div>
+          <div class="form-group">
+            <label>Capacity</label>
+            <input type="number" name="capacity" placeholder="Maximum guests" min="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Venue Description</label>
+          <textarea name="venue_description" placeholder="Describe your venue, facilities, atmosphere, and what makes it special for hosting events..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Available Equipment</label>
+          <textarea name="equipment" placeholder="Sound system, lighting, stage, projector, etc."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Availability</label>
+            <input type="text" name="availability" placeholder="e.g., Weekends only, Mon-Fri 9-5, Flexible">
+          </div>
+        </div>
+        <div class="form-group">
+          <label style="display:flex; align-items:center; gap:10px; font-weight:normal; cursor:pointer;">
+            <input type="checkbox" name="terms_accepted" required>
+            <span>I accept the <a href="/terms" style="color:var(--gold)">Terms & Conditions</a> and understand Miss Club Model SA will review my venue application.</span>
+          </label>
+        </div>
+        <button type="submit" class="form-submit">Submit Venue Application</button>
+        <div class="form-message" id="venueFormMessage"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <!-- CONTACT -->
 <section id="contact">
   <h2>Contact Us</h2>
@@ -639,6 +713,53 @@ document.getElementById('applicationForm').addEventListener('submit', async func
   msgEl.style.display = 'block';
   btn.textContent = 'Submit Application';
   btn.disabled = false;
+});
+
+// Venue Partner form submission
+document.getElementById('venueForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const msgEl = document.getElementById('venueFormMessage');
+  const btn = this.querySelector('.form-submit');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+  msgEl.className = 'form-message';
+  msgEl.textContent = 'Submitting...';
+
+  try {
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+    // Convert checkbox to boolean
+    data.terms_accepted = data.terms_accepted === 'on';
+
+    const response = await fetch('/api/organizers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    if (result.status === 'success') {
+      msgEl.className = 'form-message success';
+      msgEl.textContent = '✓ Venue application submitted! Our team will review and contact you within 3-5 business days.';
+      this.reset();
+      setTimeout(() => {
+        msgEl.className = 'form-message';
+        msgEl.textContent = '';
+        btn.textContent = 'Submit Venue Application';
+        btn.disabled = false;
+      }, 3000);
+    } else {
+      throw new Error(result.message || 'Submission failed');
+    }
+  } catch (err) {
+    msgEl.className = 'form-message error';
+    msgEl.textContent = '✗ ' + err.message;
+    btn.textContent = 'Submit Venue Application';
+    btn.disabled = false;
+  }
 });
 
 // ============================================
