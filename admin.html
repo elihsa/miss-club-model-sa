@@ -47,6 +47,16 @@
   h1 { color: var(--gold); margin-bottom: 30px; letter-spacing: 2px; }
   h1::after { content: ''; display: block; width: 80px; height: 3px; background: var(--gold); margin: 15px 0 0; }
 
+  /* TABS */
+  .tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; border-bottom: 2px solid var(--gold-dark); padding-bottom: 10px; }
+  .tab-btn {
+    padding: 12px 24px; background: var(--dark); border: 1px solid var(--gold-dark);
+    border-radius: 6px 6px 0 0; color: var(--cream); font-family: inherit; font-size: 0.95rem;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .tab-btn:hover { border-color: var(--gold); }
+  .tab-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+
   /* STATS */
   .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
   .stat-card { background: var(--dark); border: 1px solid var(--gold-dark); border-radius: 8px; padding: 25px; text-align: center; }
@@ -75,11 +85,13 @@
   .status-approved { background: var(--green); color: var(--black); }
   .status-declined { background: var(--red); color: var(--cream); }
   .status-deleted { background: #555; color: #aaa; text-decoration: line-through; }
+  .status-pending { background: var(--blue); color: var(--cream); }
   .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
   .action-btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: all 0.2s; }
   .btn-approve { background: var(--green); color: var(--black); }
   .btn-decline { background: var(--orange); color: var(--black); }
   .btn-delete { background: var(--red); color: var(--cream); }
+  .btn-view { background: var(--blue); color: var(--cream); }
   .action-btn:hover { opacity: 0.8; transform: translateY(-1px); }
   .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .applicant-name { font-weight: bold; color: var(--gold); }
@@ -88,6 +100,7 @@
   .media-links a { color: var(--gold-light); text-decoration: none; margin-right: 10px; font-size: 0.8rem; }
   .media-links a:hover { text-decoration: underline; }
   .date-col { color: #888; font-size: 0.8rem; white-space: nowrap; }
+  .event-col { color: var(--gold-light); font-size: 0.85rem; }
 
   /* LOGIN */
   .login-container { max-width: 400px; margin: 80px auto; padding: 40px; background: var(--dark); border: 1px solid var(--gold-dark); border-radius: 12px; text-align: center; }
@@ -123,6 +136,7 @@
     .action-btns { flex-direction: column; }
     .modal-row { grid-template-columns: 1fr; }
     .modal-label { border-bottom: 1px solid var(--gold-dark); padding-bottom: 5px; margin-bottom: 5px; }
+    .tabs { justify-content: center; }
   }
 </style>
 </head>
@@ -140,7 +154,7 @@
 <!-- LOGIN VIEW -->
 <div id="loginView" class="login-container">
   <h2>Admin Login</h2>
-  <p>Sign in to manage candidate applications</p>
+  <p>Sign in to manage all data</p>
   <form id="loginForm">
     <div class="form-group">
       <label>Email</label>
@@ -157,26 +171,35 @@
 
 <!-- DASHBOARD VIEW (hidden until login) -->
 <div id="dashboardView" style="display:none">
-  <h1>Applications Dashboard</h1>
+  <h1>Admin Dashboard</h1>
+
+  <!-- TABS -->
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-table="applications">Candidate Applications</button>
+    <button class="tab-btn" data-table="interested_parties">Event Registrations</button>
+    <button class="tab-btn" data-table="event_organizers">Venue Partners</button>
+    <button class="tab-btn" data-table="events">Events</button>
+  </div>
 
   <!-- STATS -->
-  <div class="stats-grid">
-    <div class="stat-card"><h3 id="statTotal">0</h3><p>Total Applications</p></div>
-    <div class="stat-card"><h3 id="statUndecided">0</h3><p>Undecided</p></div>
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><h3 id="statTotal">0</h3><p>Total</p></div>
+    <div class="stat-card"><h3 id="statUndecided">0</h3><p>Pending</p></div>
     <div class="stat-card"><h3 id="statApproved">0</h3><p>Approved</p></div>
     <div class="stat-card"><h3 id="statDeclined">0</h3><p>Declined</p></div>
   </div>
 
   <!-- FILTERS -->
-  <div class="filters">
+  <div class="filters" id="filters">
     <select class="filter-select" id="statusFilter">
       <option value="">All Statuses</option>
       <option value="undecided">Undecided</option>
       <option value="approved">Approved</option>
       <option value="declined">Declined</option>
       <option value="deleted">Deleted</option>
+      <option value="pending">Pending</option>
     </select>
-    <input type="text" class="filter-input" id="searchInput" placeholder="Search name, email, platform...">
+    <input type="text" class="filter-input" id="searchInput" placeholder="Search...">
     <select class="filter-select" id="sortSelect">
       <option value="newest">Newest First</option>
       <option value="oldest">Oldest First</option>
@@ -187,7 +210,7 @@
   <!-- TABLE -->
   <div class="table-container">
     <table>
-      <thead>
+      <thead id="tableHead">
         <tr>
           <th>Applicant</th>
           <th>Platform / Advocacy</th>
@@ -197,7 +220,7 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody id="applicationsTable">
+      <tbody id="tableBody">
       </tbody>
     </table>
   </div>
@@ -206,7 +229,7 @@
 <!-- DETAIL MODAL -->
 <div class="modal" id="detailModal">
   <div class="modal-content">
-    <h3>Application Details</h3>
+    <h3>Record Details</h3>
     <div id="modalBody"></div>
     <div class="modal-actions">
       <button class="modal-close" id="modalClose">Close</button>
@@ -221,18 +244,54 @@ const SUPABASE_URL = 'https://ekvwgxnryasrvltyukvj.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_ePDDXlwk-BhljlqNhink-w_ZEzsJ6ZR';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Admin emails allowed (add yours)
-const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za','kiyanoschoonraad98@gmail.com'; // Add your email here
+// Admin emails allowed
+const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com'];
 
-let allApplications = [];
+let allRecords = [];
+let currentTable = 'applications';
 
-// DOM Elements
+// Table configurations
+const tableConfigs = {
+  applications: {
+    title: 'Candidate Applications',
+    columns: ['applicant', 'platform', 'status', 'media', 'date', 'actions'],
+    headers: ['Applicant', 'Platform / Advocacy', 'Status', 'Media', 'Date', 'Actions'],
+    stats: ['total', 'undecided', 'approved', 'declined'],
+    statusOptions: ['undecided', 'approved', 'declined', 'deleted']
+  },
+  interested_parties: {
+    title: 'Event Registrations',
+    columns: ['applicant', 'event', 'email', 'status', 'date', 'actions'],
+    headers: ['Applicant', 'Event', 'Email', 'Status', 'Date', 'Actions'],
+    stats: ['total', 'pending'],
+    statusOptions: ['pending']
+  },
+  event_organizers: {
+    title: 'Venue Partners',
+    columns: ['applicant', 'venue', 'email', 'status', 'date', 'actions'],
+    headers: ['Contact', 'Venue', 'Email', 'Status', 'Date', 'Actions'],
+    stats: ['total', 'pending', 'approved', 'declined'],
+    statusOptions: ['pending', 'approved', 'declined']
+  },
+  events: {
+    title: 'Events',
+    columns: ['name', 'date', 'location', 'status', 'actions'],
+    headers: ['Event Name', 'Date', 'Location', 'Status', 'Actions'],
+    stats: ['total'],
+    statusOptions: []
+  }
+};
+
 const loginView = document.getElementById('loginView');
 const dashboardView = document.getElementById('dashboardView');
 const logoutBtn = document.getElementById('logoutBtn');
 const loginForm = document.getElementById('loginForm');
 const loginError = document.getElementById('loginError');
-const applicationsTable = document.getElementById('applicationsTable');
+const tabsContainer = document.getElementById('tabs');
+const statsGrid = document.getElementById('statsGrid');
+const filters = document.getElementById('filters');
+const tableHead = document.getElementById('tableHead');
+const tableBody = document.getElementById('tableBody');
 const statusFilter = document.getElementById('statusFilter');
 const searchInput = document.getElementById('searchInput');
 const sortSelect = document.getElementById('sortSelect');
@@ -245,7 +304,7 @@ async function checkSession() {
   const { data: { session } } = await supabase.auth.getSession();
   if (session && ADMIN_EMAILS.includes(session.user.email)) {
     showDashboard();
-    loadApplications();
+    loadData();
   } else {
     showLogin();
   }
@@ -255,7 +314,7 @@ async function checkSession() {
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_IN' && session && ADMIN_EMAILS.includes(session.user.email)) {
     showDashboard();
-    loadApplications();
+    loadData();
   } else if (event === 'SIGNED_OUT') {
     showLogin();
   }
@@ -266,13 +325,13 @@ loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value;
   const password = document.getElementById('loginPassword').value;
-  
+
   if (!ADMIN_EMAILS.includes(email)) {
     loginError.textContent = 'Unauthorized email';
     loginError.classList.add('show');
     return;
   }
-  
+
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     loginError.textContent = error.message;
@@ -300,153 +359,261 @@ function showDashboard() {
   logoutBtn.style.display = 'block';
 }
 
-// Load applications
-async function loadApplications() {
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTable = btn.dataset.table;
+    loadData();
+  });
+});
+
+// Load data based on current table
+async function loadData() {
+  const config = tableConfigs[currentTable];
+  document.title = `Admin - ${config.title} - Miss Club Model SA`;
+
+  // Update filters
+  updateFilters(config);
+
+  // Load records
   const { data, error } = await supabase
-    .from('applications')
+    .from(currentTable)
     .select('*')
     .order('created_at', { ascending: false });
-  
+
   if (error) {
     console.error('Load error:', error);
     return;
   }
-  
-  allApplications = data || [];
+
+  allRecords = data || [];
   updateStats();
   renderTable();
 }
 
-// Update stats
-function updateStats() {
-  const stats = { total: 0, undecided: 0, approved: 0, declined: 0, deleted: 0 };
-  allApplications.forEach(app => {
-    stats.total++;
-    const status = app.status || 'undecided';
-    if (stats[status] !== undefined) stats[status]++;
+function updateFilters(config) {
+  // Update status filter
+  statusFilter.innerHTML = '<option value="">All Statuses</option>';
+  config.statusOptions.forEach(status => {
+    const opt = document.createElement('option');
+    opt.value = status;
+    opt.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    statusFilter.appendChild(opt);
   });
-  document.getElementById('statTotal').textContent = stats.total;
-  document.getElementById('statUndecided').textContent = stats.undecided;
-  document.getElementById('statApproved').textContent = stats.approved;
-  document.getElementById('statDeclined').textContent = stats.declined;
+
+  // Update table headers
+  tableHead.innerHTML = '<tr>' + config.headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
 }
 
-// Render table
-function renderTable() {
-  let filtered = [...allApplications];
+function updateStats() {
+  const config = tableConfigs[currentTable];
+  const stats = { total: 0, undecided: 0, approved: 0, declined: 0, deleted: 0, pending: 0 };
   
+  allRecords.forEach(record => {
+    stats.total++;
+    const status = record.status || 'undecided';
+    if (stats[status] !== undefined) stats[status]++;
+  });
+
+  // Update stat cards based on current table
+  const statCards = statsGrid.querySelectorAll('.stat-card');
+  if (currentTable === 'applications') {
+    statCards[0].querySelector('h3').textContent = stats.total;
+    statCards[0].querySelector('p').textContent = 'Total';
+    statCards[1].querySelector('h3').textContent = stats.undecided;
+    statCards[1].querySelector('p').textContent = 'Undecided';
+    statCards[2].querySelector('h3').textContent = stats.approved;
+    statCards[2].querySelector('p').textContent = 'Approved';
+    statCards[3].querySelector('h3').textContent = stats.declined;
+    statCards[3].querySelector('p').textContent = 'Declined';
+  } else if (currentTable === 'interested_parties') {
+    statCards[0].querySelector('h3').textContent = stats.total;
+    statCards[0].querySelector('p').textContent = 'Total Registrations';
+    statCards[1].querySelector('h3').textContent = stats.pending;
+    statCards[1].querySelector('p').textContent = 'Pending';
+    statCards[2].style.display = 'none';
+    statCards[3].style.display = 'none';
+  } else if (currentTable === 'event_organizers') {
+    statCards[0].querySelector('h3').textContent = stats.total;
+    statCards[0].querySelector('p').textContent = 'Total Applications';
+    statCards[1].querySelector('h3').textContent = stats.pending;
+    statCards[1].querySelector('p').textContent = 'Pending';
+    statCards[2].querySelector('h3').textContent = stats.approved;
+    statCards[2].querySelector('p').textContent = 'Approved';
+    statCards[3].querySelector('h3').textContent = stats.declined;
+    statCards[3].querySelector('p').textContent = 'Declined';
+    statCards[2].style.display = 'block';
+    statCards[3].style.display = 'block';
+  } else if (currentTable === 'events') {
+    statCards[0].querySelector('h3').textContent = stats.total;
+    statCards[0].querySelector('p').textContent = 'Total Events';
+    statCards[1].style.display = 'none';
+    statCards[2].style.display = 'none';
+    statCards[3].style.display = 'none';
+  }
+}
+
+function renderTable() {
+  const config = tableConfigs[currentTable];
+  let filtered = [...allRecords];
+
   // Status filter
   const statusVal = statusFilter.value;
-  if (statusVal) filtered = filtered.filter(a => (a.status || 'undecided') === statusVal);
-  
+  if (statusVal) filtered = filtered.filter(r => (r.status || 'undecided') === statusVal);
+
   // Search
   const searchVal = searchInput.value.toLowerCase();
   if (searchVal) {
-    filtered = filtered.filter(a => 
-      (a.full_name || '').toLowerCase().includes(searchVal) ||
-      (a.email || '').toLowerCase().includes(searchVal) ||
-      (a.platform || '').toLowerCase().includes(searchVal)
+    filtered = filtered.filter(r => 
+      (r.full_name || r.name || '').toLowerCase().includes(searchVal) ||
+      (r.email || '').toLowerCase().includes(searchVal) ||
+      (r.platform || r.venue_name || r.location || '').toLowerCase().includes(searchVal)
     );
   }
-  
+
   // Sort
   const sortVal = sortSelect.value;
-  if (sortVal === 'oldest') filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-  else if (sortVal === 'name') filtered.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''));
-  else filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  
-  applicationsTable.innerHTML = filtered.map(app => `
-    <tr data-id="${app.id}">
-      <td>
-        <div class="applicant-name">${app.full_name || 'Unknown'}</div>
-        <div class="applicant-email">${app.email || ''}</div>
-      </td>
-      <td class="applicant-platform" title="${app.platform || ''}">${app.platform || ''}</td>
-      <td><span class="status-badge status-${app.status || 'undecided'}">${(app.status || 'undecided').charAt(0).toUpperCase() + (app.status || 'undecided').slice(1)}</span></td>
-      <td class="media-links">
-        ${app.headshot_url ? `<a href="${app.headshot_url}" target="_blank">📷 Headshot</a>` : ''}
-        ${app.fullbody_url ? `<a href="${app.fullbody_url}" target="_blank">📷 Full-body</a>` : ''}
-        ${app.video_url ? `<a href="${app.video_url}" target="_blank">🎥 Video</a>` : ''}
-      </td>
-      <td class="date-col">${app.created_at ? new Date(app.created_at).toLocaleDateString() : ''}</td>
-      <td>
-        <div class="action-btns">
-          ${(app.status || 'undecided') !== 'approved' ? `<button class="action-btn btn-approve" onclick="updateStatus('${app.id}', 'approved')">Approve</button>` : ''}
-          ${(app.status || 'undecided') !== 'declined' ? `<button class="action-btn btn-decline" onclick="updateStatus('${app.id}', 'declined')">Decline</button>` : ''}
-          ${(app.status || 'undecided') !== 'deleted' ? `<button class="action-btn btn-delete" onclick="updateStatus('${app.id}', 'deleted')">Delete</button>` : ''}
-          <button class="action-btn" style="background: var(--blue); color: var(--cream);" onclick="viewDetails('${app.id}')">View</button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
+  if (sortVal === 'oldest') {
+    filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  } else if (sortVal === 'name') {
+    filtered.sort((a, b) => (a.full_name || a.name || '').localeCompare(b.full_name || b.name || ''));
+  } else {
+    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }
+
+  // Render rows
+  tableBody.innerHTML = filtered.map(record => {
+    const status = record.status || 'undecided';
+    const date = record.created_at ? new Date(record.created_at).toLocaleDateString() : 'N/A';
+    
+    if (currentTable === 'applications') {
+      return `
+        <tr>
+          <td>
+            <div class="applicant-name">${record.full_name || 'Unknown'}</div>
+            <div class="applicant-email">${record.email || ''}</div>
+          </td>
+          <td class="applicant-platform">${record.platform || 'N/A'}</td>
+          <td><span class="status-badge status-${status}">${status}</span></td>
+          <td class="media-links">
+            ${record.headshot_url ? `<a href="${record.headshot_url}" target="_blank">Headshot</a>` : ''}
+            ${record.fullbody_url ? `<a href="${record.fullbody_url}" target="_blank">Full Body</a>` : ''}
+            ${record.video_url ? `<a href="${record.video_url}" target="_blank">Video</a>` : ''}
+          </td>
+          <td class="date-col">${date}</td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn btn-view" onclick="viewRecord('${record.id}')">View</button>
+              <button class="action-btn btn-approve" onclick="updateStatus('${record.id}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>Approve</button>
+              <button class="action-btn btn-decline" onclick="updateStatus('${record.id}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>Decline</button>
+              <button class="action-btn btn-delete" onclick="updateStatus('${record.id}', 'deleted')" ${status === 'deleted' ? 'disabled' : ''}>Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    } else if (currentTable === 'interested_parties') {
+      return `
+        <tr>
+          <td>
+            <div class="applicant-name">${record.full_name || 'Unknown'}</div>
+            <div class="applicant-email">${record.email || ''}</div>
+          </td>
+          <td class="event-col">${record.event_id || 'N/A'}</td>
+          <td>${record.email || ''}</td>
+          <td><span class="status-badge status-${status}">${status || 'pending'}</span></td>
+          <td class="date-col">${date}</td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn btn-view" onclick="viewRecord('${record.id}')">View</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    } else if (currentTable === 'event_organizers') {
+      return `
+        <tr>
+          <td>
+            <div class="applicant-name">${record.full_name || 'Unknown'}</div>
+            <div class="applicant-email">${record.email || ''}</div>
+          </td>
+          <td>
+            <div class="applicant-name">${record.venue_name || 'N/A'}</div>
+            <div class="applicant-email">${record.venue_location || ''}</div>
+          </td>
+          <td>${record.email || ''}</td>
+          <td><span class="status-badge status-${status}">${status}</span></td>
+          <td class="date-col">${date}</td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn btn-view" onclick="viewRecord('${record.id}')">View</button>
+              <button class="action-btn btn-approve" onclick="updateStatus('${record.id}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>Approve</button>
+              <button class="action-btn btn-decline" onclick="updateStatus('${record.id}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>Decline</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    } else if (currentTable === 'events') {
+      return `
+        <tr>
+          <td class="applicant-name">${record.name || 'Untitled Event'}</td>
+          <td>${record.event_date || 'N/A'}</td>
+          <td>${record.location || 'N/A'}</td>
+          <td><span class="status-badge">${record.poster_url ? 'Has Poster' : 'No Poster'}</span></td>
+          <td class="date-col">${date}</td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn btn-view" onclick="viewRecord('${record.id}')">View</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+  }).join('');
 }
 
-// Filter/sort listeners
-statusFilter.addEventListener('change', renderTable);
-searchInput.addEventListener('input', renderTable);
-sortSelect.addEventListener('change', renderTable);
+// View record details
+async function viewRecord(id) {
+  const record = allRecords.find(r => r.id === id);
+  if (!record) return;
 
-// Update status
-window.updateStatus = async function(id, status) {
-  const btn = event.target;
-  btn.disabled = true;
-  btn.textContent = 'Saving...';
-  
-  const { error } = await supabase
-    .from('applications')
-    .update({ status })
-    .eq('id', id);
-  
-  if (error) {
-    alert('Error: ' + error.message);
-    btn.disabled = false;
-    btn.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-  } else {
-    const app = allApplications.find(a => a.id === id);
-    if (app) app.status = status;
-    updateStats();
-    renderTable();
+  let html = '';
+  for (const [key, value] of Object.entries(record)) {
+    if (value === null || value === undefined) continue;
+    if (key === 'headshot_url' || key === 'fullbody_url' || key === 'video_url' || key === 'poster_url') {
+      html += `<div class="modal-row"><span class="modal-label">${key}</span><span class="modal-value"><a href="${value}" target="_blank">${value}</a></span></div>`;
+    } else {
+      html += `<div class="modal-row"><span class="modal-label">${key}</span><span class="modal-value">${value}</span></div>`;
+    }
   }
-};
-
-// View details
-window.viewDetails = async function(id) {
-  const app = allApplications.find(a => a.id === id);
-  if (!app) return;
-  
-  modalBody.innerHTML = `
-    <div class="modal-row"><span class="modal-label">Full Name:</span><span class="modal-value">${app.full_name || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Email:</span><span class="modal-value">${app.email || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Phone:</span><span class="modal-value">${app.phone || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Address:</span><span class="modal-value">${app.address || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">City:</span><span class="modal-value">${app.city || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Province:</span><span class="modal-value">${app.province || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">DOB:</span><span class="modal-value">${app.dob || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Height:</span><span class="modal-value">${app.height ? app.height + ' cm' : ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Occupation:</span><span class="modal-value">${app.occupation || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Education:</span><span class="modal-value">${app.education || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Instagram:</span><span class="modal-value">${app.instagram || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Platform:</span><span class="modal-value">${app.platform || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Essay:</span><span class="modal-value">${app.essay || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Talent:</span><span class="modal-value">${app.talent || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Emergency Contact:</span><span class="modal-value">${app.emergency_name || ''} - ${app.emergency_phone || ''}</span></div>
-    <div class="modal-row"><span class="modal-label">Terms:</span><span class="modal-value">${app.terms ? 'Yes' : 'No'}</span></div>
-    <div class="modal-row"><span class="modal-label">Media Release:</span><span class="modal-value">${app.media_release ? 'Yes' : 'No'}</span></div>
-    <div class="modal-row"><span class="modal-label">Status:</span><span class="modal-value"><span class="status-badge status-${app.status || 'undecided'}">${(app.status || 'undecided').charAt(0).toUpperCase() + (app.status || 'undecided').slice(1)}</span></span></div>
-    <div class="modal-row"><span class="modal-label">Applied:</span><span class="modal-value">${app.created_at ? new Date(app.created_at).toLocaleString() : ''}</span></div>
-    <div class="modal-media">
-      ${app.headshot_url ? `<a href="${app.headshot_url}" target="_blank">📷 Headshot</a>` : ''}
-      ${app.fullbody_url ? `<a href="${app.fullbody_url}" target="_blank">📷 Full-body</a>` : ''}
-      ${app.video_url ? `<a href="${app.video_url}" target="_blank">🎥 Video</a>` : ''}
-    </div>
-  `;
+  modalBody.innerHTML = html;
   detailModal.classList.add('show');
-};
+}
 
 modalClose.addEventListener('click', () => detailModal.classList.remove('show'));
 detailModal.addEventListener('click', (e) => { if (e.target === detailModal) detailModal.classList.remove('show'); });
 
-// Init
+// Update status
+async function updateStatus(id, newStatus) {
+  const { error } = await supabase
+    .from(currentTable)
+    .update({ status: newStatus })
+    .eq('id', id);
+
+  if (error) {
+    alert('Error updating status: ' + error.message);
+  } else {
+    loadData();
+  }
+}
+
+// Filters
+statusFilter.addEventListener('change', renderTable);
+searchInput.addEventListener('input', renderTable);
+sortSelect.addEventListener('change', renderTable);
+
+// Initialize
 checkSession();
 </script>
 </body>
