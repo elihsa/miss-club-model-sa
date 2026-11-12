@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miss Club Model SA</title>
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d878;
+    --gold-dark: #8b6914;
+    --black: #0a0a0a;
+    --dark: #1a1a1a;
+    --cream: #f5f0e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--black);
+    color: var(--cream);
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 1000;
+    background: rgba(10,10,10,0.95);
+    border-bottom: 2px solid var(--gold);
+    padding: 15px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  nav .logo-text {
+    font-size: 1.4rem; color: var(--gold); font-weight: bold;
+    letter-spacing: 2px;
+  }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav a {
+    color: var(--cream); text-decoration: none; font-size: 0.95rem;
+    transition: color 0.3s;
+  }
+  nav a:hover { color: var(--gold); }
+  .hamburger { display: none; cursor: pointer; font-size: 1.5rem; color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 120px 20px 60px;
+    background: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 70%);
+  }
+  .hero img { max-width: 400px; width: 80%; margin-bottom: 30px; }
+  .hero h1 {
+    font-size: 3rem; color: var(--gold); margin-bottom: 15px;
+    letter-spacing: 3px;
+  }
+  .hero .tagline {
+    font-size: 1.2rem; color: var(--gold-light); margin-bottom: 30px;
+    font-style: italic;
+  }
+  .hero .mission {
+    max-width: 700px; font-size: 1.05rem; margin-bottom: 40px;
+    color: #ccc;
+  }
+  .btn {
+    display: inline-block; padding: 15px 40px;
+    background: var(--gold); color: var(--black);
+    text-decoration: none; font-weight: bold; font-size: 1.1rem;
+    border: 2px solid var(--gold); border-radius: 4px;
+    transition: all 0.3s; cursor: pointer;
+  }
+  .btn:hover { background: transparent; color: var(--gold); }
+
+  /* SECTIONS */
+  section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
+  section h2 {
+    text-align: center; font-size: 2.2rem; color: var(--gold);
+    margin-bottom: 40px; letter-spacing: 2px;
+  }
+  section h2::after {
+    content: ''; display: block; width: 80px; height: 3px;
+    background: var(--gold); margin: 15px auto 0;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    align-items: center;
+  }
+  .about-grid p { font-size: 1.05rem; color: #ccc; margin-bottom: 15px; }
+  .about-image {
+    width: 100%; height: 300px; background: var(--dark);
+    border: 2px solid var(--gold); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold-dark); font-style: italic;
+  }
+
+  /* EVENT */
+  .event-cards {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+  }
+  .event-card {
+    background: var(--dark); border: 1px solid var(--gold-dark);
+    border-radius: 8px; padding: 30px; text-align: center;
+  }
+  .event-card h3 { color: var(--gold); margin-bottom: 10px; }
+  .event-card p { color: #aaa; font-size: 0.95rem; }
+
+  /* CANDIDATES */
+  .candidate-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px;
+  }
+  .candidate-card {
+    background: var(--dark); border: 1px solid var(--gold-dark);
+    border-radius: 8px; overflow: hidden; text-align: center;
+  }
+  .candidate-photo {
+    width: 100%; height: 200px; background: #222;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold-dark); font-style: italic;
+  }
+  .candidate-card h4 { color: var(--gold); padding: 15px 10px 5px; }
+  .candidate-card p { color: #999; font-size: 0.85rem; padding-bottom: 15px; }
+
+  /* FORM */
+  .form-section { background: var(--dark); border-radius: 12px; padding: 50px; margin: 0 40px 80px; max-width: 1200px; margin-left: auto; margin-right: auto; border: 1px solid var(--gold-dark); }
+  .form-section h2 { margin-bottom: 10px; }
+  .form-section .subtitle { text-align: center; color: #999; margin-bottom: 40px; }
+  form { max-width: 700px; margin: 0 auto; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block; color: var(--gold); margin-bottom: 6px;
+    font-size: 0.95rem; font-weight: bold;
+  }
+  .form-group label .required { color: #e74c3c; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 12px 15px;
+    background: var(--black); border: 1px solid #444;
+    color: var(--cream); border-radius: 6px; font-size: 1rem;
+    font-family: 'Georgia', serif;
+    transition: border-color 0.3s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none; border-color: var(--gold);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .file-upload {
+    border: 2px dashed var(--gold-dark); border-radius: 8px;
+    padding: 25px; text-align: center; cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  .file-upload:hover { border-color: var(--gold); }
+  .file-upload input[type="file"] { display: none; }
+  .file-upload p { color: #999; font-size: 0.9rem; }
+  .file-upload .file-name { color: var(--gold); margin-top: 8px; font-size: 0.85rem; }
+  .preview-thumb {
+    max-width: 120px; max-height: 120px; margin-top: 10px;
+    border-radius: 6px; border: 1px solid var(--gold-dark);
+  }
+  .checkbox-group { display: flex; align-items: flex-start; gap: 10px; }
+  .checkbox-group input[type="checkbox"] { width: auto; margin-top: 4px; }
+  .checkbox-group label { color: #ccc; font-weight: normal; font-size: 0.9rem; }
+  .submit-btn {
+    width: 100%; padding: 16px; font-size: 1.1rem;
+    margin-top: 10px;
+  }
+  .form-message {
+    text-align: center; padding: 15px; border-radius: 6px;
+    margin-top: 20px; display: none;
+  }
+  .form-message.success { background: #1a472a; color: #4caf50; display: block; }
+  .form-message.error { background: #4a1a1a; color: #e74c3c; display: block; }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 40px;
+    border-top: 1px solid var(--gold-dark); color: #666;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav ul { display: none; }
+    .hamburger { display: block; }
+    nav ul.open {
+      display: flex; flex-direction: column;
+      position: absolute; top: 100%; left: 0; width: 100%;
+      background: var(--black); padding: 20px; gap: 15px;
+    }
+    .hero h1 { font-size: 2rem; }
+    .about-grid, .event-cards, .candidate-grid, .form-row {
+      grid-template-columns: 1fr;
+    }
+    .form-section { padding: 30px 20px; margin: 0 15px 60px; }
+    section { padding: 60px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo-text">Miss Club Model SA</div>
+  <div class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('open')">☰</div>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#event">Event</a></li>
+    <li><a href="#candidates">Candidates</a></li>
+    <li><a href="#apply">Apply</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <img src="logo.png" alt="Miss Club Model SA Logo">
+  <p class="tagline">Your Legacy Begins Here</p>
+  <p class="mission">
+    Miss Club Model SA celebrates elegance, intelligence, and empowerment. 
+    We provide a platform for extraordinary women to showcase their talent, 
+    advocate for meaningful causes, and inspire communities across South Africa.
+  </p>
+  <a href="#apply" class="btn">Apply Now</a>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <h2>About the Pageant</h2>
+  <div class="about-grid">
+    <div>
+      <p>Miss Club Model SA is more than a beauty pageant — it is a celebration of character, leadership, and purpose. Founded to uplift and empower women, our pageant seeks candidates who embody grace, intelligence, and a commitment to positive change.</p>
+      <p>Our judging criteria evaluate poise, communication, community involvement, and personal platform. We believe true beauty shines through action and advocacy.</p>
+      <p><strong style="color:var(--gold)">Our Vision:</strong> To crown ambassadors who will represent South Africa with dignity and drive meaningful social impact.</p>
+    </div>
+    <div class="about-image" data-cms-key="aboutImage">[ CMS: Insert About Image ]</div>
+  </div>
+</section>
+
+<!-- EVENT -->
+<section id="event">
+  <h2>The Event</h2>
+  <div class="event-cards">
+    <div class="event-card">
+      <h3>📅 Date</h3>
+      <p data-cms-key="eventDate">[CMS: Event Date]</p>
+    </div>
+    <div class="event-card">
+      <h3>📍 Venue</h3>
+      <p data-cms-key="eventVenue">[CMS: Event Venue & Address]</p>
+    </div>
+    <div class="event-card">
+      <h3>️ Tickets</h3>
+      <p data-cms-key="ticketInfo">[CMS: Ticket Info & Pricing]</p>
+    </div>
+  </div>
+</section>
+
+<!-- CANDIDATES -->
+<section id="candidates">
+  <h2>Meet the Candidates</h2>
+  <div class="candidate-grid">
+    <div class="candidate-card">
+      <div class="candidate-photo" data-cms-key="candidate1Photo">[CMS: Candidate Photo]</div>
+      <h4 data-cms-key="candidate1Name">[CMS: Candidate Name]</h4>
+      <p data-cms-key="candidate1Location">[CMS: City / Province]</p>
+    </div>
+    <div class="candidate-card">
+      <div class="candidate-photo" data-cms-key="candidate2Photo">[CMS: Candidate Photo]</div>
+      <h4 data-cms-key="candidate2Name">[CMS: Candidate Name]</h4>
+      <p data-cms-key="candidate2Location">[CMS: City / Province]</p>
+    </div>
+    <div class="candidate-card">
+      <div class="candidate-photo" data-cms-key="candidate3Photo">[CMS: Candidate Photo]</div>
+      <h4 data-cms-key="candidate3Name">[CMS: Candidate Name]</h4>
+      <p data-cms-key="candidate3Location">[CMS: City / Province]</p>
+    </div>
+    <div class="candidate-card">
+      <div class="candidate-photo" data-cms-key="candidate4Photo">[CMS: Candidate Photo]</div>
+      <h4 data-cms-key="candidate4Name">[CMS: Candidate Name]</h4>
+      <p data-cms-key="candidate4Location">[CMS: City / Province]</p>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION FORM -->
+<div class="form-section" id="apply">
+  <h2>Candidate Application</h2>
+  <p class="subtitle">Complete all required fields to submit your entry</p>
+
+  <form id="applicationForm" enctype="multipart/form-data">
+
+    <!-- Personal Info -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name <span class="required">*</span></label>
+        <input type="text" name="fullName" required>
+      </div>
+      <div class="form-group">
+        <label>Date of Birth <span class="required">*</span></label>
+        <input type="date" name="dob" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email <span class="required">*</span></label>
+        <input type="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label>Phone <span class="required">*</span></label>
+        <input type="tel" name="phone" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Address <span class="required">*</span></label>
+      <input type="text" name="address" required>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" name="city">
+      </div>
+      <div class="form-group">
+        <label>Province <span class="required">*</span></label>
+        <select name="province" required>
+          <option value="">Select Province</option>
+          <option>Eastern Cape</option><option>Free State</option>
+          <option>Gauteng</option><option>KwaZulu-Natal</option>
+          <option>Limpopo</option><option>Mpumalanga</option>
+          <option>North West</option><option>Northern Cape</option>
+          <option>Western Cape</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Attributes -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Height (cm)</label>
+        <input type="number" name="height" min="100" max="250">
+      </div>
+      <div class="form-group">
+        <label>Occupation</label>
+        <input type="text" name="occupation">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Education</label>
+        <input type="text" name="education">
+      </div>
+      <div class="form-group">
+        <label>Instagram Handle</label>
+        <input type="text" name="instagram" placeholder="@username">
+      </div>
+    </div>
+
+    <!-- Pageant Specifics -->
+    <div class="form-group">
+      <label>Personal Platform / Advocacy <span class="required">*</span></label>
+      <textarea name="platform" required placeholder="Describe the cause you champion..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Why should you win? <span class="required">*</span></label>
+      <textarea name="essay" required placeholder="Tell us what makes you the ideal Miss Club Model SA..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Talent (if applicable)</label>
+      <input type="text" name="talent" placeholder="e.g., Singing, Dance, Poetry">
+    </div>
+
+    <!-- Media Uploads with Auto-Resize -->
+    <div class="form-group">
+      <label>Headshot Photo <span class="required">*</span></label>
+      <div class="file-upload" onclick="document.getElementById('headshot').click()">
+        <input type="file" id="headshot" name="headshot" accept="image/*" required onchange="handleImageUpload(this, 'headshotPreview', 'headshotName')">
+        <p>📷 Click to upload headshot (JPG/PNG, max 5MB)</p>
+        <p class="file-name" id="headshotName"></p>
+        <img id="headshotPreview" class="preview-thumb" style="display:none">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Full-Length Photo <span class="required">*</span></label>
+      <div class="file-upload" onclick="document.getElementById('fullbody').click()">
+        <input type="file" id="fullbody" name="fullbody" accept="image/*" required onchange="handleImageUpload(this, 'fullbodyPreview', 'fullbodyName')">
+        <p>📷 Click to upload full-length photo (JPG/PNG, max 5MB)</p>
+        <p class="file-name" id="fullbodyName"></p>
+        <img id="fullbodyPreview" class="preview-thumb" style="display:none">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Introduction Video <span class="required">*</span></label>
+      <div class="file-upload" onclick="document.getElementById('video').click()">
+        <input type="file" id="video" name="video" accept="video/*" required onchange="handleVideoUpload(this, 'videoName')">
+        <p>🎥 Click to upload intro video (MP4, max 2 min, max 50MB)</p>
+        <p class="file-name" id="videoName"></p>
+      </div>
+    </div>
+
+    <!-- Emergency Contact -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Emergency Contact Name</label>
+        <input type="text" name="emergencyName">
+      </div>
+      <div class="form-group">
+        <label>Emergency Contact Phone</label>
+        <input type="tel" name="emergencyPhone">
+      </div>
+    </div>
+
+    <!-- Legal -->
+    <div class="form-group">
+      <div class="checkbox-group">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">I agree to the terms and conditions and confirm all information provided is accurate. <span class="required">*</span></label>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="checkbox-group">
+        <input type="checkbox" id="mediaRelease" required>
+        <label for="mediaRelease">I grant Miss Club Model SA permission to use my photos and video for promotional purposes. <span class="required">*</span></label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn submit-btn">Submit Application</button>
+    <div class="form-message" id="formMessage"></div>
+  </form>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2>Contact Us</h2>
+  <div class="event-cards">
+    <div class="event-card">
+      <h3>📧 Email</h3>
+      <p data-cms-key="contactEmail">contact@missclubmodelsa.co.za</p>
+    </div>
+    <div class="event-card">
+      <h3>📞 Phone</h3>
+      <p data-cms-key="contactPhone">+27 XX XXX XXXX</p>
+    </div>
+    <div class="event-card">
+      <h3>📍 Office</h3>
+      <p data-cms-key="contactAddress">South Africa</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Miss Club Model SA. All rights reserved. | 
+  <a href="#">Privacy Policy</a> | <a href="#">Terms</a></p>
+</footer>
+
+<script type="module">
+// ============================================
+// CONFIGURATION - SUPABASE
+// ============================================
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://ekvwgxnryasrvltyukvj.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ePDDXlwk-BhljlqNhink-w_ZEzsJ6ZR';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const MAX_FILE_SIZE_MB = 50; // Supabase free tier limit
+const UPLOAD_BUCKET = 'videos';
+
+// ============================================
+// IMAGE AUTO-RESIZE (prevents large file breaks)
+// ============================================
+function handleImageUpload(input, previewId, nameId) {
+  const file = input.files[0];
+  if (!file) return;
+
+  if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+    alert(`Image must be under ${MAX_FILE_SIZE_MB}MB`);
+    input.value = '';
+    return;
+  }
+
+  const nameEl = document.getElementById(nameId);
+  const previewEl = document.getElementById(previewId);
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewEl.src = e.target.result;
+    previewEl.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+
+  const img = new Image();
+  img.onload = () => {
+    const MAX_WIDTH = 1200;
+    const MAX_HEIGHT = 1200;
+    let { width, height } = img;
+
+    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+      const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+      width *= ratio;
+      height *= ratio;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+
+    canvas.toBlob((blob) => {
+      const resizedFile = new File([blob], file.name, { type: 'image/jpeg' });
+      const dt = new DataTransfer();
+      dt.items.add(resizedFile);
+      input.files = dt.files;
+      nameEl.textContent = `✓ Ready: ${resizedFile.name} (${(resizedFile.size/1024/1024).toFixed(1)}MB)`;
+    }, 'image/jpeg', 0.8);
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+function handleVideoUpload(input, nameId) {
+  const file = input.files[0];
+  if (!file) return;
+  const nameEl = document.getElementById(nameId);
+  
+  if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+    alert(`Video must be under ${MAX_FILE_SIZE_MB}MB for upload`);
+    input.value = '';
+    nameEl.textContent = '';
+    return;
+  }
+  
+  nameEl.textContent = `✓ Selected: ${file.name} (${(file.size/1024/1024).toFixed(1)}MB)`;
+}
+
+// ============================================
+// UPLOAD FILE TO SUPABASE STORAGE
+// ============================================
+async function uploadToSupabase(file, folder = 'applications') {
+  const timestamp = Date.now();
+  const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const filePath = `${folder}/${timestamp}-${safeName}`;
+  
+  const { data, error } = await supabase.storage
+    .from(UPLOAD_BUCKET)
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+  
+  if (error) throw new Error(`Upload failed: ${error.message}`);
+  
+  // Get public URL
+  const { data: urlData } = supabase.storage
+    .from(UPLOAD_BUCKET)
+    .getPublicUrl(filePath);
+  
+  return urlData.publicUrl;
+}
+
+// ============================================
+// FORM SUBMISSION → Supabase
+// ============================================
+document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const msgEl = document.getElementById('formMessage');
+  const btn = this.querySelector('.submit-btn');
+  btn.textContent = 'Uploading files...';
+  btn.disabled = true;
+  msgEl.style.display = 'none';
+
+  try {
+    const formData = new FormData(this);
+    const data = {};
+    const files = {};
+
+    // Process form fields
+    formData.forEach((value, key) => {
+      if (value instanceof File) {
+        files[key] = value;
+      } else {
+        data[key] = value;
+      }
+    });
+
+    // Upload files to Supabase Storage
+    for (const [key, file] of Object.entries(files)) {
+      if (file.size > 0) {
+        const fileUrl = await uploadToSupabase(file);
+        data[key + '_url'] = fileUrl;
+        data[key + '_name'] = file.name;
+        data[key + '_type'] = file.type;
+        data[key + '_size'] = file.size;
+      }
+    }
+
+    // Convert checkboxes to boolean
+    data.terms = data.terms === 'on' || data.terms === true;
+    data.mediaRelease = data.mediaRelease === 'on' || data.mediaRelease === true;
+
+    btn.textContent = 'Submitting application...';
+
+    // Submit to Vercel API (which writes to Supabase DB)
+    const response = await fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      msgEl.className = 'form-message success';
+      msgEl.textContent = '✓ Application submitted successfully! We will contact you soon.';
+      this.reset();
+      document.querySelectorAll('.preview-thumb').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.file-name').forEach(el => el.textContent = '');
+    } else {
+      throw new Error(result.message || 'Submission failed');
+    }
+
+  } catch (err) {
+    msgEl.className = 'form-message error';
+    msgEl.textContent = '✗ Submission failed: ' + err.message;
+    console.error('Submission error:', err);
+  }
+
+  msgEl.style.display = 'block';
+  btn.textContent = 'Submit Application';
+  btn.disabled = false;
+});
+
+// ============================================
+// CMS CONTENT FETCHER (via Vercel API proxy)
+// ============================================
+// Uses /api/cms.js to fetch Google Sheets CSV server-side (avoids CORS)
+// ============================================
+
+async function loadCMSContent() {
+  try {
+    const response = await fetch('/api/cms');
+    const result = await response.json();
+    
+    if (result.status !== 'success' || !result.content) {
+      throw new Error(result.message || 'Failed to load CMS');
+    }
+    
+    const content = result.content;
+    
+    // Update CMS placeholders
+    document.querySelectorAll('[data-cms-key]').forEach(el => {
+      const key = el.getAttribute('data-cms-key');
+      if (content[key]) {
+        // Handle images (set background-image)
+        if (el.classList.contains('candidate-photo') || el.classList.contains('about-image')) {
+          el.style.backgroundImage = `url(${content[key]})`;
+          el.textContent = '';
+        } else {
+          el.textContent = content[key];
+        }
+      }
+    });
+  } catch (err) {
+    console.error('CMS load failed:', err);
+  }
+}
+
+// Load CMS content on page load
+// loadCMSContent(); // Called by non-module script below
+</script>
+
+<!-- Separate non-module script for CMS (avoids module import failures) -->
+<script>
+// CMS CONTENT FETCHER (via Vercel API proxy)
+async function loadCMSContent() {
+  try {
+    const response = await fetch('/api/cms');
+    const result = await response.json();
+    
+    if (result.status !== 'success' || !result.content) {
+      throw new Error(result.message || 'Failed to load CMS');
+    }
+    
+    const content = result.content;
+    
+    // Update CMS placeholders
+    document.querySelectorAll('[data-cms-key]').forEach(el => {
+      const key = el.getAttribute('data-cms-key');
+      if (content[key]) {
+        if (el.classList.contains('candidate-photo') || el.classList.contains('about-image')) {
+          el.style.backgroundImage = `url(${content[key]})`;
+          el.textContent = '';
+        } else {
+          el.textContent = content[key];
+        }
+      }
+    });
+  } catch (err) {
+    console.error('CMS load failed:', err);
+  }
+}
+
+// Load CMS content on page load
+loadCMSContent();
+</script>
+
+</body>
+</html>

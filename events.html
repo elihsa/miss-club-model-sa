@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events - Miss Club Model SA</title>
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d878;
+    --gold-dark: #8b6914;
+    --black: #0a0a0a;
+    --dark: #1a1a1a;
+    --cream: #f5f0e8;
+    --red: #e74c3c;
+    --green: #27ae60;
+    --blue: #3498db;
+    --orange: #f39c12;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--black);
+    color: var(--cream);
+    line-height: 1.6;
+  }
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 1000;
+    background: rgba(10,10,10,0.95);
+    border-bottom: 2px solid var(--gold);
+    padding: 15px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  nav .logo-text { font-size: 1.4rem; color: var(--gold); font-weight: bold; letter-spacing: 2px; }
+  nav a { color: var(--cream); text-decoration: none; font-size: 0.95rem; margin-left: 20px; transition: color 0.3s; }
+  nav a:hover { color: var(--gold); }
+  nav .btn { background: var(--gold); color: var(--black); padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold; }
+  .hamburger { display: none; cursor: pointer; font-size: 1.5rem; color: var(--gold); }
+
+  /* MAIN */
+  main { padding: 100px 40px 60px; max-width: 1200px; margin: 0 auto; }
+  h1 { color: var(--gold); margin-bottom: 30px; letter-spacing: 2px; }
+  h1::after { content: ''; display: block; width: 80px; height: 3px; background: var(--gold); margin: 15px 0 0; }
+
+  /* FILTERING */
+  .filters { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 40px; }
+  .filter-select, .filter-input {
+    padding: 12px 15px; background: var(--dark); border: 1px solid var(--gold-dark); border-radius: 6px; color: var(--cream); font-family: 'Georgia', serif; font-size: 0.95rem;
+  }
+  .filter-select:focus, .filter-input:focus { outline: none; border-color: var(--gold); }
+  .filter-btn {
+    padding: 12px 20px; background: var(--gold); color: var(--black); border: none; border-radius: 6px; cursor: pointer; font-family: 'Georgia', serif; font-size: 0.9rem; font-weight: bold;
+  }
+  .filter-btn:hover { background: var(--gold-light); }
+
+  /* EVENT CARDS GRID */
+  .events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+  .event-card { background: var(--dark); border: 1px solid var(--gold-dark); border-radius: 12px; overflow: hidden; display: none; }
+  .event-card.active { display: block; animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .event-card img { width: 100%; height: 250px; object-fit: cover; }
+  .event-card .event-info { padding: 30px; }
+  .event-card .event-info h2 { color: var(--gold); margin-bottom: 15px; font-size: 1.5rem; }
+  .event-card .event-info .date { color: var(--gold-light); font-size: 0.9rem; margin-bottom: 20px; }
+  .event-desc { color: #ccc; line-height: 1.8; margin-bottom: 30px; }
+  .event-location { display: inline-block; background: var(--gold-dark); color: var(--cream); padding: 8px 16px; border-radius: 4px; font-size: 0.85rem; margin-bottom: 20px; }
+  .event-candidates { margin-bottom: 30px; }
+  .event-candidates h3 { color: var(--gold); margin-bottom: 15px; }
+  .candidates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+  .candidate-item { background: var(--dark); border: 1px solid var(--gold-dark); border-radius: 8px; padding: 20px; text-align: center; }
+  .candidate-item img { width: 100%; height: 200px; object-fit: cover; border-radius: 4px; }
+  .candidate-item h4 { color: var(--gold); margin-bottom: 10px; }
+  .candidate-item p { color: #aaa; font-size: 0.85rem; }
+
+  /* JOIN FORM */
+  .join-form { background: var(--dark); border: 1px solid var(--gold-dark); border-radius: 12px; padding: 30px; display: none; }
+  .join-form.active { display: block; animation: fadeIn 0.5s ease; }
+  .join-form h3 { color: var(--gold); margin-bottom: 20px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .form-group { margin-bottom: 15px; }
+  .form-group label { color: var(--gold); font-weight: bold; display: block; margin-bottom: 5px; font-size: 0.9rem; }
+  .form-group label.checkbox-label { display: inline; margin-bottom: 0; font-weight: normal; font-size: 0.85rem; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 12px 15px; background: var(--black); border: 1px solid var(--gold-dark); color: var(--cream); border-radius: 6px; font-size: 0.9rem; font-family: 'Georgia', serif;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--gold); }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+  .form-group.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding: 0; }
+  .form-group.checkbox-group label { display: inline; margin-bottom: 0; font-weight: normal; font-size: 0.85rem; }
+  .form-group input[type="checkbox"] { width: auto; }
+  .form-message { padding: 15px; border-radius: 6px; margin-top: 15px; text-align: center; font-weight: bold; }
+  .form-message.success { background: var(--green); color: var(--black); }
+  .form-message.error { background: var(--red); color: var(--cream); }
+  .submit-btn {
+    width: 100%; padding: 14px; background: var(--gold); color: var(--black); border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; font-family: 'Georgia', serif;
+  }
+  .submit-btn:hover { background: var(--gold-light); }
+
+  /* SECRET MESSAGE */
+  .secret-message {
+    background: var(--dark); border: 2px solid var(--gold); border-radius: 12px; padding: 30px; text-align: center; margin-top: 40px;
+  }
+  .secret-message h2 { color: var(--gold); margin-bottom: 20px; }
+  .secret-message p { color: #ccc; font-size: 1.1rem; line-height: 1.8; }
+  .secret-message .ticket-link { display: inline-block; margin-top: 20px; background: var(--gold); color: var(--black); padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 1rem; }
+
+  /* BACK TO EVENTS */
+  .back-link { color: var(--gold-light); text-decoration: none; margin-top: 30px; display: inline-block; }
+  .back-link:hover { color: var(--gold); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 15px 20px; }
+    nav .hamburger { display: block; }
+    main { padding: 100px 20px 40px; }
+    .events-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+
+  /* FADE IN ANIMATION */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo-text">Miss Club Model SA</div>
+  <div>
+    <a href="/">Home</a>
+    <a href="/events">Events</a>
+    <a href="/admin">Admin</a>
+    <a href="/contact">Contact</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+  <h1>Events</h1>
+  <p>View upcoming events and join your favorites!</p>
+
+  <!-- FILTERING -->
+  <div class="filters">
+    <select class="filter-select" id="filterDate">
+      <option value="all">All Events</option>
+      <option value="upcoming">Upcoming</option>
+      <option value="past">Past</option>
+      <option value="today">Today</option>
+    </select>
+    <select class="filter-select" id="filterEvent">
+      <option value="">All Events</option>
+    </select>
+    <button class="filter-btn" onclick="filterEvents()">Filter</button>
+  </div>
+
+  <!-- EVENTS GRID -->
+  <div class="events-grid" id="eventsGrid">
+    <!-- Events will be loaded here -->
+  </div>
+
+  <!-- BACK TO HOME -->
+  <a href="/" class="back-link">← Back to Home</a>
+</main>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://ekvwgxnryasrvltyukvj.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ePDDXlwk-BhljlqNhink-w_ZEzsJ6ZR';
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+let allEvents = [];
+let allApplications = [];
+
+// Load events on page load
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadEvents();
+  await loadApplications();
+  populateEventFilter();
+  renderEvents('all');
+});
+
+// Load events from Supabase
+async function loadEvents() {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .order('event_date', { ascending: true });
+    
+    if (error) {
+      console.error('Error loading events:', error);
+      allEvents = [];
+    } else {
+      allEvents = data || [];
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    allEvents = [];
+  }
+}
+
+// Load applications (for candidate data)
+async function loadApplications() {
+  try {
+    const { data, error } = await supabase
+      .from('applications')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error loading applications:', error);
+    } else {
+      allApplications = data || [];
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    allApplications = [];
+  }
+}
+
+// Populate event filter dropdown
+function populateEventFilter() {
+  const filterEvent = document.getElementById('filterEvent');
+  allEvents.forEach(event => {
+    const option = document.createElement('option');
+    option.value = event.id;
+    option.textContent = event.name;
+    filterEvent.appendChild(option);
+  });
+}
+
+// Render events based on filter
+function renderEvents(filter) {
+  const grid = document.getElementById('eventsGrid');
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+
+  let filteredEvents = allEvents.filter(event => {
+    if (filter === 'all') return true;
+    if (filter === 'upcoming') {
+      return event.event_date >= today;
+    }
+    if (filter === 'past') {
+      return event.event_date < today;
+    }
+    if (filter === 'today') {
+      return event.event_date === today;
+    }
+    return true;
+  });
+
+  // Sort by date
+  filteredEvents.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+
+  grid.innerHTML = filteredEvents.map(event => {
+    const poster = event.poster_url || 'https://via.placeholder.com/350x200?text=No+Poster';
+    const date = event.event_date ? new Date(event.event_date).toLocaleDateString() : 'No date';
+    const time = event.event_time ? `Time: ${event.event_time}` : '';
+    const desc = event.description ? `<p class="event-desc">${event.description}</p>` : '';
+    const location = event.location ? `<span class="event-location">📍 ${event.location}</span>` : '';
+    
+    return `
+      <div class="event-card" data-event-id="${event.id}">
+        <img src="${poster}" alt="${event.name}">
+        <div class="event-info">
+          <h2>${event.name}</h2>
+          <p class="date">${date} - ${time}</p>
+          ${location}
+          ${desc}
+          <div class="event-candidates">
+            <h3>Approved Candidates</h3>
+            <div class="candidates-grid" id="candidates-${event.id}">
+              <!-- Candidates will be loaded here -->
+            </div>
+          </div>
+          <div class="join-form" id="form-${event.id}">
+            <h3>Join ${event.name}</h3>
+            <p class="event-desc" style="margin-bottom:20px; padding:15px; background:rgba(201,168,76,0.05); border-radius:6px;">
+              Enter your details below to join this event. We'll send you the event schedule, ticket links, and any other important information after you sign up.
+            </p>
+            <form id="joinForm-${event.id}">
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" name="full_name" required placeholder="Enter your full name">
+              </div>
+              <div class="form-group">
+                <label>Email Address *</label>
+                <input type="email" name="email" required placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" placeholder="Your phone number">
+              </div>
+              <div class="form-group">
+                <label>Favorite Candidate (if applicable)</label>
+                <select name="favorite_candidate">
+                  <option value="">Select your favorite candidate</option>
+                </select>
+              </div>
+              <button type="submit" class="submit-btn">Join Event</button>
+            </form>
+            <div class="form-message" id="formMessage-${event.id}"></div>
+          </div>
+          <button class="btn" onclick="toggleForm('${event.id}')">
+            ${document.getElementById(`form-${event.id}`).classList.contains('active') ? 'Back to Event' : 'Join Event'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Load candidates for each event
+  allEvents.forEach(event => {
+    const candidates = allApplications.filter(app => app.event_name === event.name);
+    const container = document.getElementById(`candidates-${event.id}`);
+    if (container) {
+      container.innerHTML = candidates.map(app => {
+        const photo = app.headshot_url || 'https://via.placeholder.com/200x200?text=No+Photo';
+        return `
+          <div class="candidate-item">
+            <img src="${photo}" alt="${app.full_name || 'Unknown'}" onerror="this.src='https://via.placeholder.com/200x200?text=No+Photo'">
+            <h4>${app.full_name || 'Unknown'}</h4>
+            <p>${app.platform || ''}</p>
+            <p style="color:var(--green); font-size:0.8rem;">✓ Approved</p>
+          </div>
+        `;
+      }).join('');
+    }
+  });
+
+  // Populate favorite candidate dropdowns
+  allEvents.forEach(event => {
+    const select = document.querySelector(`#joinForm-${event.id} select[name="favorite_candidate"]`);
+    if (select) {
+      const candidates = allApplications.filter(app => app.event_name === event.name);
+      candidates.forEach(app => {
+        const option = document.createElement('option');
+        option.value = app.full_name || 'Unknown';
+        option.textContent = app.full_name || 'Unknown';
+        select.appendChild(option);
+      });
+    }
+  });
+}
+
+// Filter events
+function filterEvents() {
+  const dateFilter = document.getElementById('filterDate').value;
+  renderEvents(dateFilter);
+}
+
+// Toggle form visibility
+function toggleForm(eventId) {
+  const form = document.getElementById(`form-${eventId}`);
+  const btn = event.querySelector(`button[onclick="toggleForm('${eventId}')"]`);
+  
+  if (form.classList.contains('active')) {
+    form.classList.remove('active');
+    btn.textContent = 'Join Event';
+  } else {
+    form.classList.add('active');
+    btn.textContent = 'Back to Event';
+  }
+}
+
+// Handle form submission
+document.addEventListener('submit', async (e) => {
+  const form = e.target;
+  const eventId = form.id.replace('joinForm-', '');
+  
+  if (!form.id.startsWith('joinForm-')) return;
+  
+  e.preventDefault();
+  
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData);
+  
+  // Add event ID
+  data.event_id = eventId;
+  
+  try {
+    const response = await fetch('/api/interested_parties', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      const message = document.getElementById(`formMessage-${eventId}`);
+      message.className = 'form-message success';
+      message.textContent = '✓ Successfully joined! We will send you event details and ticket links soon.';
+      
+      // Reset form
+      form.reset();
+      
+      // Re-enable submit button (reset)
+      setTimeout(() => {
+        const submitBtn = form.querySelector('.submit-btn');
+        submitBtn.disabled = false;
+      }, 100);
+    } else {
+      const message = document.getElementById(`formMessage-${eventId}`);
+      message.className = 'form-message error';
+      message.textContent = '✗ ' + (result.message || 'Failed to submit. Please try again.');
+    }
+  } catch (err) {
+    const message = document.getElementById(`formMessage-${eventId}`);
+    message.className = 'form-message error';
+    message.textContent = '✗ ' + err.message;
+  }
+});
+
+  // Load applications for candidate display
+  loadApplications();
+</script>
+
+<!-- ORGANIZER BUTTON -->
+<section style="padding: 40px; text-align: center; background: var(--dark); border-top: 1px solid var(--gold-dark);">
+  <button class="btn" onclick="toggleOrganizerForm()">
+    I want to host one of your events at my club → 
+  </button>
+</section>
+
+<!-- ORGANIZER FORM SECTION -->
+<section class="organizer-form" id="organizerForm" style="display:none">
+  <h2>Event Organizers & Venue Applications</h2>
+  <p>Have a venue for our events? Fill out this form and we'll get back to you with partnership opportunities.</p>
+  <form id="organizerFormSubmit">
+    <div class="form-group">
+      <label>Your Name *</label>
+      <input type="text" name="full_name" required placeholder="Enter your full name">
+    </div>
+    <div class="form-group">
+      <label>Your Email *</label>
+      <input type="email" name="email" required placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" name="phone" placeholder="Your phone number">
+    </div>
+    <div class="form-group">
+      <label>Venue Name *</label>
+      <input type="text" name="venue_name" required placeholder="Venue name">
+    </div>
+    <div class="form-group">
+      <label>Venue Location *</label>
+      <input type="text" name="venue_location" required placeholder="City/Region">
+    </div>
+    <div class="form-group">
+      <label>Venue Address</label>
+      <input type="text" name="venue_address" placeholder="Full address">
+    </div>
+    <div class="form-group">
+      <label>Website URL</label>
+      <input type="url" name="website_url" placeholder="https://your-venue.com">
+    </div>
+    <div class="form-group">
+      <label>Venue Description</label>
+      <textarea name="venue_description" placeholder="Describe your venue, what it offers, and what makes it great for hosting events..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Capacity (Max Guests)</label>
+      <input type="number" name="capacity" min="1" placeholder="e.g., 200">
+    </div>
+    <div class="form-group">
+      <label>Equipment & Amenities</label>
+      <textarea name="equipment" placeholder="e.g., stage, sound system, lighting, dance floor, projector, kitchenette..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Availability</label>
+      <textarea name="availability" placeholder="When are you available for hosting events? (e.g., monthly, specific dates, year-round...)"></textarea>
+    </div>
+    <div class="form-group checkbox-group">
+      <input type="checkbox" name="terms_accepted" id="termsAccepted" required>
+      <label class="checkbox-label" for="termsAccepted">I agree to the terms and conditions and confirm I have the authority to host Miss Club Model SA events at this venue.</label>
+    </div>
+    <div class="form-message" id="organizerFormMessage"></div>
+    <button type="submit" class="submit-btn">Submit Venue Application</button>
+  </form>
+  <p style="margin-top:15px; color:#888; font-size:0.9rem;">
+    <a href="#" onclick="toggleOrganizerForm(); return false;" style="color:var(--gold);">← Back to Events</a>
+  </p>
+</section>
+
+<script type="text/javascript">
+// Toggle organizer form visibility
+function toggleOrganizerForm() {
+  const form = document.getElementById('organizerForm');
+  if (form.style.display === 'none') {
+    form.style.display = 'block';
+    document.querySelector('.btn').textContent = '← Back to Events';
+  } else {
+    form.style.display = 'none';
+    document.querySelector('.btn').textContent = 'I want to host one of your events at my club →';
+  }
+}
+
+// Organizer form submission
+document.addEventListener('submit', async (e) => {
+  const form = e.target;
+  if (!form.id || form.id !== 'organizerFormSubmit') return;
+  
+  e.preventDefault();
+  const message = document.getElementById('organizerFormMessage');
+  const submitBtn = form.querySelector('.submit-btn');
+  message.className = 'form-message';
+  message.textContent = 'Submitting...';
+  submitBtn.disabled = true;
+  
+  try {
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    const response = await fetch('/api/organizers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      message.className = 'form-message success';
+      message.textContent = '✓ Thank you! Our team will review your application and get back to you within 3-5 business days.';
+      form.reset();
+      form.style.display = 'none';
+      document.querySelector('.btn').textContent = 'I want to host one of your events at my club →';
+    } else {
+      message.className = 'form-message error';
+      message.textContent = '✗ ' + (result.message || 'Failed to submit. Please try again.');
+    }
+  } catch (err) {
+    message.className = 'form-message error';
+    message.textContent = '✗ ' + err.message;
+  }
+  
+  submitBtn.disabled = false;
+});
+</script>
+<script type="text/javascript">
+// Events menu items - fix rendering
+document.addEventListener('DOMContentLoaded', function() {
+  // Ensure all menu items are present
+  const links = document.querySelectorAll('nav a');
+  const existingLinks = Array.from(links).map(a => a.textContent.trim());
+  const requiredLinks = ['Home', 'Events', 'Apply', 'Admin', 'Contact'];
+  
+  requiredLinks.forEach(link => {
+    if (!existingLinks.includes(link)) {
+      const nav = document.querySelector('nav ul');
+      if (nav) {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="/${link.toLowerCase()}">${link}</a>`;
+        nav.appendChild(li);
+      }
+    }
+  });
+  
+  // Fix any menu items that might be missing
+  setTimeout(() => {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      const allLinks = nav.querySelectorAll('a');
+      const linkTexts = Array.from(allLinks).map(a => a.textContent.trim());
+      if (!linkTexts.includes('Contact')) {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="/contact">Contact</a>`;
+        nav.appendChild(li);
+      }
+    }
+  }, 100);
+});
+</script>
+</body>
+</html>
