@@ -216,6 +216,7 @@
   <ul>
     <li><a href="#home">Home</a></li>
     <li><a href="#about">About</a></li>
+    <li><a href="#gallery">Gallery</a></li>
     <li><a href="#event">Event</a></li>
     <li><a href="#candidates">Candidates</a></li>
     <li><a href="#apply">Apply</a></li>
@@ -225,32 +226,147 @@
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="home">
-  <picture>
-    <source srcset="logo.webp" type="image/webp">
-    <img src="logo.png" alt="Miss Club Model SA Logo" width="400" height="auto">
-  </picture>
-  <p class="tagline">Your Legacy Begins Here</p>
-  <p class="mission">
-    Miss Club Model SA celebrates elegance, intelligence, and empowerment. 
-    We provide a platform for extraordinary women to showcase their talent, 
-    advocate for meaningful causes, and inspire communities across South Africa.
-  </p>
-  <a href="#apply" class="btn">Apply Now</a>
-</section>
-
-<!-- ABOUT -->
-<section id="about">
-  <h2>About the Pageant</h2>
-  <div class="about-grid">
-    <div>
-      <p>Miss Club Model SA is more than a beauty pageant — it is a celebration of character, leadership, and purpose. Founded to uplift and empower women, our pageant seeks candidates who embody grace, intelligence, and a commitment to positive change.</p>
-      <p>Our judging criteria evaluate poise, communication, community involvement, and personal platform. We believe true beauty shines through action and advocacy.</p>
-      <p><strong style="color:var(--gold)">Our Vision:</strong> To crown ambassadors who will represent South Africa with dignity and drive meaningful social impact.</p>
-    </div>
-    <div class="about-image" data-cms-key="aboutImage">[ CMS: Insert About Image ]</div>
+<section class="hero" id="home" style="position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 60px; background: linear-gradient(rgba(10,10,10,0.7), rgba(10,10,10,0.85)), url('assets/photos/women_celebrating_1.webp'); background-size: cover; background-position: center; background-attachment: fixed;">
+  <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,10,10,0.8) 0%, rgba(26,26,26,0.6) 100%); z-index: 0;"></div>
+  <div style="position: relative; z-index: 1; max-width: 800px;">
+    <picture>
+      <source srcset="logo.webp" type="image/webp">
+      <img src="logo.png" alt="Miss Club Model SA Logo" width="400" height="auto" style="filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));">
+    </picture>
+    <p class="tagline" style="font-size: 1.5rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Your Legacy Begins Here</p>
+    <p class="mission" style="font-size: 1.2rem; max-width: 700px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+      Miss Club Model SA celebrates elegance, intelligence, and empowerment. 
+      We provide a platform for extraordinary women to showcase their talent, 
+      advocate for meaningful causes, and inspire communities across South Africa.
+    </p>
+    <a href="#apply" class="btn" style="margin-top: 20px; box-shadow: 0 10px 30px rgba(201,168,76,0.3);">Apply Now</a>
+  </div>
+  <!-- Scroll indicator -->
+  <div style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; z-index: 1;">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="opacity: 0.7;">
+      <path d="M12 5v14M19 12l-7 7-7-7"/>
+    </svg>
   </div>
 </section>
+
+<style>
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+  40% { transform: translateX(-50%) translateY(-10px); }
+  60% { transform: translateX(-50%) translateY(-5px); }
+}
+</style>
+
+<!-- ABOUT -->
+<section id="about" style="background: var(--black);">
+  <h2>About the Pageant</h2>
+  <div class="about-grid" style="gap: 60px;">
+    <div>
+      <p style="font-size: 1.15rem; line-height: 1.9; margin-bottom: 25px;">Miss Club Model SA is more than a beauty pageant — it is a celebration of character, leadership, and purpose. Founded to uplift and empower women, our pageant seeks candidates who embody grace, intelligence, and a commitment to positive change.</p>
+      <p style="font-size: 1.15rem; line-height: 1.9; margin-bottom: 25px;">Our judging criteria evaluate poise, communication, community involvement, and personal platform. We believe true beauty shines through action and advocacy.</p>
+      <div style="background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.05)); border: 1px solid var(--gold-dark); border-radius: 12px; padding: 30px; margin-top: 30px;">
+        <p style="color: var(--gold); font-weight: bold; font-size: 1.1rem; margin-bottom: 15px;">Our Vision</p>
+        <p style="color: #ccc; line-height: 1.8;">To crown ambassadors who will represent South Africa with dignity and drive meaningful social impact.</p>
+      </div>
+    </div>
+    <div class="about-image" style="width: 100%; height: 400px; background: linear-gradient(rgba(10,10,10,0.6), rgba(10,10,10,0.8)), url('assets/photos/women_club_1.webp'); background-size: cover; background-position: center; border: 2px solid var(--gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--gold-dark); font-style: italic; position: relative; overflow: hidden;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.8) 100%);"></div>
+      <span style="position: relative; z-index: 1; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Elegance in Every Moment</span>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY / ATMOSPHERE -->
+<section id="gallery" style="background: var(--dark); position: relative;">
+  <h2>The Miss Club Model Experience</h2>
+  <p style="text-align: center; color: #999; margin-bottom: 50px; max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.1rem;">Moments of joy, elegance, and sisterhood that define our community</p>
+  
+  <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; max-width: 1400px; margin: 0 auto;">
+    <div class="gallery-item" style="position: relative; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold-dark); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 20px 40px rgba(201,168,76,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+      <picture>
+        <source srcset="assets/photos/women_club_1.webp" type="image/webp">
+        <img src="assets/photos/women_club_1.jpg" alt="Women enjoying club atmosphere" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+      </picture>
+      <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9) 100%); display: flex; align-items: flex-end; padding: 30px; opacity: 0; transition: opacity 0.3s;">
+        <div>
+          <h3 style="color: var(--gold); margin-bottom: 8px;">Club Atmosphere</h3>
+          <p style="color: var(--cream); font-size: 0.95rem;">Where elegance meets excitement</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="gallery-item" style="position: relative; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold-dark); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 20px 40px rgba(201,168,76,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+      <picture>
+        <source srcset="assets/photos/women_toasting_1.webp" type="image/webp">
+        <img src="assets/photos/women_toasting_1.jpg" alt="Women toasting with drinks" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+      </picture>
+      <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9) 100%); display: flex; align-items: flex-end; padding: 30px; opacity: 0; transition: opacity 0.3s;">
+        <div>
+          <h3 style="color: var(--gold); margin-bottom: 8px;">Celebration & Sisterhood</h3>
+          <p style="color: var(--cream); font-size: 0.95rem;">Toasting to success and friendship</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="gallery-item" style="position: relative; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold-dark); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 20px 40px rgba(201,168,76,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+      <picture>
+        <source srcset="assets/photos/women_laughing_1.webp" type="image/webp">
+        <img src="assets/photos/women_laughing_1.jpg" alt="Women laughing and having fun" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+      </picture>
+      <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9) 100%); display: flex; align-items: flex-end; padding: 30px; opacity: 0; transition: opacity 0.3s;">
+        <div>
+          <h3 style="color: var(--gold); margin-bottom: 8px;">Joy & Laughter</h3>
+          <p style="color: var(--cream); font-size: 0.95rem;">Authentic moments of happiness</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="gallery-item" style="position: relative; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold-dark); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 20px 40px rgba(201,168,76,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+      <picture>
+        <source srcset="assets/photos/women_celebrating_1.webp" type="image/webp">
+        <img src="assets/photos/women_celebrating_1.jpg" alt="Women celebrating indoors" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+      </picture>
+      <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9) 100%); display: flex; align-items: flex-end; padding: 30px; opacity: 0; transition: opacity 0.3s;">
+        <div>
+          <h3 style="color: var(--gold); margin-bottom: 8px;">Elegant Celebrations</h3>
+          <p style="color: var(--cream); font-size: 0.95rem;">Sophisticated indoor gatherings</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="gallery-item" style="position: relative; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold-dark); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 20px 40px rgba(201,168,76,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+      <picture>
+        <source srcset="assets/photos/women_bar_2.webp" type="image/webp">
+        <img src="assets/photos/women_bar_2.jpg" alt="Women at bar having drinks" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+      </picture>
+      <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9) 100%); display: flex; align-items: flex-end; padding: 30px; opacity: 0; transition: opacity 0.3s;">
+        <div>
+          <h3 style="color: var(--gold); margin-bottom: 8px;">Social Connections</h3>
+          <p style="color: var(--cream); font-size: 0.95rem;">Building networks over drinks</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="gallery-item" style="position: relative; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold-dark); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 20px 40px rgba(201,168,76,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+      <picture>
+        <source srcset="assets/photos/women_drinks_1.webp" type="image/webp">
+        <img src="assets/photos/women_drinks_1.jpg" alt="Women with cocktails" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+      </picture>
+      <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9) 100%); display: flex; align-items: flex-end; padding: 30px; opacity: 0; transition: opacity 0.3s;">
+        <div>
+          <h3 style="color: var(--gold); margin-bottom: 8px;">Craft Cocktails</h3>
+          <p style="color: var(--cream); font-size: 0.95rem;">Premium drinks for premium moments</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.gallery-item:hover .gallery-overlay { opacity: 1; }
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-overlay { opacity: 1; } /* Always show for now */
+</style>
 
 <!-- EVENT -->
 <section id="event">
