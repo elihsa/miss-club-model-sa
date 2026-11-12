@@ -166,6 +166,15 @@
     width: 100%; padding: 16px; font-size: 1.1rem;
     margin-top: 10px;
   }
+  .form-submit {
+    width: 100%; padding: 16px; font-size: 1.1rem;
+    margin-top: 10px;
+    background: var(--gold); color: var(--black);
+    border: 2px solid var(--gold); border-radius: 4px;
+    font-weight: bold; font-family: 'Georgia', serif;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .form-submit:hover { background: transparent; color: var(--gold); }
   .form-message {
     text-align: center; padding: 15px; border-radius: 6px;
     margin-top: 20px; display: none;
@@ -265,7 +274,10 @@
 <!-- CANDIDATES -->
 <section id="candidates">
   <h2>Meet the Candidates</h2>
-  <div class="candidate-grid">
+  <div class="event-filter" style="text-align: center; margin-bottom: 30px;">
+    <button class="filter-btn active" data-event="all">All Candidates</button>
+  </div>
+  <div class="candidate-grid" id="candidateGrid">
     <div class="candidate-card">
       <div class="candidate-photo" data-cms-key="candidate1Photo">[CMS: Candidate Photo]</div>
       <h4 data-cms-key="candidate1Name">[CMS: Candidate Name]</h4>
@@ -317,6 +329,14 @@
         <label>Phone <span class="required">*</span></label>
         <input type="tel" name="phone" required>
       </div>
+    </div>
+
+    <!-- Event Selection -->
+    <div class="form-group">
+      <label>Event Applying For <span class="required">*</span></label>
+      <select name="event_id" id="eventSelect" required>
+        <option value="">Select an event</option>
+      </select>
     </div>
 
     <div class="form-group">
@@ -446,7 +466,7 @@
 <section class="apply" id="venue-partner" style="background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 100%);">
   <div class="content">
     <h2>Become a Venue Partner</h2>
-    <p>Host Miss Club Model SA events at your venue. We're always looking for elegant, professional spaces that align with our brand of elegance and empowerment.</p>
+    <p data-cms-key="venuePartnerIntro" style="max-width: 800px; margin: 0 auto 40px; text-align: center; line-height: 1.8; font-size: 1.05rem; color: #ccc;">Host Miss Club Model SA events at your venue. We're always looking for elegant, professional spaces that align with our brand of elegance and empowerment.</p>
 
     <div class="form-container">
       <form id="venueForm" enctype="multipart/form-data">
@@ -502,11 +522,9 @@
             <input type="text" name="availability" placeholder="e.g., Weekends only, Mon-Fri 9-5, Flexible">
           </div>
         </div>
-        <div class="form-group">
-          <label style="display:flex; align-items:center; gap:10px; font-weight:normal; cursor:pointer;">
-            <input type="checkbox" name="terms_accepted" required>
-            <span>I accept the <a href="/terms" style="color:var(--gold)">Terms & Conditions</a> and understand Miss Club Model SA will review my venue application.</span>
-          </label>
+        <div class="form-group checkbox-group">
+          <input type="checkbox" name="terms_accepted" required id="venueTerms">
+          <label for="venueTerms" style="color: #ccc; font-weight: normal; font-size: 0.95rem; cursor: pointer;">I accept the <a href="/terms" style="color:var(--gold)">Terms & Conditions</a> and understand Miss Club Model SA will review my venue application.</label>
         </div>
         <button type="submit" class="form-submit">Submit Venue Application</button>
         <div class="form-message" id="venueFormMessage"></div>
@@ -717,6 +735,100 @@ document.getElementById('applicationForm').addEventListener('submit', async func
   btn.textContent = 'Submit Application';
   btn.disabled = false;
 });
+
+// Load events for candidate application dropdown
+async function loadEventsForApplication() {
+  try {
+    const response = await fetch('/api/events');
+    const events = await response.json();
+    const select = document.getElementById('eventSelect');
+    if (select && events) {
+      events.forEach(event => {
+        const option = document.createElement('option');
+        option.value = event.id;
+        option.textContent = `${event.name} (${event.event_date})`;
+        select.appendChild(option);
+      });
+    }
+  } catch (err) {
+    console.error('Failed to load events for application:', err);
+  }
+}
+
+// Load events on page load
+document.addEventListener('DOMContentLoaded', () => {
+  loadEventsForApplication();
+  loadEventsForCandidateFilter();
+  loadCandidatesFromSupabase();
+});
+
+// Load events for candidate filter buttons
+async function loadEventsForCandidateFilter() {
+  try {
+    const response = await fetch('/api/events');
+    const events = await response.json();
+    const filterContainer = document.querySelector('.event-filter');
+    if (filterContainer && events) {
+      events.forEach(event => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.event = event.id;
+        btn.textContent = event.name;
+        btn.addEventListener('click', () => filterCandidatesByEvent(event.id));
+        filterContainer.appendChild(btn);
+      });
+    }
+  } catch (err) {
+    console.error('Failed to load events for candidate filter:', err);
+  }
+}
+
+// Load candidates from Supabase
+async function loadCandidatesFromSupabase() {
+  try {
+    const response = await fetch('/api/candidates');
+    const candidates = await response.json();
+    if (candidates) {
+      window.allCandidates = candidates;
+      renderCandidates('all');
+    }
+  } catch (err) {
+    console.error('Failed to load candidates:', err);
+  }
+}
+
+// Filter candidates by event
+function filterCandidatesByEvent(eventId) {
+  // Update active button
+  document.querySelectorAll('.event-filter .filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.event === eventId);
+  });
+  renderCandidates(eventId);
+}
+
+// Render candidates
+function renderCandidates(eventId) {
+  const grid = document.getElementById('candidateGrid');
+  if (!grid || !window.allCandidates) return;
+
+  let filtered = window.allCandidates;
+  if (eventId !== 'all') {
+    filtered = window.allCandidates.filter(c => c.event_id === eventId);
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<p style="text-align:center; color:#999; grid-column:1/-1;">No candidates for this event yet.</p>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(c => `
+    <div class="candidate-card">
+      <div class="candidate-photo" style="background-image: url('${c.headshot_url || 'https://via.placeholder.com/300x200?text=No+Photo'}')"></div>
+      <h4>${c.full_name || 'Candidate'}</h4>
+      <p>${c.city || ''}${c.city && c.province ? ', ' : ''}${c.province || ''}</p>
+    </div>
+  `).join('');
+}
 
 // Venue Partner form submission
 document.getElementById('venueForm').addEventListener('submit', async function(e) {
