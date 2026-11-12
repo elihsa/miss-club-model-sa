@@ -3,6 +3,10 @@
   "public": true,
   "cleanUrls": true,
   "trailingSlash": false,
+  "buildCommand": "npm run build",
+  "devCommand": "vercel dev",
+  "installCommand": "npm install",
+  "framework": null,
   "headers": [
     {
       "source": "/(.*)",
