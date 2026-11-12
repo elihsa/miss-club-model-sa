@@ -1,7 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const Resend = require('resend');
 
-const adminEmail = process.env.ADMIN_EMAIL || 'admin@missclubmodelsa.co.za';
+const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 const resendApiKey = process.env.RESEND_API_KEY;
 
