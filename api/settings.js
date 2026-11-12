@@ -1,6 +1,4 @@
 const { createClient } = require('@supabase/supabase-js');
-const fs = require('fs');
-const path = require('path');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
@@ -13,51 +11,93 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
-// Load settings - Use environment variable (settable in admin panel)
-const adminEmail = process.env.ADMIN_EMAIL || 'admin@missclubmodelsa.co.za';
-
 function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  if (req.method === 'POST') {
-    return handleSettings(req, res);
+  if (req.method === 'GET') {
+    return getSettings(req, res);
+  }
+
+  if (req.method === 'POST' || req.method === 'PUT') {
+    return updateSettings(req, res);
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
 
-async function handleSettings(req, res) {
+async function getSettings(req, res) {
   try {
-    const body = req.body;
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('key, value, description')
+      .eq('key', 'email_settings')
+      .single();
 
-    // Validate admin email
-    if (!body.admin_email || !body.admin_email.includes('@')) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Invalid email address'
+    if (error) {
+      // Return defaults if not found
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          candidate_application_email: 'elihsa@gmail.com',
+          venue_partner_email: 'elihsa@gmail.com',
+          event_registration_email: 'elihsa@gmail.com',
+          send_all_to_same: false,
+          global_email: 'elihsa@gmail.com'
+        }
       });
     }
 
-    // Set the admin email (environment variable persists for this serverless function)
-    process.env.ADMIN_EMAIL = body.admin_email;
+    return res.status(200).json({
+      status: 'success',
+      data: data.value
+    });
+  } catch (error) {
+    console.error('Get settings error:', error);
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+async function updateSettings(req, res) {
+  try {
+    const body = req.body;
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const fields = ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'global_email'];
+    
+    for (const field of fields) {
+      if (body[field] && !emailRegex.test(body[field])) {
+        return res.status(400).json({ error: `Invalid email format for ${field}` });
+      }
+    }
+
+    const { data, error } = await supabase
+      .from('site_settings')
+      .upsert([{
+        key: 'email_settings',
+        value: body,
+        description: 'Email configuration for form submissions',
+        updated_at: new Date().toISOString()
+      }], { onConflict: 'key' })
+      .select()
+      .single();
+
+    if (error) throw error;
 
     return res.status(200).json({
       status: 'success',
-      message: 'Settings saved successfully',
-      data: { admin_email: body.admin_email }
+      message: 'Email settings updated successfully',
+      data: data.value
     });
   } catch (error) {
-    console.error('Settings error:', error);
-    return res.status(500).json({
-      status: 'error',
-      message: error.message
-    });
+    console.error('Update settings error:', error);
+    return res.status(500).json({ error: error.message });
   }
 }
 

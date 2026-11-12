@@ -1,23 +1,9 @@
 const { createClient } = require('@supabase/supabase-js');
 const Resend = require('resend');
-const fs = require('fs');
-const path = require('path');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 const resendApiKey = process.env.RESEND_API_KEY;
-
-// Load settings from JSON file (allows admin to change admin email via dashboard)
-const settingsFile = path.join(__dirname, '..', 'settings.json');
-let adminEmail = 'admin@missclubmodelsa.co.za';
-try {
-  if (fs.existsSync(settingsFile)) {
-    const settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
-    adminEmail = settings.admin_email || 'admin@missclubmodelsa.co.za';
-  }
-} catch (e) {
-  adminEmail = process.env.ADMIN_EMAIL || 'admin@missclubmodelsa.co.za';
-}
 
 if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY environment variables');
@@ -27,13 +13,43 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
-// Initialize Resend if API key is available
 let resendClient = null;
 if (resendApiKey) {
   try {
     resendClient = new Resend(resendApiKey);
   } catch (e) {
     console.error('Resend init error:', e.message);
+  }
+}
+
+// Get email settings from database
+async function getEmailSettings() {
+  try {
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'email_settings')
+      .single();
+    
+    if (error || !data) {
+      return {
+        candidate_application_email: process.env.CANDIDATE_EMAIL || 'elihsa@gmail.com',
+        venue_partner_email: process.env.VENUE_EMAIL || 'elihsa@gmail.com',
+        event_registration_email: process.env.EVENT_EMAIL || 'elihsa@gmail.com',
+        send_all_to_same: false,
+        global_email: process.env.GLOBAL_EMAIL || 'elihsa@gmail.com'
+      };
+    }
+    return data.value;
+  } catch (err) {
+    console.error('Error fetching email settings:', err);
+    return {
+      candidate_application_email: 'elihsa@gmail.com',
+      venue_partner_email: 'elihsa@gmail.com',
+      event_registration_email: 'elihsa@gmail.com',
+      send_all_to_same: false,
+      global_email: 'elihsa@gmail.com'
+    };
   }
 }
 
@@ -53,20 +69,25 @@ function handler(req, res) {
   return res.status(405).json({ error: 'Method not allowed' });
 }
 
-async function sendOrganizerNotification(emailData) {
+async function sendOrganizerNotification(emailData, settings) {
   if (!resendClient) return;
+
+  // Determine recipient
+  const recipient = settings.send_all_to_same 
+    ? settings.global_email 
+    : settings.venue_partner_email;
 
   const subject = `Miss Club Model SA: New Venue Application - ${emailData.venue_name}`;
   const html = `
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
-      <h2>🏛️ New Venue Application Received</h2>
+      <h2 style="color: #c9a84c;">🏛️ New Venue Application Received</h2>
       <p><strong>Name:</strong> ${emailData.full_name}</p>
       <p><strong>Email:</strong> ${emailData.email}</p>
       <p><strong>Phone:</strong> ${emailData.phone || 'N/A'}</p>
       <p><strong>Venue:</strong> ${emailData.venue_name}</p>
       <p><strong>Location:</strong> ${emailData.venue_location}</p>
       <p><strong>Submitted:</strong> ${new Date(emailData.created_at).toLocaleString()}</p>
-      <hr>
+      <hr style="border-color: #c9a84c;">
       <p><a href="https://missclubmodel.vercel.app/admin" style="background: #c9a84c; color: #0a0a0a; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View in Admin Dashboard</a></p>
     </div>
   `;
@@ -74,11 +95,11 @@ async function sendOrganizerNotification(emailData) {
   try {
     await resendClient.emails.send({
       from: 'Miss Club Model SA <noreply@missclubmodelsa.co.za>',
-      to: adminEmail,
+      to: recipient,
       subject,
       html,
     });
-    console.log('Organizer notification sent to:', adminEmail);
+    console.log('Organizer notification sent to:', recipient);
   } catch (error) {
     console.error('Failed to send organizer notification:', error.message);
   }
@@ -128,6 +149,9 @@ async function submitOrganizer(req, res) {
 
     if (error) throw error;
 
+    // Get email settings
+    const settings = await getEmailSettings();
+
     // Send notification email to admin (async)
     sendOrganizerNotification({
       full_name: body.full_name,
@@ -136,7 +160,7 @@ async function submitOrganizer(req, res) {
       venue_name: body.venue_name,
       venue_location: body.venue_location,
       created_at: new Date().toISOString()
-    }).catch(err => console.error('Email send error:', err));
+    }, settings).catch(err => console.error('Email send error:', err));
 
     return res.status(201).json({
       status: 'success',

@@ -279,6 +279,8 @@
     <button class="tab-btn" data-table="interested_parties">Event Registrations</button>
     <button class="tab-btn" data-table="event_organizers">Venue Partners</button>
     <button class="tab-btn" data-table="events">Events</button>
+    <button class="tab-btn" data-table="event_interest_subscriptions">Event Interest List</button>
+    <button class="tab-btn" data-table="email_settings">Email Settings</button>
   </div>
 
   <!-- STATS -->
@@ -482,6 +484,36 @@ const tableSchemas = {
     statusOptions: [],
     hasStatus: false,
     hasActions: true,
+  },
+  event_interest_subscriptions: {
+    title: 'Event Interest List (Tell Me More)',
+    allColumns: [
+      { key: 'email', label: 'Email', required: true },
+      { key: 'phone', label: 'Phone' },
+      { key: 'event_id', label: 'Event' },
+      { key: 'favorite_candidate', label: 'Favorite Candidate' },
+      { key: 'status', label: 'Status' },
+      { key: 'subscribed_at', label: 'Subscribed' },
+    ],
+    defaultColumns: ['email', 'event_id', 'favorite_candidate', 'status', 'subscribed_at'],
+    statusOptions: ['active', 'unsubscribed'],
+    hasStatus: true,
+    hasActions: true,
+  },
+  email_settings: {
+    title: 'Email Settings',
+    allColumns: [
+      { key: 'candidate_application_email', label: 'Candidate Application Email' },
+      { key: 'venue_partner_email', label: 'Venue Partner Email' },
+      { key: 'event_registration_email', label: 'Event Registration Email' },
+      { key: 'send_all_to_same', label: 'Send All to Same' },
+      { key: 'global_email', label: 'Global Email (when send_all_to_same=true)' },
+    ],
+    defaultColumns: ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'send_all_to_same', 'global_email'],
+    statusOptions: [],
+    hasStatus: false,
+    hasActions: false,
+    isSettings: true,
   }
 };
 
@@ -617,7 +649,12 @@ async function loadData() {
   // Update filters
   updateFilters(schema);
 
-  // Load records
+  // Load records - special handling for email_settings
+  if (currentTable === 'email_settings') {
+    await loadEmailSettings();
+    return;
+  }
+
   const { data, error } = await supabase
     .from(currentTable)
     .select('*')
@@ -632,6 +669,44 @@ async function loadData() {
   updateStats();
   renderTable();
   renderColumnConfig();
+}
+
+async function loadEmailSettings() {
+  try {
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'email_settings')
+      .single();
+
+    if (error || !data) {
+      // Use defaults
+      allRecords = [{
+        candidate_application_email: 'elihsa@gmail.com',
+        venue_partner_email: 'elihsa@gmail.com',
+        event_registration_email: 'elihsa@gmail.com',
+        send_all_to_same: false,
+        global_email: 'elihsa@gmail.com'
+      }];
+    } else {
+      allRecords = [data.value];
+    }
+    updateStats();
+    renderTable();
+    renderColumnConfig();
+  } catch (err) {
+    console.error('Load email settings error:', err);
+    allRecords = [{
+      candidate_application_email: 'elihsa@gmail.com',
+      venue_partner_email: 'elihsa@gmail.com',
+      event_registration_email: 'elihsa@gmail.com',
+      send_all_to_same: false,
+      global_email: 'elihsa@gmail.com'
+    }];
+    updateStats();
+    renderTable();
+    renderColumnConfig();
+  }
 }
 
 function updateFilters(schema) {
@@ -652,7 +727,7 @@ function updateFilters(schema) {
 
 function updateStats() {
   const schema = tableSchemas[currentTable];
-  const stats = { total: 0, undecided: 0, approved: 0, declined: 0, deleted: 0, pending: 0 };
+  const stats = { total: 0, undecided: 0, approved: 0, declined: 0, deleted: 0, pending: 0, active: 0, unsubscribed: 0 };
 
   allRecords.forEach(record => {
     stats.total++;
@@ -694,6 +769,16 @@ function updateStats() {
     statCards[1].style.display = 'none';
     statCards[2].style.display = 'none';
     statCards[3].style.display = 'none';
+  } else if (currentTable === 'event_interest_subscriptions') {
+    statCards[0].querySelector('h3').textContent = stats.total;
+    statCards[0].querySelector('p').textContent = 'Total Subscriptions';
+    statCards[1].querySelector('h3').textContent = stats.active;
+    statCards[1].querySelector('p').textContent = 'Active';
+    statCards[2].querySelector('h3').textContent = stats.unsubscribed;
+    statCards[2].querySelector('p').textContent = 'Unsubscribed';
+    statCards[3].style.display = 'none';
+  } else if (currentTable === 'email_settings') {
+    statCards.forEach(c => c.style.display = 'none');
   }
 }
 
@@ -701,6 +786,12 @@ function renderTable() {
   const schema = tableSchemas[currentTable];
   const visibleCols = getVisibleColumns(currentTable);
   let filtered = [...allRecords];
+
+  // Special handling for email_settings - render as a form
+  if (currentTable === 'email_settings') {
+    renderEmailSettingsForm();
+    return;
+  }
 
   // Status filter
   const statusVal = statusFilter.value;
@@ -763,14 +854,19 @@ function renderTable() {
     // Actions column
     let actionsHtml = '';
     if (schema.hasActions) {
+      // For event_interest_subscriptions, use email as the ID (composite key)
+      const recordId = currentTable === 'event_interest_subscriptions' ? record.email : record.id;
       actionsHtml = '<div class="action-btns">';
-      actionsHtml += `<button class="action-btn btn-view" onclick="viewRecord('${record.id}')">View</button>`;
+      actionsHtml += `<button class="action-btn btn-view" onclick="viewRecord('${recordId}')">View</button>`;
       if (schema.hasStatus) {
-        actionsHtml += `<button class="action-btn btn-edit" onclick="editRecord('${record.id}')">Edit</button>`;
+        // Skip edit button for event_interest_subscriptions
+        if (currentTable !== 'event_interest_subscriptions') {
+          actionsHtml += `<button class="action-btn btn-edit" onclick="editRecord('${recordId}')">Edit</button>`;
+        }
         if (currentTable !== 'interested_parties') {
-          actionsHtml += `<button class="action-btn btn-approve" onclick="updateStatus('${record.id}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>Approve</button>`;
-          actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${record.id}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>Decline</button>`;
-          actionsHtml += `<button class="action-btn btn-delete" onclick="updateStatus('${record.id}', 'deleted')" ${status === 'deleted' ? 'disabled' : ''}>Delete</button>`;
+          actionsHtml += `<button class="action-btn btn-approve" onclick="updateStatus('${recordId}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>Approve</button>`;
+          actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${recordId}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>Decline</button>`;
+          actionsHtml += `<button class="action-btn btn-delete" onclick="updateStatus('${recordId}', 'deleted')" ${status === 'deleted' ? 'disabled' : ''}>Delete</button>`;
         }
       }
       actionsHtml += '</div>';
@@ -790,7 +886,13 @@ loadEventCache();
 
 // View record details - enhanced for candidates with carousel
 async function viewRecord(id) {
-  const record = allRecords.find(r => r.id === id);
+  // For event_interest_subscriptions, find by email
+  let record;
+  if (currentTable === 'event_interest_subscriptions') {
+    record = allRecords.find(r => r.email === id);
+  } else {
+    record = allRecords.find(r => r.id === id);
+  }
   if (!record) return;
   currentRecordId = id;
 
@@ -851,6 +953,24 @@ async function viewRecord(id) {
         <div class="detail-field"><label>Created</label><span>${record.created_at ? new Date(record.created_at).toLocaleString() : '—'}</span></div>
       </div>
     `;
+  } else if (currentTable === 'event_interest_subscriptions') {
+    // Event Interest List detail view
+    const event = eventCache.find(e => e.id === record.event_id);
+    html = `
+      <div class="detail-header" style="flex-direction:column; align-items:center; text-align:center;">
+        <div class="detail-info" style="max-width:600px;">
+          <h3>Event Interest Subscription</h3>
+          <div class="detail-email">${event?.name || record.event_id}</div>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-field"><label>Email</label><span>${record.email || '—'}</span></div>
+        <div class="detail-field"><label>Phone</label><span>${record.phone || '—'}</span></div>
+        <div class="detail-field"><label>Favorite Candidate</label><span>${record.favorite_candidate || '—'}</span></div>
+        <div class="detail-field"><label>Status</label><span><span class="status-badge status-${record.status || 'active'}">${record.status || 'active'}</span></span></div>
+        <div class="detail-field"><label>Subscribed</label><span>${record.subscribed_at ? new Date(record.subscribed_at).toLocaleString() : '—'}</span></div>
+      </div>
+    `;
   } else {
     // Standard detail view for other tables
     for (const [key, value] of Object.entries(record)) {
@@ -867,6 +987,104 @@ async function viewRecord(id) {
   detailModal.classList.add('show');
 }
 
+// Render email settings form
+function renderEmailSettingsForm() {
+  const record = allRecords[0] || {
+    candidate_application_email: 'elihsa@gmail.com',
+    venue_partner_email: 'elihsa@gmail.com',
+    event_registration_email: 'elihsa@gmail.com',
+    send_all_to_same: false,
+    global_email: 'elihsa@gmail.com'
+  };
+
+  const visibleCols = getVisibleColumns(currentTable);
+  let headersHtml = '<tr>';
+  visibleCols.forEach(colKey => {
+    const col = tableSchemas.email_settings.allColumns.find(c => c.key === colKey);
+    if (col) headersHtml += `<th>${col.label}</th>`;
+  });
+  headersHtml += '<th>Actions</th></tr>';
+  tableHead.innerHTML = headersHtml;
+
+  let cellsHtml = '';
+  visibleCols.forEach(colKey => {
+    const value = record[colKey];
+    if (colKey === 'send_all_to_same') {
+      cellsHtml += `<td><input type="checkbox" id="settings_send_all_to_same" ${value ? 'checked' : ''} onchange="toggleGlobalEmail()"></td>`;
+    } else {
+      cellsHtml += `<td><input type="email" id="settings_${colKey}" value="${value || ''}" class="settings-input" style="width:100%; padding:8px 12px; background:var(--black); border:1px solid var(--gold-dark); border-radius:6px; color:var(--cream); font-family:inherit;"></td>`;
+    }
+  });
+
+  const actionsHtml = `
+    <div class="action-btns">
+      <button class="action-btn btn-primary" onclick="saveEmailSettings()">Save Settings</button>
+    </div>
+  `;
+
+  tableBody.innerHTML = `<tr>${cellsHtml}<td>${actionsHtml}</td></tr>`;
+
+  // Show/hide global email field based on send_all_to_same
+  const globalEmailField = document.getElementById('settings_global_email');
+  if (globalEmailField) {
+    globalEmailField.style.display = record.send_all_to_same ? 'block' : 'none';
+  }
+}
+
+// Toggle global email field visibility
+function toggleGlobalEmail() {
+  const checkbox = document.getElementById('settings_send_all_to_same');
+  const globalEmailField = document.getElementById('settings_global_email');
+  if (globalEmailField) {
+    globalEmailField.style.display = checkbox.checked ? 'block' : 'none';
+  }
+}
+
+// Save email settings
+async function saveEmailSettings() {
+  const settings = {
+    candidate_application_email: document.getElementById('settings_candidate_application_email')?.value || 'elihsa@gmail.com',
+    venue_partner_email: document.getElementById('settings_venue_partner_email')?.value || 'elihsa@gmail.com',
+    event_registration_email: document.getElementById('settings_event_registration_email')?.value || 'elihsa@gmail.com',
+    send_all_to_same: document.getElementById('settings_send_all_to_same')?.checked || false,
+    global_email: document.getElementById('settings_global_email')?.value || 'elihsa@gmail.com'
+  };
+
+  // Validate emails
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  for (const [key, value] of Object.entries(settings)) {
+    if (key !== 'send_all_to_same' && value && !emailRegex.test(value)) {
+      alert(`Invalid email format for ${key}`);
+      return;
+    }
+  }
+
+  const btn = document.querySelector('.btn-primary');
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
+  try {
+    const response = await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings)
+    });
+
+    const result = await response.json();
+
+    if (result.status === 'success') {
+      alert('Email settings saved successfully!');
+      loadData(); // Reload to reflect changes
+    } else {
+      throw new Error(result.message || 'Failed to save settings');
+    }
+  } catch (err) {
+    alert('Error saving settings: ' + err.message);
+    btn.textContent = 'Save Settings';
+    btn.disabled = false;
+  }
+}
+
 modalClose.addEventListener('click', () => detailModal.classList.remove('show'));
 detailModal.addEventListener('click', (e) => { if (e.target === detailModal) detailModal.classList.remove('show'); });
 
@@ -877,6 +1095,11 @@ function openMediaModal(url, isVideo) {
 
 // Edit record
 function editRecord(id) {
+  // Skip edit for email_settings (uses form) and event_interest_subscriptions (composite key)
+  if (currentTable === 'email_settings' || currentTable === 'event_interest_subscriptions') {
+    return;
+  }
+  
   const record = allRecords.find(r => r.id === id);
   if (!record) return;
   currentRecordId = id;
@@ -991,6 +1214,25 @@ eventCreationForm.addEventListener('submit', async (e) => {
 
 // Update status
 async function updateStatus(id, newStatus) {
+  // For event_interest_subscriptions, the id is the email (composite key with event_id)
+  if (currentTable === 'event_interest_subscriptions') {
+    const record = allRecords.find(r => r.email === id);
+    if (!record) return;
+    
+    const { error } = await supabase
+      .from('event_interest_subscriptions')
+      .update({ status: newStatus })
+      .eq('event_id', record.event_id)
+      .eq('email', record.email);
+
+    if (error) {
+      alert('Error updating status: ' + error.message);
+    } else {
+      loadData();
+    }
+    return;
+  }
+
   const { error } = await supabase
     .from(currentTable)
     .update({ status: newStatus })
