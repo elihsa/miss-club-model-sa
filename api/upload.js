@@ -1,0 +1,90 @@
+const Busboy = require('busboy');
+const { createClient } = require('@supabase/supabase-js');
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: { autoRefreshToken: false, persistSession: false }
+});
+
+function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const bb = Busboy({ headers: req.headers });
+  const fields = {};
+  let fileData = null;
+  let fileName = null;
+  let filePath = null;
+  let fileEncoding = null;
+  let fileMimeType = null;
+
+  bb.on('field', (fieldname, val) => {
+    fields[fieldname] = val;
+  });
+
+  bb.on('file', (fieldname, file, info) => {
+    const { filename, encoding, mimeType } = info;
+    fileName = filename;
+    fileEncoding = encoding;
+    fileMimeType = mimeType;
+    filePath = fields.path || 'uploads';
+
+    const chunks = [];
+    file.on('data', (data) => chunks.push(data));
+    file.on('end', () => {
+      fileData = Buffer.concat(chunks);
+    });
+  });
+
+  bb.on('close', async () => {
+    try {
+      if (!fileData) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      const uploadPath = `${filePath}/${Date.now()}-${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('videos')
+        .upload(uploadPath, fileData, {
+          contentType: fileMimeType,
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from('videos')
+        .getPublicUrl(uploadPath);
+
+      return res.status(200).json({
+        status: 'success',
+        url: urlData.publicUrl,
+        path: uploadPath
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  req.pipe(bb);
+}
+
+module.exports = handler;
