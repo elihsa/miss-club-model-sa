@@ -449,7 +449,8 @@ async function loadCMSContent() {
           el.placeholder = content[key];
         } else if (el.tagName === 'OPTION') {
           el.textContent = content[key];
-        } else if (el.tagName === 'LABEL') {
+        } else if (el.tagName === 'LABEL' || el.tagName === 'P' || el.tagName === 'A') {
+          // Labels/paragraphs/links - allow HTML so embedded links (e.g. Terms & Conditions) are preserved
           el.innerHTML = content[key];
         } else {
           el.textContent = content[key];
