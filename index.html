@@ -1241,7 +1241,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <p data-cms-key="footerText">© 2026 Miss Club Model SA. All rights reserved. |
+  <p>© 2026 Miss Club Model SA. All rights reserved. |
   <a href="https://missclubmodel.vercel.app/privacy" data-cms-key="footerPrivacy">Privacy Policy</a> | <a href="https://missclubmodel.vercel.app/terms" data-cms-key="footerTerms">Terms & Conditions</a></p>
 </footer>
 
@@ -1916,8 +1916,8 @@ async function loadCMSContent() {
         } else if (el.tagName === 'OPTION') {
           // Select options - update text content
           el.textContent = content[key];
-        } else if (el.tagName === 'LABEL') {
-          // Labels - update text content (preserve required asterisk)
+        } else if (el.tagName === 'LABEL' || el.tagName === 'P' || el.tagName === 'A') {
+          // Labels, paragraphs, and links - use innerHTML to preserve nested markup
           el.innerHTML = content[key];
         } else {
           el.textContent = content[key];
