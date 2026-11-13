@@ -210,162 +210,162 @@
 
 <!-- NAV -->
 <nav>
-  <a href="/" class="logo-text">Miss Club Model SA</a>
+  <a href="/" class="logo-text" data-cms-key="siteTitle">Miss Club Model SA</a>
   <div class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('open')">☰</div>
   <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/events">Events</a></li>
-    <li><a href="/apply">Apply</a></li>
-    <li><a href="/admin">Admin</a></li>
-    <li><a href="/contact">Contact</a></li>
+    <li><a href="/" data-cms-key="navHome">Home</a></li>
+    <li><a href="/events" data-cms-key="navEvents">Events</a></li>
+    <li><a href="/apply" data-cms-key="navApply">Apply</a></li>
+    <li><a href="/admin" data-cms-key="navAdmin">Admin</a></li>
+    <li><a href="/contact" data-cms-key="navContact">Contact</a></li>
   </ul>
 </nav>
 
 <!-- MAIN -->
 <main>
   <div class="page-header">
-    <h1 class="section-title">Events</h1>
-    <p class="section-subtitle">Discover upcoming Miss Club Model SA events and register your interest</p>
+    <h1 class="section-title" data-cms-key="eventsPageTitle">Events</h1>
+    <p class="section-subtitle" data-cms-key="eventsPageSubtitle">Discover upcoming Miss Club Model SA events and register your interest</p>
   </div>
 
   <!-- EVENTS TOOLBAR -->
   <div class="events-toolbar">
-    <label for="eventSort" style="display:flex; align-items:center; gap:10px; color:var(--gold); font-weight:600;">Sort by:</label>
+    <label for="eventSort" style="display:flex; align-items:center; gap:10px; color:var(--gold); font-weight:600;" data-cms-key="labelSortBy">Sort by:</label>
     <select id="eventSort">
-      <option value="date-asc">Date: Soonest First</option>
-      <option value="date-desc">Date: Latest First</option>
-      <option value="name-asc">Name: A-Z</option>
-      <option value="name-desc">Name: Z-A</option>
+      <option value="date-asc" data-cms-key="optionDateAsc">Date: Soonest First</option>
+      <option value="date-desc" data-cms-key="optionDateDesc">Date: Latest First</option>
+      <option value="name-asc" data-cms-key="optionNameAsc">Name: A-Z</option>
+      <option value="name-desc" data-cms-key="optionNameDesc">Name: Z-A</option>
     </select>
-    <label for="eventFilter" style="display:flex; align-items:center; gap:10px; color:var(--gold); font-weight:600;">Filter:</label>
+    <label for="eventFilter" style="display:flex; align-items:center; gap:10px; color:var(--gold); font-weight:600;" data-cms-key="labelFilter">Filter:</label>
     <select id="eventFilter">
-      <option value="all">All Events</option>
-      <option value="upcoming">Upcoming</option>
-      <option value="past">Past Events</option>
+      <option value="all" data-cms-key="optionAllEvents">All Events</option>
+      <option value="upcoming" data-cms-key="optionUpcoming">Upcoming</option>
+      <option value="past" data-cms-key="optionPast">Past Events</option>
     </select>
   </div>
 
   <!-- EVENTS GRID -->
   <div class="events-grid" id="eventsGrid">
     <div class="event-card" style="grid-column:1/-1; text-align:center; padding:60px;">
-      <p style="color:#888;">Loading events...</p>
+      <p style="color:#888;" data-cms-key="textLoadingEvents">Loading events...</p>
     </div>
   </div>
 
   <!-- BACK TO HOME -->
-  <a href="/" class="back-link">← Back to Home</a>
+  <a href="/" class="back-link" data-cms-key="linkBackHome">← Back to Home</a>
 </main>
 
 <!-- VENUE PARTNER SECTION -->
 <section class="venue-section">
-  <div class="section-title">Become a Venue Partner</div>
-  <p class="section-subtitle">Host Miss Club Model SA events at your venue. We seek elegant, professional spaces aligned with our brand.</p>
+  <h2 class="section-title" data-cms-key="venueTitle">Become a Venue Partner</h2>
+  <p class="section-subtitle" data-cms-key="venueSubtitle">Host Miss Club Model SA events at your venue. We seek elegant, professional spaces aligned with our brand.</p>
 
   <div class="venue-form-container" id="venueFormContainer">
     <form id="venueForm" enctype="multipart/form-data">
       <div class="form-row">
         <div class="form-group">
-          <label>Full Name <span style="color:var(--red)">*</span></label>
-          <input type="text" name="full_name" required placeholder="Your full name">
+          <label data-cms-key="venueLabelName">Full Name <span style="color:var(--red)">*</span></label>
+          <input type="text" name="full_name" required placeholder="Your full name" data-cms-key="venuePlaceholderName">
         </div>
         <div class="form-group">
-          <label>Email Address <span style="color:var(--red)">*</span></label>
-          <input type="email" name="email" required placeholder="you@domain.com">
+          <label data-cms-key="venueLabelEmail">Email Address <span style="color:var(--red)">*</span></label>
+          <input type="email" name="email" required placeholder="you@domain.com" data-cms-key="venuePlaceholderEmail">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Phone Number <span style="color:var(--red)">*</span></label>
-          <input type="tel" name="phone" required placeholder="+27 XX XXX XXXX">
+          <label data-cms-key="venueLabelPhone">Phone Number <span style="color:var(--red)">*</span></label>
+          <input type="tel" name="phone" required placeholder="+27 XX XXX XXXX" data-cms-key="venuePlaceholderPhone">
         </div>
         <div class="form-group">
-          <label>Venue Name <span style="color:var(--red)">*</span></label>
-          <input type="text" name="venue_name" required placeholder="e.g., The Grand Ballroom, Sun City">
+          <label data-cms-key="venueLabelVenueName">Venue Name <span style="color:var(--red)">*</span></label>
+          <input type="text" name="venue_name" required placeholder="e.g., The Grand Ballroom, Sun City" data-cms-key="venuePlaceholderVenueName">
         </div>
       </div>
       <div class="form-group">
-        <label>Venue Location <span style="color:var(--red)">*</span></label>
-        <input type="text" name="venue_location" required placeholder="City, Province (e.g., Cape Town, Western Cape)">
+        <label data-cms-key="venueLabelLocation">Venue Location <span style="color:var(--red)">*</span></label>
+        <input type="text" name="venue_location" required placeholder="City, Province (e.g., Cape Town, Western Cape)" data-cms-key="venuePlaceholderLocation">
       </div>
       <div class="form-group">
-        <label>Venue Address</label>
-        <textarea name="venue_address" placeholder="Full physical address"></textarea>
+        <label data-cms-key="venueLabelAddress">Venue Address</label>
+        <textarea name="venue_address" placeholder="Full physical address" data-cms-key="venuePlaceholderAddress"></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Website URL</label>
-          <input type="url" name="website_url" placeholder="https://yourvenue.co.za">
+          <label data-cms-key="venueLabelWebsite">Website URL</label>
+          <input type="url" name="website_url" placeholder="https://yourvenue.co.za" data-cms-key="venuePlaceholderWebsite">
         </div>
         <div class="form-group">
-          <label>Capacity</label>
-          <input type="number" name="capacity" placeholder="Maximum guests" min="1">
+          <label data-cms-key="venueLabelCapacity">Capacity</label>
+          <input type="number" name="capacity" placeholder="Maximum guests" min="1" data-cms-key="venuePlaceholderCapacity">
         </div>
       </div>
       <div class="form-group">
-        <label>Venue Description</label>
-        <textarea name="venue_description" placeholder="Describe your venue, facilities, atmosphere, and what makes it special for hosting events..."></textarea>
+        <label data-cms-key="venueLabelDescription">Venue Description</label>
+        <textarea name="venue_description" placeholder="Describe your venue, facilities, atmosphere, and what makes it special for hosting events..." data-cms-key="venuePlaceholderDescription"></textarea>
       </div>
       <div class="form-group">
-        <label>Available Equipment</label>
-        <textarea name="equipment" placeholder="Sound system, lighting, stage, projector, etc."></textarea>
+        <label data-cms-key="venueLabelEquipment">Available Equipment</label>
+        <textarea name="equipment" placeholder="Sound system, lighting, stage, projector, etc." data-cms-key="venuePlaceholderEquipment"></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Availability</label>
-          <input type="text" name="availability" placeholder="e.g., Weekends only, Mon-Fri 9-5, Flexible">
+          <label data-cms-key="venueLabelAvailability">Availability</label>
+          <input type="text" name="availability" placeholder="e.g., Weekends only, Mon-Fri 9-5, Flexible" data-cms-key="venuePlaceholderAvailability">
         </div>
       </div>
       <div class="form-group checkbox-group">
         <input type="checkbox" name="terms_accepted" required id="venueTerms">
-        <label for="venueTerms">I accept the <a href="/terms" target="_blank" style="color:var(--gold)">Terms & Conditions</a> and understand Miss Club Model SA will review my venue application.</label>
+        <label for="venueTerms" data-cms-key="venueTextTerms">I accept the <a href="/terms" target="_blank" style="color:var(--gold)">Terms & Conditions</a> and understand Miss Club Model SA will review my venue application.</label>
       </div>
-      <button type="submit" class="form-submit">Submit Venue Application</button>
+      <button type="submit" class="form-submit" data-cms-key="venueBtnSubmit">Submit Venue Application</button>
       <div class="form-message" id="venueFormMessage"></div>
     </form>
   </div>
-  <p style="text-align:center; margin-top:20px; color:#888;"><a href="#" onclick="toggleVenueForm(); return false;" style="color:var(--gold)">← Back to Events</a></p>
+  <p style="text-align:center; margin-top:20px; color:#888;"><a href="#" onclick="toggleVenueForm(); return false;" style="color:var(--gold)" data-cms-key="venueLinkBack">← Back to Events</a></p>
 </section>
 
 <!-- EVENT CREATION SECTION (Admin) -->
 <section class="event-creation-section" id="eventCreationSection">
-  <h2>Create New Event</h2>
-  <p>Admin only: Create a new event with description and poster.</p>
+  <h2 data-cms-key="eventCreationTitle">Create New Event</h2>
+  <p data-cms-key="eventCreationSubtitle">Admin only: Create a new event with description and poster.</p>
 
   <form class="event-form" id="eventCreationForm" enctype="multipart/form-data">
     <div class="form-row">
       <div class="form-group">
-        <label>Event Name <span style="color:var(--red)">*</span></label>
-        <input type="text" name="name" required placeholder="e.g., Miss Club Model SA Gala 2026">
+        <label data-cms-key="eventLabelName">Event Name <span style="color:var(--red)">*</span></label>
+        <input type="text" name="name" required placeholder="e.g., Miss Club Model SA Gala 2026" data-cms-key="eventPlaceholderName">
       </div>
       <div class="form-group">
-        <label>Event Date <span style="color:var(--red)">*</span></label>
-        <input type="date" name="event_date" required>
+        <label data-cms-key="eventLabelDate">Event Date <span style="color:var(--red)">*</span></label>
+        <input type="date" name="event_date" required data-cms-key="eventPlaceholderDate">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label>Event Time</label>
-        <input type="time" name="event_time">
+        <label data-cms-key="eventLabelTime">Event Time</label>
+        <input type="time" name="event_time" data-cms-key="eventPlaceholderTime">
       </div>
       <div class="form-group">
-        <label>Location <span style="color:var(--red)">*</span></label>
-        <input type="text" name="location" required placeholder="e.g., Sun City, South Africa">
+        <label data-cms-key="eventLabelLocation">Location <span style="color:var(--red)">*</span></label>
+        <input type="text" name="location" required placeholder="e.g., Sun City, South Africa" data-cms-key="eventPlaceholderLocation">
       </div>
     </div>
     <div class="form-group">
-      <label>Description</label>
-      <textarea name="description" placeholder="Describe the event, schedule, highlights, ticket info..."></textarea>
+      <label data-cms-key="eventLabelDescription">Description</label>
+      <textarea name="description" placeholder="Describe the event, schedule, highlights, ticket info..." data-cms-key="eventPlaceholderDescription"></textarea>
     </div>
     <div class="form-group">
-      <label>Poster Image URL</label>
-      <input type="text" name="poster_url" placeholder="https://... (or leave empty to upload later)">
+      <label data-cms-key="eventLabelPoster">Poster Image URL</label>
+      <input type="text" name="poster_url" placeholder="https://... (or leave empty to upload later)" data-cms-key="eventPlaceholderPoster">
       <div id="posterPreview" style="margin-top:10px;"></div>
     </div>
     <div class="form-message" id="eventCreationMessage"></div>
-    <button type="submit" class="form-submit">Create Event</button>
+    <button type="submit" class="form-submit" data-cms-key="eventBtnCreate">Create Event</button>
   </form>
   <p style="margin-top:15px; color:#888; font-size:0.9rem; text-align:center;">
-    <a href="#" onclick="toggleEventCreation(); return false;" style="color:var(--gold)">← Back to Events</a>
+    <a href="#" onclick="toggleEventCreation(); return false;" style="color:var(--gold)" data-cms-key="eventLinkBack">← Back to Events</a>
   </p>
 </section>
 
@@ -373,30 +373,30 @@
 <div class="modal" id="tellMeMoreModal">
   <div class="modal-content">
     <button class="modal-close" id="tellMeMoreClose" aria-label="Close">&times;</button>
-    <h3>Tell Me More</h3>
+    <h3 data-cms-key="modalTitle">Tell Me More</h3>
     <p class="modal-event-name" id="modalEventName"></p>
-    <p class="modal-intro">Join our mailing list to receive updates on event timing, ticket releases, candidate announcements, and exclusive details for this event.</p>
+    <p class="modal-intro" data-cms-key="modalIntro">Join our mailing list to receive updates on event timing, ticket releases, candidate announcements, and exclusive details for this event.</p>
     <form class="modal-form" id="tellMeMoreForm">
       <input type="hidden" name="event_id" id="modalEventId">
       <div class="form-group">
-        <label>Email Address <span style="color:var(--red)">*</span></label>
-        <input type="email" name="email" required placeholder="your@email.com">
+        <label data-cms-key="modalLabelEmail">Email Address <span style="color:var(--red)">*</span></label>
+        <input type="email" name="email" required placeholder="your@email.com" data-cms-key="modalPlaceholderEmail">
       </div>
       <div class="form-group">
-        <label>Phone Number</label>
-        <input type="tel" name="phone" placeholder="+27 XX XXX XXXX">
+        <label data-cms-key="modalLabelPhone">Phone Number</label>
+        <input type="tel" name="phone" placeholder="+27 XX XXX XXXX" data-cms-key="modalPlaceholderPhone">
       </div>
       <div class="form-group">
-        <label>Favorite Candidate (Optional)</label>
+        <label data-cms-key="modalLabelFavorite">Favorite Candidate (Optional)</label>
         <select name="favorite_candidate" id="modalFavoriteCandidate">
-          <option value="">Select a candidate or leave blank</option>
+          <option value="" data-cms-key="modalOptionSelect">Select a candidate or leave blank</option>
         </select>
       </div>
       <div class="form-group checkbox-group">
         <input type="checkbox" name="terms_accepted" required id="modalTerms">
-        <label for="modalTerms">I agree to receive event updates and communications.</label>
+        <label for="modalTerms" data-cms-key="modalTextTerms">I agree to receive event updates and communications.</label>
       </div>
-      <button type="submit" class="form-submit">Join Mailing List</button>
+      <button type="submit" class="form-submit" data-cms-key="modalBtnSubmit">Join Mailing List</button>
       <div class="form-message" id="modalFormMessage"></div>
     </form>
   </div>
@@ -418,7 +418,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadApplications();
   renderEvents();
   setupEventHandlers();
+  loadCMSContent();
 });
+
+// Load CMS content
+async function loadCMSContent() {
+  try {
+    const response = await fetch('/api/cms');
+    const result = await response.json();
+
+    if (result.status !== 'success' || !result.content) {
+      throw new Error(result.message || 'Failed to load CMS');
+    }
+
+    const content = result.content;
+
+    // Update CMS placeholders
+    document.querySelectorAll('[data-cms-key]').forEach(el => {
+      const key = el.getAttribute('data-cms-key');
+      if (content[key]) {
+        // Handle images
+        if (el.tagName === 'IMG') {
+          el.src = content[key];
+        } else if (el.classList.contains('gallery-item')) {
+          const img = el.querySelector('img');
+          const source = el.querySelector('source');
+          if (img) img.src = content[key];
+          if (source) source.srcset = content[key];
+        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.placeholder = content[key];
+        } else if (el.tagName === 'OPTION') {
+          el.textContent = content[key];
+        } else if (el.tagName === 'LABEL') {
+          el.innerHTML = content[key];
+        } else {
+          el.textContent = content[key];
+        }
+      }
+    });
+  } catch (err) {
+    console.error('CMS load failed:', err);
+  }
+}
 
 // Load events from Supabase
 async function loadEvents() {
@@ -482,7 +523,7 @@ function renderEvents() {
   else if (sortVal === 'name-desc') filteredEvents.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
 
   if (filteredEvents.length === 0) {
-    grid.innerHTML = '<div class="event-card" style="grid-column:1/-1; text-align:center; padding:60px;"><p style="color:#888;">No events match your filters.</p></div>';
+    grid.innerHTML = '<div class="event-card" style="grid-column:1/-1; text-align:center; padding:60px;"><p style="color:#888;" data-cms-key="textNoEvents">No events match your filters.</p></div>';
     return;
   }
 
@@ -512,7 +553,7 @@ function renderEvents() {
 
           ${eventCandidates.length > 0 ? `
             <div class="candidates-section">
-              <h4>Approved Candidates (${eventCandidates.length})</h4>
+              <h4 data-cms-key="approvedCandidatesLabel">Approved Candidates (${eventCandidates.length})</h4>
               <div class="candidates-grid">
                 ${eventCandidates.map(app => {
                   const photo = app.headshot_url || 'assets/photos/women_club_1.webp';
@@ -522,7 +563,7 @@ function renderEvents() {
                       <div class="candidate-info">
                         <h5>${app.full_name || 'Candidate'}</h5>
                         <p>${app.city || ''}${app.city && app.province ? ', ' : ''}${app.province || ''}</p>
-                        <span class="approved-badge">✓ Approved</span>
+                        <span class="approved-badge" data-cms-key="approvedBadge">✓ Approved</span>
                       </div>
                     </article>
                   `;
@@ -532,44 +573,45 @@ function renderEvents() {
           ` : ''}
 
           <div class="event-actions" style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
-            <button class="btn" onclick="toggleForm('${event.id}')" id="btn-${event.id}">Register Interest</button>
-            <button class="btn btn-secondary" onclick="openTellMeMore('${event.id}', '${event.name.replace(/'/g, "\\'")}')">Tell Me More</button>
+            <button class="btn" onclick="toggleForm('${event.id}')" id="btn-${event.id}" data-cms-key="btnRegisterInterest">Register Interest</button>
+            <button class="btn btn-secondary" onclick="openTellMeMore('${event.id}', '${event.name.replace(/'/g, "\\'")}')" data-cms-key="btnTellMeMore">Tell Me More</button>
           </div>
-            <h4>Register Interest for ${event.name}</h4>
-            <p class="form-intro">Enter your details below to join this event. We'll send you the event schedule, ticket links, and any other important information after you sign up.</p>
+
+          <div class="join-form" id="form-${event.id}">
+            <h4 data-cms-key="joinFormTitle">Register Interest for ${event.name}</h4>
+            <p class="form-intro" data-cms-key="joinFormIntro">Enter your details below to join this event. We'll send you the event schedule, ticket links, and any other important information after you sign up.</p>
             <form id="joinForm-${event.id}">
               <div class="form-row">
                 <div class="form-group">
-                  <label>Full Name <span style="color:var(--red)">*</span></label>
-                  <input type="text" name="full_name" required placeholder="Enter your full name">
+                  <label data-cms-key="joinLabelName">Full Name <span style="color:var(--red)">*</span></label>
+                  <input type="text" name="full_name" required placeholder="Enter your full name" data-cms-key="joinPlaceholderName">
                 </div>
                 <div class="form-group">
-                  <label>Email Address <span style="color:var(--red)">*</span></label>
-                  <input type="email" name="email" required placeholder="your@email.com">
+                  <label data-cms-key="joinLabelEmail">Email Address <span style="color:var(--red)">*</span></label>
+                  <input type="email" name="email" required placeholder="your@email.com" data-cms-key="joinPlaceholderEmail">
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Phone Number</label>
-                  <input type="tel" name="phone" placeholder="Your phone number">
+                  <label data-cms-key="joinLabelPhone">Phone Number</label>
+                  <input type="tel" name="phone" placeholder="Your phone number" data-cms-key="joinPlaceholderPhone">
                 </div>
                 <div class="form-group">
-                  <label>Favorite Candidate</label>
+                  <label data-cms-key="joinLabelFavorite">Favorite Candidate</label>
                   <select name="favorite_candidate">
-                    <option value="">Select your favorite candidate</option>
+                    <option value="" data-cms-key="joinOptionSelect">Select your favorite candidate</option>
                     ${eventCandidates.map(app => `<option value="${app.full_name}">${app.full_name}</option>`).join('')}
                   </select>
                 </div>
               </div>
               <div class="form-group checkbox-group">
                 <input type="checkbox" name="terms_accepted" required id="terms-${event.id}">
-                <label for="terms-${event.id}">I agree to receive event updates and communications.</label>
+                <label for="terms-${event.id}" data-cms-key="joinTextTerms">I agree to receive event updates and communications.</label>
               </div>
-              <button type="submit" class="form-submit">Join Event</button>
+              <button type="submit" class="form-submit" data-cms-key="joinBtnSubmit">Join Event</button>
             </form>
             <div class="form-message" id="formMessage-${event.id}"></div>
           </div>
-          <button class="btn" onclick="toggleForm('${event.id}')" id="btn-${event.id}">Register Interest</button>
         </div>
       </article>
     `;
@@ -746,18 +788,18 @@ function toggleEventCreation() {
 function openTellMeMore(eventId, eventName) {
   document.getElementById('modalEventId').value = eventId;
   document.getElementById('modalEventName').textContent = eventName;
-  
+
   // Populate favorite candidate dropdown
   const select = document.getElementById('modalFavoriteCandidate');
   const event = allEvents.find(e => e.id === eventId);
   if (event) {
-    const eventCandidates = allApplications.filter(app => 
+    const eventCandidates = allApplications.filter(app =>
       app.event_id === eventId && (app.status === 'approved' || !app.status)
     );
     select.innerHTML = '<option value="">Select a candidate or leave blank</option>' +
       eventCandidates.map(app => `<option value="${app.full_name}">${app.full_name}</option>`).join('');
   }
-  
+
   document.getElementById('tellMeMoreModal').classList.add('show');
   document.body.style.overflow = 'hidden';
 }
@@ -791,20 +833,20 @@ async function handleTellMeMoreSubmit(form) {
 
     if (result.status === 'success') {
       msgEl.className = 'form-message success';
-      msgEl.textContent = '✓ You\'re on the list! We\'ll keep you updated on event timing, tickets, and more.';
+      msgEl.textContent = "✓ You're on the list! We'll keep you updated on event timing, tickets, and more.";
       form.reset();
-      setTimeout(() => { 
+      setTimeout(() => {
         closeTellMeMore();
-        btn.textContent = 'Join Mailing List'; 
-        btn.disabled = false; 
+        btn.textContent = 'Join Mailing List';
+        btn.disabled = false;
       }, 2000);
     } else if (response.status === 409) {
       msgEl.className = 'form-message success';
-      msgEl.textContent = '✓ You\'re already on the list for this event!';
-      setTimeout(() => { 
+      msgEl.textContent = "✓ You're already on the list for this event!";
+      setTimeout(() => {
         closeTellMeMore();
-        btn.textContent = 'Join Mailing List'; 
-        btn.disabled = false; 
+        btn.textContent = 'Join Mailing List';
+        btn.disabled = false;
       }, 2000);
     } else {
       throw new Error(result.message || 'Failed to submit');

@@ -377,17 +377,17 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#home" class="logo-text">Miss Club Model SA</a>
+  <a href="#home" class="logo-text" data-cms-key="siteTitle">Miss Club Model SA</a>
   <div class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('open')">☰</div>
   <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#events">Events</a></li>
-    <li><a href="#candidates">Candidates</a></li>
-    <li><a href="#apply">Apply</a></li>
-    <li><a href="#venue-partner">Venue Partner</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#home" data-cms-key="navHome">Home</a></li>
+    <li><a href="#about" data-cms-key="navAbout">About</a></li>
+    <li><a href="#gallery" data-cms-key="navGallery">Gallery</a></li>
+    <li><a href="#events" data-cms-key="navEvents">Events</a></li>
+    <li><a href="#candidates" data-cms-key="navCandidates">Candidates</a></li>
+    <li><a href="#apply" data-cms-key="navApply">Apply</a></li>
+    <li><a href="#venue-partner" data-cms-key="navVenuePartner">Venue Partner</a></li>
+    <li><a href="#contact" data-cms-key="navContact">Contact</a></li>
   </ul>
 </nav>
 
@@ -396,15 +396,15 @@
   <div class="hero-content">
     <picture>
       <source srcset="logo.webp" type="image/webp">
-      <img class="logo" src="logo.png" alt="Miss Club Model SA Logo" width="380" height="auto">
+      <img class="logo" src="logo.png" alt="Miss Club Model SA Logo" width="380" height="auto" data-cms-key="heroLogo">
     </picture>
-    <p class="tagline">Your Legacy Begins Here</p>
-    <p class="mission">
+    <p class="tagline" data-cms-key="heroTagline">Your Legacy Begins Here</p>
+    <p class="mission" data-cms-key="heroMission">
       Miss Club Model SA celebrates elegance, intelligence, and empowerment.
       We provide a platform for extraordinary women to showcase their talent,
       advocate for meaningful causes, and inspire communities across South Africa.
     </p>
-    <a href="#apply" class="btn">Apply Now</a>
+    <a href="#apply" class="btn" data-cms-key="heroCTA">Apply Now</a>
   </div>
   <div class="scroll-indicator">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
@@ -415,33 +415,33 @@
 
 <!-- ABOUT -->
 <section id="about">
-  <h2 class="section-title">About the Pageant</h2>
-  <p class="section-subtitle">More than a beauty pageant — a celebration of character, leadership, and purpose</p>
+  <h2 class="section-title" data-cms-key="aboutTitle">About the Pageant</h2>
+  <p class="section-subtitle" data-cms-key="aboutSubtitle">More than a beauty pageant — a celebration of character, leadership, and purpose</p>
   <div class="about-grid">
     <div class="about-text">
-      <p>Miss Club Model SA is more than a beauty pageant — it is a celebration of character, leadership, and purpose. Founded to uplift and empower women, our pageant seeks candidates who embody grace, intelligence, and a commitment to positive change.</p>
-      <p>Our judging criteria evaluate poise, communication, community involvement, and personal platform. We believe true beauty shines through action and advocacy.</p>
+      <p data-cms-key="aboutText1">Miss Club Model SA is more than a beauty pageant — it is a celebration of character, leadership, and purpose. Founded to uplift and empower women, our pageant seeks candidates who embody grace, intelligence, and a commitment to positive change.</p>
+      <p data-cms-key="aboutText2">Our judging criteria evaluate poise, communication, community involvement, and personal platform. We believe true beauty shines through action and advocacy.</p>
       <div class="vision-box">
-        <h3>Our Vision</h3>
-        <p>To crown ambassadors who will represent South Africa with dignity and drive meaningful social impact.</p>
+        <h3 data-cms-key="visionTitle">Our Vision</h3>
+        <p data-cms-key="visionText">To crown ambassadors who will represent South Africa with dignity and drive meaningful social impact.</p>
       </div>
     </div>
     <div class="about-image" data-cms-key="aboutImage">
-      <span>Elegance in Every Moment</span>
+      <span data-cms-key="aboutImageAlt">Elegance in Every Moment</span>
     </div>
   </div>
 </section>
 
 <!-- GALLERY -->
 <section id="gallery">
-  <h2 class="section-title">The Miss Club Model Experience</h2>
-  <p class="section-subtitle">Moments of joy, elegance, and sisterhood that define our community</p>
+  <h2 class="section-title" data-cms-key="galleryTitle">The Miss Club Model Experience</h2>
+  <p class="section-subtitle" data-cms-key="gallerySubtitle">Moments of joy, elegance, and sisterhood that define our community</p>
 
   <div class="gallery-grid">
     <div class="gallery-item" data-cms-key="gallery1">
       <picture>
-        <source srcset="assets/photos/women_club_1.webp" type="image/webp">
-        <img src="assets/photos/women_club_1.jpg" alt="Women enjoying club atmosphere">
+        <source srcset="assets/photos/women_club_1.webp" type="image/webp" data-cms-key="gallery1Img">
+        <img src="assets/photos/women_club_1.jpg" alt="Women enjoying club atmosphere" data-cms-key="gallery1ImgFallback">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -453,8 +453,8 @@
 
     <div class="gallery-item" data-cms-key="gallery2">
       <picture>
-        <source srcset="assets/photos/women_toasting_1.webp" type="image/webp">
-        <img src="assets/photos/women_toasting_1.jpg" alt="Women toasting with drinks">
+        <source srcset="assets/photos/women_toasting_1.webp" type="image/webp" data-cms-key="gallery2Img">
+        <img src="assets/photos/women_toasting_1.jpg" alt="Women toasting with drinks" data-cms-key="gallery2ImgFallback">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -466,8 +466,8 @@
 
     <div class="gallery-item" data-cms-key="gallery3">
       <picture>
-        <source srcset="assets/photos/women_laughing_1.webp" type="image/webp">
-        <img src="assets/photos/women_laughing_1.jpg" alt="Women laughing and having fun">
+        <source srcset="assets/photos/women_laughing_1.webp" type="image/webp" data-cms-key="gallery3Img">
+        <img src="assets/photos/women_laughing_1.jpg" alt="Women laughing and having fun" data-cms-key="gallery3ImgFallback">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -479,8 +479,8 @@
 
     <div class="gallery-item" data-cms-key="gallery4">
       <picture>
-        <source srcset="assets/photos/women_celebrating_1.webp" type="image/webp">
-        <img src="assets/photos/women_celebrating_1.jpg" alt="Women celebrating indoors">
+        <source srcset="assets/photos/women_celebrating_1.webp" type="image/webp" data-cms-key="gallery4Img">
+        <img src="assets/photos/women_celebrating_1.jpg" alt="Women celebrating indoors" data-cms-key="gallery4ImgFallback">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -492,8 +492,8 @@
 
     <div class="gallery-item" data-cms-key="gallery5">
       <picture>
-        <source srcset="assets/photos/women_bar_2.webp" type="image/webp">
-        <img src="assets/photos/women_bar_2.jpg" alt="Women at bar having drinks">
+        <source srcset="assets/photos/women_bar_2.webp" type="image/webp" data-cms-key="gallery5Img">
+        <img src="assets/photos/women_bar_2.jpg" alt="Women at bar having drinks" data-cms-key="gallery5ImgFallback">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -505,8 +505,8 @@
 
     <div class="gallery-item" data-cms-key="gallery6">
       <picture>
-        <source srcset="assets/photos/women_drinks_1.webp" type="image/webp">
-        <img src="assets/photos/women_drinks_1.jpg" alt="Women with cocktails">
+        <source srcset="assets/photos/women_drinks_1.webp" type="image/webp" data-cms-key="gallery6Img">
+        <img src="assets/photos/women_drinks_1.jpg" alt="Women with cocktails" data-cms-key="gallery6ImgFallback">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -520,8 +520,8 @@
 
 <!-- EVENTS -->
 <section id="events">
-  <h2 class="section-title">Events</h2>
-  <p class="section-subtitle">Discover upcoming Miss Club Model SA events and experiences</p>
+  <h2 class="section-title" data-cms-key="eventsTitle">Events</h2>
+  <p class="section-subtitle" data-cms-key="eventsSubtitle">Discover upcoming Miss Club Model SA events and experiences</p>
 
   <div class="events-toolbar">
     <label for="eventSort" style="display:flex; align-items:center; gap:10px; color:var(--gold); font-weight:600;">Sort by:</label>
@@ -549,11 +549,11 @@
 
 <!-- CANDIDATES -->
 <section id="candidates">
-  <h2 class="section-title">Meet the Candidates</h2>
-  <p class="section-subtitle">Get to know the remarkable women competing for the crown</p>
+  <h2 class="section-title" data-cms-key="candidatesTitle">Meet the Candidates</h2>
+  <p class="section-subtitle" data-cms-key="candidatesSubtitle">Get to know the remarkable women competing for the crown</p>
 
   <div class="candidates-toolbar" id="candidateFilter">
-    <button class="filter-btn active" data-event="all">All Candidates</button>
+    <button class="filter-btn active" data-event="all" data-cms-key="filterAll">All Candidates</button>
     <!-- Event filter buttons loaded dynamically -->
   </div>
 
@@ -596,8 +596,8 @@
 <!-- APPLY SECTION -->
 <section id="apply">
   <div class="apply-header">
-    <h2 class="section-title">Apply</h2>
-    <p class="section-subtitle">Take the first step towards your legacy. Complete all required fields to submit your entry.</p>
+    <h2 class="section-title" data-cms-key="applyTitle">Apply</h2>
+    <p class="section-subtitle" data-cms-key="applySubtitle">Take the first step towards your legacy. Complete all required fields to submit your entry.</p>
   </div>
 
   <div class="form-section">
@@ -605,55 +605,59 @@
       <!-- Personal Info -->
       <div class="form-row">
         <div class="form-group">
-          <label>Full Name <span class="required">*</span></label>
-          <input type="text" name="fullName" required placeholder="Your full legal name">
+          <label data-cms-key="labelFullName">Full Name <span class="required">*</span></label>
+          <input type="text" name="fullName" required placeholder="Your full legal name" data-cms-key="placeholderFullName">
         </div>
         <div class="form-group">
-          <label>Date of Birth <span class="required">*</span></label>
-          <input type="date" name="dob" required>
+          <label data-cms-key="labelDOB">Date of Birth <span class="required">*</span></label>
+          <input type="date" name="dob" required data-cms-key="placeholderDOB">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Email <span class="required">*</span></label>
-          <input type="email" name="email" required placeholder="you@domain.com">
+          <label data-cms-key="labelEmail">Email <span class="required">*</span></label>
+          <input type="email" name="email" required placeholder="you@domain.com" data-cms-key="placeholderEmail">
         </div>
         <div class="form-group">
-          <label>Phone <span class="required">*</span></label>
-          <input type="tel" name="phone" required placeholder="+27 XX XXX XXXX">
+          <label data-cms-key="labelPhone">Phone <span class="required">*</span></label>
+          <input type="tel" name="phone" required placeholder="+27 XX XXX XXXX" data-cms-key="placeholderPhone">
         </div>
       </div>
 
       <!-- Event Selection -->
       <div class="form-group">
-        <label>Event Applying For <span class="required">*</span></label>
+        <label data-cms-key="labelEvent">Event Applying For <span class="required">*</span></label>
         <select name="event_id" id="eventSelect" required>
-          <option value="">Select an event</option>
-          <option value="all">All Events (General Application)</option>
+          <option value="" data-cms-key="optionSelectEvent">Select an event</option>
+          <option value="all" data-cms-key="optionAllEvents">All Events (General Application)</option>
           <!-- Events loaded dynamically -->
         </select>
       </div>
 
       <div class="form-group">
-        <label>Address <span class="required">*</span></label>
-        <input type="text" name="address" required placeholder="Street address">
+        <label data-cms-key="labelAddress">Address <span class="required">*</span></label>
+        <input type="text" name="address" required placeholder="Street address" data-cms-key="placeholderAddress">
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>City</label>
-          <input type="text" name="city" placeholder="City">
+          <label data-cms-key="labelCity">City</label>
+          <input type="text" name="city" placeholder="City" data-cms-key="placeholderCity">
         </div>
         <div class="form-group">
-          <label>Province <span class="required">*</span></label>
+          <label data-cms-key="labelProvince">Province <span class="required">*</span></label>
           <select name="province" required>
-            <option value="">Select Province</option>
-            <option>Eastern Cape</option><option>Free State</option>
-            <option>Gauteng</option><option>KwaZulu-Natal</option>
-            <option>Limpopo</option><option>Mpumalanga</option>
-            <option>North West</option><option>Northern Cape</option>
-            <option>Western Cape</option>
+            <option value="" data-cms-key="optionSelectProvince">Select Province</option>
+            <option data-cms-key="provinceEC">Eastern Cape</option>
+            <option data-cms-key="provinceFS">Free State</option>
+            <option data-cms-key="provinceGP">Gauteng</option>
+            <option data-cms-key="provinceKZN">KwaZulu-Natal</option>
+            <option data-cms-key="provinceLP">Limpopo</option>
+            <option data-cms-key="provinceMP">Mpumalanga</option>
+            <option data-cms-key="provinceNW">North West</option>
+            <option data-cms-key="provinceNC">Northern Cape</option>
+            <option data-cms-key="provinceWC">Western Cape</option>
           </select>
         </div>
       </div>
@@ -661,68 +665,68 @@
       <!-- Attributes -->
       <div class="form-row">
         <div class="form-group">
-          <label>Height (cm)</label>
-          <input type="number" name="height" min="100" max="250" placeholder="e.g., 170">
+          <label data-cms-key="labelHeight">Height (cm)</label>
+          <input type="number" name="height" min="100" max="250" placeholder="e.g., 170" data-cms-key="placeholderHeight">
         </div>
         <div class="form-group">
-          <label>Occupation</label>
-          <input type="text" name="occupation" placeholder="Current profession or student">
+          <label data-cms-key="labelOccupation">Occupation</label>
+          <input type="text" name="occupation" placeholder="Current profession or student" data-cms-key="placeholderOccupation">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Education</label>
-          <input type="text" name="education" placeholder="Highest qualification">
+          <label data-cms-key="labelEducation">Education</label>
+          <input type="text" name="education" placeholder="Highest qualification" data-cms-key="placeholderEducation">
         </div>
         <div class="form-group">
-          <label>Instagram Handle</label>
-          <input type="text" name="instagram" placeholder="@username">
+          <label data-cms-key="labelInstagram">Instagram Handle</label>
+          <input type="text" name="instagram" placeholder="@username" data-cms-key="placeholderInstagram">
         </div>
       </div>
 
       <!-- Pageant Specifics -->
       <div class="form-group">
-        <label>Personal Platform / Advocacy <span class="required">*</span></label>
-        <textarea name="platform" required placeholder="Describe the cause you champion and why it matters to you..."></textarea>
+        <label data-cms-key="labelPlatform">Personal Platform / Advocacy <span class="required">*</span></label>
+        <textarea name="platform" required placeholder="Describe the cause you champion and why it matters to you..." data-cms-key="placeholderPlatform"></textarea>
       </div>
 
       <div class="form-group">
-        <label>Why should you win? <span class="required">*</span></label>
-        <textarea name="essay" required placeholder="Tell us what makes you the ideal Miss Club Model SA..."></textarea>
+        <label data-cms-key="labelEssay">Why should you win? <span class="required">*</span></label>
+        <textarea name="essay" required placeholder="Tell us what makes you the ideal Miss Club Model SA..." data-cms-key="placeholderEssay"></textarea>
       </div>
 
       <div class="form-group">
-        <label>Talent (if applicable)</label>
-        <input type="text" name="talent" placeholder="e.g., Singing, Dance, Poetry, Public Speaking">
+        <label data-cms-key="labelTalent">Talent (if applicable)</label>
+        <input type="text" name="talent" placeholder="e.g., Singing, Dance, Poetry, Public Speaking" data-cms-key="placeholderTalent">
       </div>
 
       <!-- Media Uploads with Auto-Resize -->
       <div class="form-group">
-        <label>Headshot Photo <span class="required">*</span></label>
+        <label data-cms-key="labelHeadshot">Headshot Photo <span class="required">*</span></label>
         <div class="file-upload" onclick="document.getElementById('headshot').click()">
           <input type="file" id="headshot" name="headshot" accept="image/*" required onchange="handleImageUpload(this, 'headshotPreview', 'headshotName')">
-          <p>📷 Click to upload headshot (JPG/PNG, auto-resized to 1200px max)</p>
+          <p data-cms-key="textHeadshotUpload">📷 Click to upload headshot (JPG/PNG, auto-resized to 1200px max)</p>
           <p class="file-name" id="headshotName"></p>
           <img id="headshotPreview" class="preview-thumb" style="display:none">
         </div>
       </div>
 
       <div class="form-group">
-        <label>Full-Length Photo <span class="required">*</span></label>
+        <label data-cms-key="labelFullbody">Full-Length Photo <span class="required">*</span></label>
         <div class="file-upload" onclick="document.getElementById('fullbody').click()">
           <input type="file" id="fullbody" name="fullbody" accept="image/*" required onchange="handleImageUpload(this, 'fullbodyPreview', 'fullbodyName')">
-          <p>📷 Click to upload full-length photo (JPG/PNG, auto-resized to 1200px max)</p>
+          <p data-cms-key="textFullbodyUpload">📷 Click to upload full-length photo (JPG/PNG, auto-resized to 1200px max)</p>
           <p class="file-name" id="fullbodyName"></p>
           <img id="fullbodyPreview" class="preview-thumb" style="display:none">
         </div>
       </div>
 
       <div class="form-group">
-        <label>Introduction Video <span class="required">*</span></label>
+        <label data-cms-key="labelVideo">Introduction Video <span class="required">*</span></label>
         <div class="file-upload" onclick="document.getElementById('video').click()">
           <input type="file" id="video" name="video" accept="video/*" required onchange="handleVideoUpload(this, 'videoName')">
-          <p>🎥 Click to upload intro video (MP4, max 2 min, max 50MB)</p>
+          <p data-cms-key="textVideoUpload">🎥 Click to upload intro video (MP4, max 2 min, max 50MB)</p>
           <p class="file-name" id="videoName"></p>
         </div>
       </div>
@@ -730,12 +734,12 @@
       <!-- Emergency Contact -->
       <div class="form-row">
         <div class="form-group">
-          <label>Emergency Contact Name</label>
-          <input type="text" name="emergencyName" placeholder="Full name">
+          <label data-cms-key="labelEmergencyName">Emergency Contact Name</label>
+          <input type="text" name="emergencyName" placeholder="Full name" data-cms-key="placeholderEmergencyName">
         </div>
         <div class="form-group">
-          <label>Emergency Contact Phone</label>
-          <input type="tel" name="emergencyPhone" placeholder="+27 XX XXX XXXX">
+          <label data-cms-key="labelEmergencyPhone">Emergency Contact Phone</label>
+          <input type="tel" name="emergencyPhone" placeholder="+27 XX XXX XXXX" data-cms-key="placeholderEmergencyPhone">
         </div>
       </div>
 
@@ -743,17 +747,17 @@
       <div class="form-group">
         <div class="checkbox-group">
           <input type="checkbox" id="terms" required>
-          <label for="terms">I agree to the <a href="/terms" target="_blank">Terms & Conditions</a> and confirm all information provided is accurate. <span class="required">*</span></label>
+          <label for="terms" data-cms-key="textTerms">I agree to the <a href="/terms" target="_blank">Terms & Conditions</a> and confirm all information provided is accurate. <span class="required">*</span></label>
         </div>
       </div>
       <div class="form-group">
         <div class="checkbox-group">
           <input type="checkbox" id="mediaRelease" required>
-          <label for="mediaRelease">I grant Miss Club Model SA permission to use my photos and video for promotional purposes. <span class="required">*</span></label>
+          <label for="mediaRelease" data-cms-key="textMediaRelease">I grant Miss Club Model SA permission to use my photos and video for promotional purposes. <span class="required">*</span></label>
         </div>
       </div>
 
-      <button type="submit" class="btn form-submit">Submit Application</button>
+      <button type="submit" class="btn form-submit" data-cms-key="btnSubmitApplication">Submit Application</button>
       <div class="form-message" id="formMessage"></div>
     </form>
   </div>
@@ -762,8 +766,8 @@
 <!-- VENUE PARTNER -->
 <section id="venue-partner">
   <div class="venue-content">
-    <h2 class="section-title">Become a Venue Partner</h2>
-    <p class="section-subtitle">Host Miss Club Model SA events at your venue. We seek elegant, professional spaces aligned with our brand.</p>
+    <h2 class="section-title" data-cms-key="venueTitle">Become a Venue Partner</h2>
+    <p class="section-subtitle" data-cms-key="venueSubtitle">Host Miss Club Model SA events at your venue. We seek elegant, professional spaces aligned with our brand.</p>
 
     <div class="venue-intro" data-cms-key="venuePartnerIntro">
       Host Miss Club Model SA events at your venue. We're always looking for elegant, professional spaces that align with our brand of elegance and empowerment.
@@ -773,61 +777,61 @@
       <form id="venueForm" enctype="multipart/form-data">
         <div class="form-row">
           <div class="form-group">
-            <label>Full Name <span class="required">*</span></label>
-            <input type="text" name="full_name" required placeholder="Your full name">
+            <label data-cms-key="venueLabelName">Full Name <span class="required">*</span></label>
+            <input type="text" name="full_name" required placeholder="Your full name" data-cms-key="venuePlaceholderName">
           </div>
           <div class="form-group">
-            <label>Email Address <span class="required">*</span></label>
-            <input type="email" name="email" required placeholder="you@domain.com">
+            <label data-cms-key="venueLabelEmail">Email Address <span class="required">*</span></label>
+            <input type="email" name="email" required placeholder="you@domain.com" data-cms-key="venuePlaceholderEmail">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Phone Number <span class="required">*</span></label>
-            <input type="tel" name="phone" required placeholder="+27 XX XXX XXXX">
+            <label data-cms-key="venueLabelPhone">Phone Number <span class="required">*</span></label>
+            <input type="tel" name="phone" required placeholder="+27 XX XXX XXXX" data-cms-key="venuePlaceholderPhone">
           </div>
           <div class="form-group">
-            <label>Venue Name <span class="required">*</span></label>
-            <input type="text" name="venue_name" required placeholder="e.g., The Grand Ballroom, Sun City">
+            <label data-cms-key="venueLabelVenueName">Venue Name <span class="required">*</span></label>
+            <input type="text" name="venue_name" required placeholder="e.g., The Grand Ballroom, Sun City" data-cms-key="venuePlaceholderVenueName">
           </div>
         </div>
         <div class="form-group">
-          <label>Venue Location <span class="required">*</span></label>
-          <input type="text" name="venue_location" required placeholder="City, Province (e.g., Cape Town, Western Cape)">
+          <label data-cms-key="venueLabelLocation">Venue Location <span class="required">*</span></label>
+          <input type="text" name="venue_location" required placeholder="City, Province (e.g., Cape Town, Western Cape)" data-cms-key="venuePlaceholderLocation">
         </div>
         <div class="form-group">
-          <label>Venue Address</label>
-          <textarea name="venue_address" placeholder="Full physical address"></textarea>
+          <label data-cms-key="venueLabelAddress">Venue Address</label>
+          <textarea name="venue_address" placeholder="Full physical address" data-cms-key="venuePlaceholderAddress"></textarea>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Website URL</label>
-            <input type="url" name="website_url" placeholder="https://yourvenue.co.za">
+            <label data-cms-key="venueLabelWebsite">Website URL</label>
+            <input type="url" name="website_url" placeholder="https://yourvenue.co.za" data-cms-key="venuePlaceholderWebsite">
           </div>
           <div class="form-group">
-            <label>Capacity</label>
-            <input type="number" name="capacity" placeholder="Maximum guests" min="1">
+            <label data-cms-key="venueLabelCapacity">Capacity</label>
+            <input type="number" name="capacity" placeholder="Maximum guests" min="1" data-cms-key="venuePlaceholderCapacity">
           </div>
         </div>
         <div class="form-group">
-          <label>Venue Description</label>
-          <textarea name="venue_description" placeholder="Describe your venue, facilities, atmosphere, and what makes it special for hosting events..."></textarea>
+          <label data-cms-key="venueLabelDescription">Venue Description</label>
+          <textarea name="venue_description" placeholder="Describe your venue, facilities, atmosphere, and what makes it special for hosting events..." data-cms-key="venuePlaceholderDescription"></textarea>
         </div>
         <div class="form-group">
-          <label>Available Equipment</label>
-          <textarea name="equipment" placeholder="Sound system, lighting, stage, projector, etc."></textarea>
+          <label data-cms-key="venueLabelEquipment">Available Equipment</label>
+          <textarea name="equipment" placeholder="Sound system, lighting, stage, projector, etc." data-cms-key="venuePlaceholderEquipment"></textarea>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Availability</label>
-            <input type="text" name="availability" placeholder="e.g., Weekends only, Mon-Fri 9-5, Flexible">
+            <label data-cms-key="venueLabelAvailability">Availability</label>
+            <input type="text" name="availability" placeholder="e.g., Weekends only, Mon-Fri 9-5, Flexible" data-cms-key="venuePlaceholderAvailability">
           </div>
         </div>
         <div class="form-group checkbox-group">
           <input type="checkbox" name="terms_accepted" required id="venueTerms">
-          <label for="venueTerms">I accept the <a href="/terms" target="_blank">Terms & Conditions</a> and understand Miss Club Model SA will review my venue application.</label>
+          <label for="venueTerms" data-cms-key="venueTextTerms">I accept the <a href="/terms" target="_blank">Terms & Conditions</a> and understand Miss Club Model SA will review my venue application.</label>
         </div>
-        <button type="submit" class="form-submit">Submit Venue Application</button>
+        <button type="submit" class="form-submit" data-cms-key="venueBtnSubmit">Submit Venue Application</button>
         <div class="form-message" id="venueFormMessage"></div>
       </form>
     </div>
@@ -836,20 +840,20 @@
 
 <!-- CONTACT -->
 <section id="contact">
-  <h2 class="section-title">Contact Us</h2>
-  <p class="section-subtitle">We'd love to hear from you</p>
+  <h2 class="section-title" data-cms-key="contactTitle">Contact Us</h2>
+  <p class="section-subtitle" data-cms-key="contactSubtitle">We'd love to hear from you</p>
 
   <div class="contact-grid">
     <div class="contact-card">
-      <h3>📧 Email</h3>
+      <h3 data-cms-key="contactIconEmail">📧 Email</h3>
       <p data-cms-key="contactEmail">contact@missclubmodelsa.co.za</p>
     </div>
     <div class="contact-card">
-      <h3>📞 Phone</h3>
+      <h3 data-cms-key="contactIconPhone">📞 Phone</h3>
       <p data-cms-key="contactPhone">+27 XX XXX XXXX</p>
     </div>
     <div class="contact-card">
-      <h3>📍 Office</h3>
+      <h3 data-cms-key="contactIconAddress">📍 Office</h3>
       <p data-cms-key="contactAddress">South Africa</p>
     </div>
   </div>
@@ -857,8 +861,8 @@
 
 <!-- FOOTER -->
 <footer>
-  <p>© 2026 Miss Club Model SA. All rights reserved. |
-  <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms</a></p>
+  <p data-cms-key="footerText">© 2026 Miss Club Model SA. All rights reserved. |
+  <a href="/privacy" data-cms-key="footerPrivacy">Privacy Policy</a> | <a href="/terms" data-cms-key="footerTerms">Terms</a></p>
 </footer>
 
 <script type="module">
@@ -1318,6 +1322,15 @@ async function loadCMSContent() {
           // Background images on divs
           el.style.backgroundImage = `url(${content[key]})`;
           el.textContent = '';
+        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          // Form inputs - update placeholder
+          el.placeholder = content[key];
+        } else if (el.tagName === 'OPTION') {
+          // Select options - update text content
+          el.textContent = content[key];
+        } else if (el.tagName === 'LABEL') {
+          // Labels - update text content (preserve required asterisk)
+          el.innerHTML = content[key];
         } else {
           el.textContent = content[key];
         }
