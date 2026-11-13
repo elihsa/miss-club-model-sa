@@ -157,7 +157,7 @@ joinOptionSelect,Select a candidate
 joinPlaceholderEmail,you@example.com
 joinPlaceholderName,Your Name
 joinPlaceholderPhone,082 123 4567
-joinTextTerms,By joining, you agree to receive updates about this event
+joinTextTerms,I agree to the <a href="/terms.html" target="_blank">Terms & Conditions</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a> and consent to receive event updates and communications.
 labelAddress,Physical Address
 labelCity,City
 labelDOB,Date of Birth
@@ -195,7 +195,7 @@ modalOptionSelect,Select a candidate
 modalPadding,40px
 modalPlaceholderEmail,you@example.com
 modalPlaceholderPhone,082 123 4567
-modalTextTerms,By submitting, you agree to receive event updates
+modalTextTerms,I agree to the <a href="/terms.html" target="_blank">Terms & Conditions</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a> and consent to receive event updates and communications.
 modalTitle,Tell Me More
 navAbout,About
 navAdmin,Admin
@@ -289,7 +289,7 @@ textMediaRelease,I consent to the use of my photos and videos for promotional pu
 textNoEvents,No events found
 textPrivacyPolicy,I have read and accept the Privacy Policy (POPIA Compliant)
 textSm,0.9rem
-textTerms,I agree to the Terms & Conditions and Privacy Policy
+textTerms,I agree to the <a href="/terms.html" target="_blank">Terms & Conditions</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a> and confirm all information provided is accurate.
 textVideoUpload,Upload a 60-second video introduction (MP4/WebM, max 50MB)
 trackingNormal,0
 trackingTight,-0.02em
