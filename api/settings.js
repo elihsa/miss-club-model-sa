@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const { requireAdmin } = require('./_auth');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
@@ -14,7 +15,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -25,6 +26,7 @@ function handler(req, res) {
   }
 
   if (req.method === 'POST' || req.method === 'PUT') {
+    // Email settings are sensitive - require an authenticated admin session.
     return updateSettings(req, res);
   }
 
@@ -64,6 +66,10 @@ async function getSettings(req, res) {
 }
 
 async function updateSettings(req, res) {
+  const auth = await requireAdmin(req);
+  if (!auth.ok) {
+    return res.status(auth.status).json({ error: auth.error });
+  }
   try {
     const body = req.body;
     
