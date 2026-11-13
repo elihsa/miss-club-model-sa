@@ -246,7 +246,7 @@
 </nav>
 
 <!-- LOGIN VIEW -->
-<div id="loginView" class="login-container">
+<div id="loginView" class="login-container" style="display: block">
   <h2>Admin Login</h2>
   <p>Sign in to manage all data</p>
   <form id="loginForm">
@@ -1343,6 +1343,29 @@ sortSelect.addEventListener('change', renderTable);
 
 // Initialize
 checkSession();
+
+// Fallback: ensure login shows if module fails
+setTimeout(() => {
+  const loginView = document.getElementById('loginView');
+  const dashboardView = document.getElementById('dashboardView');
+  if (loginView && loginView.style.display === 'none' && dashboardView && dashboardView.style.display === 'none') {
+    loginView.style.display = 'block';
+    dashboardView.style.display = 'none';
+  }
+}, 2000);
+</script>
+
+<!-- Fallback non-module script for immediate login display -->
+<script>
+  // Immediate fallback - runs before module scripts
+  document.addEventListener('DOMContentLoaded', () => {
+    const loginView = document.getElementById('loginView');
+    const dashboardView = document.getElementById('dashboardView');
+    if (loginView && dashboardView) {
+      loginView.style.display = 'block';
+      dashboardView.style.display = 'none';
+    }
+  });
 </script>
 </body>
 </html>
