@@ -163,7 +163,7 @@
     background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
     border-top: 1px solid var(--gold-dark);
     border-bottom: 1px solid var(--gold-dark);
-    padding: 50px var(--section-px);
+    padding: 50px 0;  /* No side padding - full width like hero */
     margin: 0;
     width: 100%;
   }
@@ -171,19 +171,17 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 30px;
-    max-width: 100%;
+    max-width: var(--container-max);  /* Constrain content but allow full-width bg */
     margin: 0 auto;
     text-align: center;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
+    padding: 0 var(--section-px);  /* Add padding here for content */
   }
   .metric-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 20px 0;  /* Vertical padding only */
     position: relative;
   }
   .metric-item:not(:last-child)::after {
