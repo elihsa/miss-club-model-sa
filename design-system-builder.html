@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miss Club Model SA - Design System & Theme Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;900&family=Montserrat:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600;700&family=DM+Serif+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --builder-bg: #0a0a0a;
+    --builder-surface: #141414;
+    --builder-surface-hover: #1e1e1e;
+    --builder-border: #2a2a2a;
+    --builder-gold: #c9a84c;
+    --builder-gold-light: #f0d878;
+    --builder-gold-dark: #8b6914;
+    --builder-cream: #f5f0e8;
+    --builder-text: #f5f0e8;
+    --builder-text-muted: #999;
+    --builder-red: #e74c3c;
+    --builder-green: #27ae60;
+    --builder-blue: #3498db;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--builder-bg);
+    color: var(--builder-text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* LAYOUT */
+  .builder-app {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .builder-sidebar {
+    background: var(--builder-surface);
+    border-right: 1px solid var(--builder-border);
+    padding: 24px;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .builder-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--builder-gold);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .builder-subtitle {
+    font-size: 0.8rem;
+    color: var(--builder-text-muted);
+    margin-bottom: 32px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .builder-nav {
+    list-style: none;
+  }
+
+  .builder-nav-item {
+    margin-bottom: 4px;
+  }
+
+  .builder-nav-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--builder-text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+
+  .builder-nav-btn:hover {
+    background: var(--builder-surface-hover);
+    border-color: var(--builder-border);
+  }
+
+  .builder-nav-btn.active {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--builder-gold);
+    color: var(--builder-gold);
+  }
+
+  .builder-nav-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* MAIN CONTENT */
+  .builder-main {
+    padding: 32px 48px;
+    overflow-y: auto;
+  }
+
+  .builder-header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--builder-border);
+  }
+
+  .builder-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: var(--builder-gold);
+    margin-bottom: 8px;
+  }
+
+  .builder-header p {
+    color: var(--builder-text-muted);
+    font-size: 1.1rem;
+  }
+
+  /* PANELS */
+  .builder-panel {
+    display: none;
+  }
+
+  .builder-panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-section {
+    background: var(--builder-surface);
+    border: 1px solid var(--builder-border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .panel-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--builder-gold);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--builder-border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .panel-section-title::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: var(--builder-gold);
+    border-radius: 2px;
+  }
+
+  /* CONTROLS */
+  .control-group {
+    margin-bottom: 20px;
+  }
+
+  .control-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--builder-text);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .control-hint {
+    font-size: 0.75rem;
+    color: var(--builder-text-muted);
+    margin-top: 4px;
+  }
+
+  .control-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* INPUTS */
+  .builder-input,
+  .builder-select,
+  .builder-color {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--builder-bg);
+    border: 1px solid var(--builder-border);
+    border-radius: 8px;
+    color: var(--builder-text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  .builder-input:focus,
+  .builder-select:focus {
+    outline: none;
+    border-color: var(--builder-gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  }
+
+  .builder-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+  }
+
+  .builder-color {
+    height: 50px;
+    padding: 4px;
+    cursor: pointer;
+  }
+
+  .builder-color::-webkit-color-swatch-wrapper { padding: 0; }
+  .builder-color::-webkit-color-swatch { border: none; border-radius: 6px; }
+
+  /* RANGE SLIDER */
+  .builder-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--builder-border);
+    border-radius: 3px;
+    outline: none;
+  }
+
+  .builder-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--builder-gold);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .builder-range::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 4px rgba(201,168,76,0.3);
+  }
+
+  .range-value {
+    display: inline-block;
+    margin-left: 12px;
+    font-family: 'Inter', monospace;
+    font-size: 0.9rem;
+    color: var(--builder-gold);
+    min-width: 50px;
+  }
+
+  /* TOGGLE SWITCH */
+  .toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 56px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--builder-border);
+    border-radius: 14px;
+    transition: 0.3s;
+  }
+
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--builder-text);
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+
+  .toggle-switch input:checked + .toggle-slider {
+    background: var(--builder-gold);
+  }
+
+  .toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(28px);
+  }
+
+  /* FONT PREVIEW */
+  .font-preview {
+    margin-top: 12px;
+    padding: 16px;
+    background: var(--builder-bg);
+    border-radius: 8px;
+    border: 1px solid var(--builder-border);
+  }
+
+  .font-preview-text {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .font-preview-text.body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .font-preview-text.caption {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--builder-text-muted);
+  }
+
+  /* LIVE PREVIEW AREA */
+  .preview-area {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--builder-surface);
+    border: 1px solid var(--builder-border);
+    border-radius: 16px;
+  }
+
+  .preview-title {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--color-gold);
+    margin-bottom: 12px;
+  }
+
+  .preview-subtitle {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin-bottom: 24px;
+  }
+
+  .preview-card {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    max-width: 400px;
+  }
+
+  .preview-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-gold);
+    margin-bottom: 8px;
+  }
+
+  .preview-card p {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    line-height: 1.7;
+  }
+
+  .preview-btn {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 14px 32px;
+    background: var(--color-gold);
+    color: var(--color-black);
+    border: 2px solid var(--color-gold);
+    border-radius: var(--radius-btn);
+    font-family: var(--font-button);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .preview-btn:hover {
+    background: transparent;
+    color: var(--color-gold);
+  }
+
+  .preview-form-input {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--color-input-bg);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-input);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+  }
+
+  .preview-form-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-gold);
+    margin-bottom: 8px;
+  }
+
+  /* EXPORT SECTION */
+  .export-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.05));
+    border: 1px solid var(--builder-gold);
+    border-radius: 16px;
+  }
+
+  .export-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--builder-gold);
+    margin-bottom: 16px;
+  }
+
+  .export-btn {
+    padding: 14px 28px;
+    background: var(--builder-gold);
+    color: var(--builder-bg);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+
+  .export-btn:hover {
+    background: var(--builder-gold-light);
+    transform: translateY(-1px);
+  }
+
+  .export-btn.secondary {
+    background: var(--builder-surface);
+    color: var(--builder-gold);
+    border: 1px solid var(--builder-gold);
+  }
+
+  .export-btn.secondary:hover {
+    background: rgba(201,168,76,0.1);
+  }
+
+  .css-output {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--builder-bg);
+    border: 1px solid var(--builder-border);
+    border-radius: 8px;
+    font-family: 'Inter', monospace;
+    font-size: 0.75rem;
+    color: var(--builder-gold-light);
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    display: none;
+  }
+
+  .css-output.visible {
+    display: block;
+  }
+
+  /* PRESETS */
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .preset-card {
+    padding: 16px;
+    background: var(--builder-surface);
+    border: 1px solid var(--builder-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .preset-card:hover {
+    border-color: var(--builder-gold);
+    transform: translateY(-2px);
+  }
+
+  .preset-card.active {
+    border-color: var(--builder-gold);
+    background: rgba(201,168,76,0.1);
+  }
+
+  .preset-swatch {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .preset-color {
+    flex: 1;
+    height: 24px;
+    border-radius: 4px;
+  }
+
+  .preset-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--builder-text);
+  }
+
+  .preset-desc {
+    font-size: 0.7rem;
+    color: var(--builder-text-muted);
+    margin-top: 4px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .builder-app {
+      grid-template-columns: 1fr;
+    }
+    .builder-sidebar {
+      position: relative;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--builder-border);
+    }
+    .builder-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .builder-nav-item {
+      margin-bottom: 0;
+      flex: 1;
+      min-width: 140px;
+    }
+    .builder-nav-btn {
+      justify-content: center;
+      padding: 12px 16px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .builder-main { padding: 24px; }
+    .control-row { grid-template-columns: 1fr; }
+    .builder-header h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="builder-app">
+  <!-- SIDEBAR -->
+  <aside class="builder-sidebar">
+    <div class="builder-logo">Design System</div>
+    <div class="builder-subtitle">Miss Club Model SA</div>
+
+    <nav>
+      <ul class="builder-nav">
+        <li class="builder-nav-item">
+          <button class="builder-nav-btn active" data-panel="colors">
+            <svg class="builder-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+            Colors
+          </button>
+        </li>
+        <li class="builder-nav-item">
+          <button class="builder-nav-btn" data-panel="typography">
+            <svg class="builder-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 7 4 4 20 4 20 7" />
+              <line x1="9" y1="20" x2="15" y2="20" />
+              <line x1="12" y1="4" x2="12" y2="20" />
+            </svg>
+            Typography
+          </button>
+        </li>
+        <li class="builder-nav-item">
+          <button class="builder-nav-btn" data-panel="spacing">
+            <svg class="builder-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="9" y1="21" x2="9" y2="9" />
+            </svg>
+            Spacing & Sizing
+          </button>
+        </li>
+        <li class="builder-nav-item">
+          <button class="builder-nav-btn" data-panel="components">
+            <svg class="builder-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="9" />
+              <rect x="14" y="3" width="7" height="5" />
+              <rect x="14" y="12" width="7" height="9" />
+              <rect x="3" y="16" width="7" height="5" />
+            </svg>
+            Components
+          </button>
+        </li>
+        <li class="builder-nav-item">
+          <button class="builder-nav-btn" data-panel="effects">
+            <svg class="builder-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            Effects & Motion
+          </button>
+        </li>
+        <li class="builder-nav-item">
+          <button class="builder-nav-btn" data-panel="presets">
+            <svg class="builder-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+            Presets
+          </button>
+        </li>
+        <li class="builder-nav-item">
+          <button class="builder-nav-btn" data-panel="export">
+            <svg class="builder-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Export / Apply
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="builder-main">
+    <header class="builder-header">
+      <h1>Design System Builder</h1>
+      <p>Visual theme editor for Miss Club Model SA — control every design token, see live preview, export CSS</p>
+    </header>
+
+    <!-- COLORS PANEL -->
+    <section class="builder-panel active" id="panel-colors">
+      <div class="panel-section">
+        <h2 class="panel-section-title">Core Brand Colors</h2>
+        <div class="control-group">
+          <label class="control-label">Primary Gold (--color-gold)</label>
+          <input type="color" class="builder-color" id="colorGold" value="#c9a84c">
+          <div class="control-hint">Main brand color — buttons, accents, borders, gold text</div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Gold Light (--color-gold-light)</label>
+          <input type="color" class="builder-color" id="colorGoldLight" value="#f0d878">
+          <div class="control-hint">Hover states, highlights, lighter accents</div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Gold Dark (--color-gold-dark)</label>
+          <input type="color" class="builder-color" id="colorGoldDark" value="#8b6914">
+          <div class="control-hint">Borders, disabled states, darker accents</div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Neutral Palette</h2>
+        <div class="control-group">
+          <label class="control-label">Pure Black (--color-black)</label>
+          <input type="color" class="builder-color" id="colorBlack" value="#0a0a0a">
+          <div class="control-hint">Page background, darkest surfaces</div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Dark Surface (--color-dark)</label>
+          <input type="color" class="builder-color" id="colorDark" value="#1a1a1a">
+          <div class="control-hint">Card backgrounds, sections</div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Darker Surface (--color-darker)</label>
+          <input type="color" class="builder-color" id="colorDarker" value="#121212">
+          <div class="control-hint">Deeper elevation, modals</div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Cream Text (--color-cream)</label>
+          <input type="color" class="builder-color" id="colorCream" value="#f5f0e8">
+          <div class="control-hint">Primary body text</div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Muted Text (--color-text-muted)</label>
+          <input type="color" class="builder-color" id="colorTextMuted" value="#999999">
+          <div class="control-hint">Secondary text, placeholders</div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Semantic Colors</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Success (--color-success)</label>
+            <input type="color" class="builder-color" id="colorSuccess" value="#27ae60">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Error (--color-error)</label>
+            <input type="color" class="builder-color" id="colorError" value="#e74c3c">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Info (--color-info)</label>
+            <input type="color" class="builder-color" id="colorInfo" value="#3498db">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Warning (--color-warning)</label>
+            <input type="color" class="builder-color" id="colorWarning" value="#f39c12">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Component-Specific Colors</h2>
+        <div class="control-group">
+          <label class="control-label">Card Background (--color-card-bg)</label>
+          <input type="color" class="builder-color" id="colorCardBg" value="#1a1a1a">
+        </div>
+        <div class="control-group">
+          <label class="control-label">Border Color (--color-border)</label>
+          <input type="color" class="builder-color" id="colorBorder" value="#2a2a2a">
+        </div>
+        <div class="control-group">
+          <label class="control-label">Input Background (--color-input-bg)</label>
+          <input type="color" class="builder-color" id="colorInputBg" value="#0a0a0a">
+        </div>
+        <div class="control-group">
+          <label class="control-label">Input Border (--color-input-border)</label>
+          <input type="color" class="builder-color" id="colorInputBorder" value="#444444">
+        </div>
+        <div class="control-group">
+          <label class="control-label">Input Focus Border (--color-input-focus)</label>
+          <input type="color" class="builder-color" id="colorInputFocus" value="#c9a84c">
+        </div>
+        <div class="control-group">
+          <label class="control-label">Overlay/Modal Background (--color-overlay)</label>
+          <input type="color" class="builder-color" id="colorOverlay" value="#000000">
+          <div class="control-hint">Modal overlays — opacity controlled separately</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TYPOGRAPHY PANEL -->
+    <section class="builder-panel" id="panel-typography">
+      <div class="panel-section">
+        <h2 class="panel-section-title">Font Families</h2>
+
+        <div class="control-group">
+          <label class="control-label">Heading Font (--font-heading)</label>
+          <select class="builder-select" id="fontHeading">
+            <option value="'Playfair Display', serif">Playfair Display (Current - Elegant Serif)</option>
+            <option value="'DM Serif Display', serif">DM Serif Display (Modern High-Contrast)</option>
+            <option value="'Lora', serif">Lora (Contemporary Serif)</option>
+            <option value="'Montserrat', sans-serif">Montserrat (Geometric Sans - Bold)</option>
+            <option value="'Inter', sans-serif">Inter (Current Body - Also Works for Headings)</option>
+            <option value="'Cormorant Garamond', serif">Cormorant Garamond (Classic Editorial)</option>
+            <option value="'Bodoni Moda', serif">Bodoni Moda (High Fashion)</option>
+            <option value="'Fraunces', serif">Fraunces (Display Serif with Personality)</option>
+          </select>
+          <div class="control-hint">Used for: h1-h4, .section-title, .logo-text, buttons</div>
+        </div>
+
+        <div class="font-preview" id="headingPreview">
+          <div class="font-preview-text" style="font-family: 'Playfair Display', serif;">Miss Club Model SA — Heading Preview</div>
+          <div class="font-preview-text body" style="font-family: 'Playfair Display', serif;">Section Title Example</div>
+          <div class="font-preview-text caption" style="font-family: 'Playfair Display', serif;">Button Text & Labels</div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Body Font (--font-body)</label>
+          <select class="builder-select" id="fontBody">
+            <option value="'Inter', sans-serif">Inter (Current - Clean & Readable)</option>
+            <option value="'Montserrat', sans-serif">Montserrat (Geometric, Modern)</option>
+            <option value="'Lora', serif">Lora (Serif - Editorial Feel)</option>
+            <option value="'DM Sans', sans-serif">DM Sans (Geometric, Friendly)</option>
+            <option value="'Outfit', sans-serif">Outfit (Contemporary, Versatile)</option>
+            <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans (Modern, Expressive)</option>
+            <option value="'Work Sans', sans-serif">Work Sans (Clean, Professional)</option>
+            <option value="'IBMPlex Sans', sans-serif">IBM Plex Sans (Technical, Precise)</option>
+          </select>
+          <div class="control-hint">Used for: paragraphs, form inputs, body text, navigation</div>
+        </div>
+
+        <div class="font-preview" id="bodyPreview">
+          <div class="font-preview-text" style="font-family: 'Inter', sans-serif;">Miss Club Model SA — Body Preview</div>
+          <div class="font-preview-text body" style="font-family: 'Inter', sans-serif;">This is body text at regular size. It should be highly readable at small sizes.</div>
+          <div class="font-preview-text caption" style="font-family: 'Inter', sans-serif;">Caption / metadata text</div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Button/Accent Font (--font-button)</label>
+          <select class="builder-select" id="fontButton">
+            <option value="'Playfair Display', serif">Playfair Display (Matches Headings)</option>
+            <option value="'Montserrat', sans-serif">Montserrat (Bold, Geometric)</option>
+            <option value="'Inter', sans-serif">Inter (Consistent with Body)</option>
+            <option value="'DM Sans', sans-serif">DM Sans (Modern, Clean)</option>
+            <option value="'Outfit', sans-serif">Outfit (Contemporary)</option>
+          </select>
+          <div class="control-hint">Used for: .btn, .form-submit, primary CTAs</div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Font Sizes (Responsive Clamp)</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">H1 / Hero (--text-h1)</label>
+            <input type="text" class="builder-input" id="textH1" value="clamp(3rem, 8vw, 5rem)">
+          </div>
+          <div class="control-group">
+            <label class="control-label">H2 / Section (--text-h2)</label>
+            <input type="text" class="builder-input" id="textH2" value="clamp(2rem, 5vw, 2.8rem)">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">H3 / Card Title (--text-h3)</label>
+            <input type="text" class="builder-input" id="textH3" value="clamp(1.3rem, 3vw, 1.5rem)">
+          </div>
+          <div class="control-group">
+            <label class="control-label">H4 / Small Title (--text-h4)</label>
+            <input type="text" class="builder-input" id="textH4" value="clamp(1.1rem, 2.5vw, 1.25rem)">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Body Large (--text-body-lg)</label>
+            <input type="text" class="builder-input" id="textBodyLg" value="clamp(1.15rem, 2.5vw, 1.3rem)">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Body (--text-body)</label>
+            <input type="text" class="builder-input" id="textBody" value="1rem">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Small (--text-sm)</label>
+            <input type="text" class="builder-input" id="textSm" value="0.9rem">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Caption (--text-caption)</label>
+            <input type="text" class="builder-input" id="textCaption" value="0.85rem">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Font Weights & Line Heights</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Light (--weight-light)</label>
+            <input type="number" class="builder-input" id="weightLight" value="300" min="100" max="900" step="100">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Regular (--weight-regular)</label>
+            <input type="number" class="builder-input" id="weightRegular" value="400" min="100" max="900" step="100">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Medium (--weight-medium)</label>
+            <input type="number" class="builder-input" id="weightMedium" value="500" min="100" max="900" step="100">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Bold (--weight-bold)</label>
+            <input type="number" class="builder-input" id="weightBold" value="600" min="100" max="900" step="100">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Line Height Tight (--leading-tight)</label>
+            <input type="text" class="builder-input" id="leadingTight" value="1.2">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Line Height Normal (--leading-normal)</label>
+            <input type="text" class="builder-input" id="leadingNormal" value="1.6">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Line Height Relaxed (--leading-relaxed)</label>
+            <input type="text" class="builder-input" id="leadingRelaxed" value="1.8">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Letter Spacing Tight (--tracking-tight)</label>
+            <input type="text" class="builder-input" id="trackingTight" value="-0.02em">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Letter Spacing Normal (--tracking-normal)</label>
+            <input type="text" class="builder-input" id="trackingNormal" value="0">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Letter Spacing Wide (--tracking-wide)</label>
+            <input type="text" class="builder-input" id="trackingWide" value="0.02em">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPACING & SIZING PANEL -->
+    <section class="builder-panel" id="panel-spacing">
+      <div class="panel-section">
+        <h2 class="panel-section-title">Spacing Scale</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Space 1 (--space-1)</label>
+            <input type="text" class="builder-input" id="space1" value="0.25rem">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Space 2 (--space-2)</label>
+            <input type="text" class="builder-input" id="space2" value="0.5rem">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Space 3 (--space-3)</label>
+            <input type="text" class="builder-input" id="space3" value="0.75rem">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Space 4 (--space-4)</label>
+            <input type="text" class="builder-input" id="space4" value="1rem">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Space 5 (--space-5)</label>
+            <input type="text" class="builder-input" id="space5" value="1.5rem">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Space 6 (--space-6)</label>
+            <input type="text" class="builder-input" id="space6" value="2rem">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Space 8 (--space-8)</label>
+            <input type="text" class="builder-input" id="space8" value="3rem">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Space 10 (--space-10)</label>
+            <input type="text" class="builder-input" id="space10" value="4rem">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Border Radius</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Radius None (--radius-none)</label>
+            <input type="text" class="builder-input" id="radiusNone" value="0">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Radius SM (--radius-sm)</label>
+            <input type="text" class="builder-input" id="radiusSm" value="4px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Radius MD (--radius-md)</label>
+            <input type="text" class="builder-input" id="radiusMd" value="8px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Radius LG (--radius-lg)</label>
+            <input type="text" class="builder-input" id="radiusLg" value="12px">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Radius XL (--radius-xl)</label>
+            <input type="text" class="builder-input" id="radiusXl" value="16px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Radius 2XL (--radius-2xl)</label>
+            <input type="text" class="builder-input" id="radius2xl" value="24px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Radius Full (--radius-full)</label>
+            <input type="text" class="builder-input" id="radiusFull" value="9999px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Button Radius (--radius-btn)</label>
+            <input type="text" class="builder-input" id="radiusBtn" value="8px">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Card Radius (--radius-card)</label>
+            <input type="text" class="builder-input" id="radiusCard" value="16px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Input Radius (--radius-input)</label>
+            <input type="text" class="builder-input" id="radiusInput" value="8px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Modal Radius (--radius-modal)</label>
+            <input type="text" class="builder-input" id="radiusModal" value="16px">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Container & Layout</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Container Max Width (--container-max)</label>
+            <input type="text" class="builder-input" id="containerMax" value="1400px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Container Padding (--container-pad)</label>
+            <input type="text" class="builder-input" id="containerPad" value="40px">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Section Padding Y (--section-py)</label>
+            <input type="text" class="builder-input" id="sectionPy" value="100px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Section Padding X (--section-px)</label>
+            <input type="text" class="builder-input" id="sectionPx" value="40px">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Grid Gap Default (--gap-default)</label>
+            <input type="text" class="builder-input" id="gapDefault" value="30px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Grid Gap Small (--gap-sm)</label>
+            <input type="text" class="builder-input" id="gapSm" value="16px">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Border Widths</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Border Thin (--border-thin)</label>
+            <input type="text" class="builder-input" id="borderThin" value="1px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Border Default (--border-default)</label>
+            <input type="text" class="builder-input" id="borderDefault" value="1px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Border Thick (--border-thick)</label>
+            <input type="text" class="builder-input" id="borderThick" value="2px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Focus Ring (--focus-ring)</label>
+            <input type="text" class="builder-input" id="focusRing" value="3px">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPONENTS PANEL -->
+    <section class="builder-panel" id="panel-components">
+      <div class="panel-section">
+        <h2 class="panel-section-title">Buttons</h2>
+        <div class="control-group">
+          <label class="control-label">Primary Button Style</label>
+          <select class="builder-select" id="btnPrimaryStyle">
+            <option value="filled">Filled Gold (Current)</option>
+            <option value="outline">Outline Gold</option>
+            <option value="gradient">Gold Gradient</option>
+            <option value="minimal">Minimal / Text Only</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Padding Y (--btn-py)</label>
+            <input type="text" class="builder-input" id="btnPy" value="16px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Padding X (--btn-px)</label>
+            <input type="text" class="builder-input" id="btnPx" value="36px">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Hover Transform (--btn-hover-lift)</label>
+            <input type="text" class="builder-input" id="btnHoverLift" value="-2px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Hover Shadow (--btn-hover-shadow)</label>
+            <input type="text" class="builder-input" id="btnHoverShadow" value="0 8px 24px rgba(201,168,76,0.3)">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Cards & Panels</h2>
+        <div class="control-group">
+          <label class="control-label">Card Style</label>
+          <select class="builder-select" id="cardStyle">
+            <option value="bordered">Bordered (Current)</option>
+            <option value="elevated">Elevated Shadow</option>
+            <option value="filled">Filled Background</option>
+            <option value="glass">Glassmorphism</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Card Shadow (--card-shadow)</label>
+            <input type="text" class="builder-input" id="cardShadow" value="0 4px 20px rgba(0,0,0,0.3)">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Card Hover Shadow (--card-hover-shadow)</label>
+            <input type="text" class="builder-input" id="cardHoverShadow" value="0 20px 40px rgba(201,168,76,0.15)">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Card Hover Lift (--card-hover-lift)</label>
+            <input type="text" class="builder-input" id="cardHoverLift" value="-6px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Card Border Color</label>
+            <input type="color" class="builder-color" id="cardBorderColor" value="#2a2a2a">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Form Elements</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Input Height (--input-height)</label>
+            <input type="text" class="builder-input" id="inputHeight" value="48px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Label Gap (--label-gap)</label>
+            <input type="text" class="builder-input" id="labelGap" value="8px">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Focus Ring Width (--input-focus-ring)</label>
+            <input type="text" class="builder-input" id="inputFocusRing" value="3px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Focus Ring Color</label>
+            <input type="color" class="builder-color" id="inputFocusColor" value="#c9a84c">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Checkbox/Radio Size (--checkbox-size)</label>
+          <input type="text" class="builder-input" id="checkboxSize" value="20px">
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Navigation</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Nav Height (--nav-height)</label>
+            <input type="text" class="builder-input" id="navHeight" value="72px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Nav Background</label>
+            <input type="color" class="builder-color" id="navBg" value="#0a0a0a">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Nav Border</label>
+            <input type="color" class="builder-color" id="navBorder" value="#c9a84c">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Nav Blur (--nav-blur)</label>
+            <input type="text" class="builder-input" id="navBlur" value="10px">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Modals & Overlays</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Overlay Opacity (--overlay-opacity)</label>
+            <input type="range" class="builder-range" id="overlayOpacity" min="0" max="1" step="0.05" value="0.85">
+            <span class="range-value" id="overlayOpacityVal">0.85</span>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Modal Max Width (--modal-max-w)</label>
+            <input type="text" class="builder-input" id="modalMaxW" value="500px">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Modal Padding (--modal-padding)</label>
+            <input type="text" class="builder-input" id="modalPadding" value="40px">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Close Button Size (--close-btn-size)</label>
+            <input type="text" class="builder-input" id="closeBtnSize" value="40px">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EFFECTS & MOTION PANEL -->
+    <section class="builder-panel" id="panel-effects">
+      <div class="panel-section">
+        <h2 class="panel-section-title">Transitions</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Fast (--transition-fast)</label>
+            <input type="text" class="builder-input" id="transitionFast" value="150ms ease">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Normal (--transition-normal)</label>
+            <input type="text" class="builder-input" id="transitionNormal" value="300ms ease">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Slow (--transition-slow)</label>
+            <input type="text" class="builder-input" id="transitionSlow" value="500ms ease">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Bounce (--transition-bounce)</label>
+            <input type="text" class="builder-input" id="transitionBounce" value="300ms cubic-bezier(0.34, 1.56, 0.64, 1)">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Shadows</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Shadow SM (--shadow-sm)</label>
+            <input type="text" class="builder-input" id="shadowSm" value="0 2px 8px rgba(0,0,0,0.2)">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Shadow MD (--shadow-md)</label>
+            <input type="text" class="builder-input" id="shadowMd" value="0 8px 24px rgba(0,0,0,0.3)">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Shadow LG (--shadow-lg)</label>
+            <input type="text" class="builder-input" id="shadowLg" value="0 20px 40px rgba(0,0,0,0.4)">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Gold Glow (--shadow-gold)</label>
+            <input type="text" class="builder-input" id="shadowGold" value="0 8px 30px rgba(201,168,76,0.3)">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Inner Shadow (--shadow-inner)</label>
+            <input type="text" class="builder-input" id="shadowInner" value="inset 0 2px 4px rgba(0,0,0,0.2)">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Animations</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Fade In Duration (--anim-fade-in)</label>
+            <input type="text" class="builder-input" id="animFadeIn" value="300ms">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Slide Up Duration (--anim-slide-up)</label>
+            <input type="text" class="builder-input" id="animSlideUp" value="400ms">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Scale Hover (--anim-scale-hover)</label>
+            <input type="text" class="builder-input" id="animScaleHover" value="1.02">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Image Hover Scale (--anim-img-scale)</label>
+            <input type="text" class="builder-input" id="animImgScale" value="1.08">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Reduce Motion</label>
+          <div class="toggle-wrapper">
+            <label class="toggle-switch">
+              <input type="checkbox" id="reduceMotion">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>Respect prefers-reduced-motion</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Parallax & Scroll Effects</h2>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Hero Parallax Speed (--parallax-speed)</label>
+            <input type="range" class="builder-range" id="parallaxSpeed" min="0" max="1" step="0.1" value="0.5">
+            <span class="range-value" id="parallaxSpeedVal">0.5</span>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Scroll Reveal Offset (--scroll-offset)</label>
+            <input type="text" class="builder-input" id="scrollOffset" value="100px">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRESETS PANEL -->
+    <section class="builder-panel" id="panel-presets">
+      <div class="panel-section">
+        <h2 class="panel-section-title">Design Presets</h2>
+        <p style="color: var(--builder-text-muted); margin-bottom: 20px;">Click a preset to apply a complete design language. Based on Miss SA and modern luxury trends.</p>
+
+        <div class="preset-grid" id="presetGrid">
+          <!-- Presets rendered by JS -->
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2 class="panel-section-title">Miss SA-Inspired Themes</h2>
+        <div class="preset-grid" id="missSaPresets">
+          <!-- Miss SA presets rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPORT PANEL -->
+    <section class="builder-panel" id="panel-export">
+      <div class="panel-section">
+        <h2 class="panel-section-title">Export & Apply</h2>
+
+        <div class="export-section">
+          <h3 class="export-title">Generate CSS Custom Properties</h3>
+          <button class="export-btn" id="btnGenerateCSS">Generate CSS Variables</button>
+          <button class="export-btn secondary" id="btnCopyCSS">Copy to Clipboard</button>
+          <button class="export-btn secondary" id="btnDownloadCSS">Download .css File</button>
+          <button class="export-btn secondary" id="btnApplyLive">Apply to Live Preview</button>
+          <pre class="css-output" id="cssOutput"></pre>
+        </div>
+
+        <div class="panel-section">
+          <h2 class="panel-section-title">Integration Guide</h2>
+          <pre class="css-output visible" style="color: var(--builder-text); font-size: 0.8rem; line-height: 1.7;">
+<!-- 1. Add to your HTML <head> -->
+<link rel="stylesheet" href="design-tokens.css">
+
+<!-- 2. Or inline the :root block in your main CSS -->
+:root {
+  --color-gold: #c9a84c;
+  --color-gold-light: #f0d878;
+  --color-gold-dark: #8b6914;
+  --color-black: #0a0a0a;
+  --color-dark: #1a1a1a;
+  --color-darker: #121212;
+  --color-cream: #f5f0e8;
+  --color-text-muted: #999999;
+  --color-success: #27ae60;
+  --color-error: #e74c3c;
+  --color-info: #3498db;
+  --color-warning: #f39c12;
+  --color-card-bg: #1a1a1a;
+  --color-border: #2a2a2a;
+  --color-input-bg: #0a0a0a;
+  --color-input-border: #444444;
+  --color-input-focus: #c9a84c;
+  --color-overlay: #000000;
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-button: 'Playfair Display', serif;
+
+  --text-h1: clamp(3rem, 8vw, 5rem);
+  --text-h2: clamp(2rem, 5vw, 2.8rem);
+  --text-h3: clamp(1.3rem, 3vw, 1.5rem);
+  --text-h4: clamp(1.1rem, 2.5vw, 1.25rem);
+  --text-body-lg: clamp(1.15rem, 2.5vw, 1.3rem);
+  --text-body: 1rem;
+  --text-sm: 0.9rem;
+  --text-caption: 0.85rem;
+
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 600;
+  --leading-tight: 1.2;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.8;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+  --radius-btn: 8px;
+  --radius-card: 16px;
+  --radius-input: 8px;
+  --radius-modal: 16px;
+
+  --border-thin: 1px;
+  --border-default: 1px;
+  --border-thick: 2px;
+  --focus-ring: 3px;
+
+  --container-max: 1400px;
+  --container-pad: 40px;
+  --section-py: 100px;
+  --section-px: 40px;
+  --gap-default: 30px;
+  --gap-sm: 16px;
+
+  --nav-height: 72px;
+  --nav-blur: 10px;
+
+  --overlay-opacity: 0.85;
+  --modal-max-w: 500px;
+  --modal-padding: 40px;
+  --close-btn-size: 40px;
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+  --transition-bounce: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.3);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,0.4);
+  --shadow-gold: 0 8px 30px rgba(201,168,76,0.3);
+  --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.2);
+
+  --anim-fade-in: 300ms;
+  --anim-slide-up: 400ms;
+  --anim-scale-hover: 1.02;
+  --anim-img-scale: 1.08;
+
+  --parallax-speed: 0.5;
+  --scroll-offset: 100px;
+}
+
+<!-- 3. Use in your components -->
+.section-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-h2);
+  color: var(--color-gold);
+}
+
+.btn {
+  font-family: var(--font-button);
+  padding: var(--btn-py) var(--btn-px);
+  border-radius: var(--radius-btn);
+  background: var(--color-gold);
+  border: var(--border-thick) solid var(--color-gold);
+  transition: var(--transition-normal);
+}
+
+.card {
+  background: var(--color-card-bg);
+  border: var(--border-default) solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-normal);
+}
+          </pre>
+        </div>
+
+        <div class="panel-section">
+          <h2 class="panel-section-title">CMS Integration</h2>
+          <pre class="css-output visible" style="color: var(--builder-text); font-size: 0.8rem; line-height: 1.7;">
+<!-- Add these data-cms-key attributes to your Google Sheets columns -->
+
+# Colors
+colorGold, colorGoldLight, colorGoldDark
+colorBlack, colorDark, colorDarker
+colorCream, colorTextMuted
+colorCardBg, colorBorder, colorInputBg, colorInputBorder
+
+# Typography
+fontHeading, fontBody, fontButton
+textH1, textH2, textH3, textH4, textBody, textSm, textCaption
+
+# Spacing
+containerMax, sectionPy, sectionPx, gapDefault
+radiusCard, radiusBtn, radiusInput, radiusModal
+
+# Component Styles
+btnPrimaryStyle, cardStyle, navHeight, overlayOpacity
+
+# Then in your CMS loader:
+document.querySelectorAll('[data-cms-key]').forEach(el => {
+  const key = el.getAttribute('data-cms-key');
+  if (content[key] && key.startsWith('color')) {
+    document.documentElement.style.setProperty('--' + key.replace(/([A-Z])/g, '-$1').toLowerCase(), content[key]);
+  }
+});
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE PREVIEW -->
+    <div class="preview-area">
+      <h3 style="font-family: var(--font-heading); color: var(--color-gold); margin-bottom: 20px; font-size: 1.5rem;">Live Preview</h3>
+
+      <div class="preview-card" id="livePreviewCard">
+        <h3 class="preview-title">Miss Club Model SA</h3>
+        <p class="preview-subtitle">A Platform for Leadership, Elegance & Empowerment</p>
+        <p>Miss Club Model SA celebrates elegance, intelligence, and empowerment. We provide a platform for extraordinary women to showcase their talent, advocate for meaningful causes, and inspire communities across South Africa.</p>
+        <a href="#" class="preview-btn">Apply Now</a>
+
+        <label class="preview-form-label">Email Address</label>
+        <input type="email" class="preview-form-input" placeholder="you@domain.com">
+
+        <label class="preview-form-label" style="margin-top: 16px;">Event Selection</label>
+        <select class="preview-form-input">
+          <option>Select an event</option>
+          <option>Miss Club Model SA Gala 2026</option>
+          <option>Regional Auditions - Johannesburg</option>
+        </select>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ============================================
+// DESIGN SYSTEM STATE
+// ============================================
+const state = {
+  // Colors
+  colorGold: '#c9a84c',
+  colorGoldLight: '#f0d878',
+  colorGoldDark: '#8b6914',
+  colorBlack: '#0a0a0a',
+  colorDark: '#1a1a1a',
+  colorDarker: '#121212',
+  colorCream: '#f5f0e8',
+  colorTextMuted: '#999999',
+  colorSuccess: '#27ae60',
+  colorError: '#e74c3c',
+  colorInfo: '#3498db',
+  colorWarning: '#f39c12',
+  colorCardBg: '#1a1a1a',
+  colorBorder: '#2a2a2a',
+  colorInputBg: '#0a0a0a',
+  colorInputBorder: '#444444',
+  colorInputFocus: '#c9a84c',
+  colorOverlay: '#000000',
+
+  // Typography
+  fontHeading: "'Playfair Display', serif",
+  fontBody: "'Inter', sans-serif",
+  fontButton: "'Playfair Display', serif",
+  textH1: 'clamp(3rem, 8vw, 5rem)',
+  textH2: 'clamp(2rem, 5vw, 2.8rem)',
+  textH3: 'clamp(1.3rem, 3vw, 1.5rem)',
+  textH4: 'clamp(1.1rem, 2.5vw, 1.25rem)',
+  textBodyLg: 'clamp(1.15rem, 2.5vw, 1.3rem)',
+  textBody: '1rem',
+  textSm: '0.9rem',
+  textCaption: '0.85rem',
+  weightLight: '300',
+  weightRegular: '400',
+  weightMedium: '500',
+  weightBold: '600',
+  leadingTight: '1.2',
+  leadingNormal: '1.6',
+  leadingRelaxed: '1.8',
+  trackingTight: '-0.02em',
+  trackingNormal: '0',
+  trackingWide: '0.02em',
+
+  // Spacing
+  space1: '0.25rem',
+  space2: '0.5rem',
+  space3: '0.75rem',
+  space4: '1rem',
+  space5: '1.5rem',
+  space6: '2rem',
+  space8: '3rem',
+  space10: '4rem',
+  radiusNone: '0',
+  radiusSm: '4px',
+  radiusMd: '8px',
+  radiusLg: '12px',
+  radiusXl: '16px',
+  radius2xl: '24px',
+  radiusFull: '9999px',
+  radiusBtn: '8px',
+  radiusCard: '16px',
+  radiusInput: '8px',
+  radiusModal: '16px',
+  borderThin: '1px',
+  borderDefault: '1px',
+  borderThick: '2px',
+  focusRing: '3px',
+  containerMax: '1400px',
+  containerPad: '40px',
+  sectionPy: '100px',
+  sectionPx: '40px',
+  gapDefault: '30px',
+  gapSm: '16px',
+
+  // Components
+  btnPrimaryStyle: 'filled',
+  btnPy: '16px',
+  btnPx: '36px',
+  btnHoverLift: '-2px',
+  btnHoverShadow: '0 8px 24px rgba(201,168,76,0.3)',
+  cardStyle: 'bordered',
+  cardShadow: '0 4px 20px rgba(0,0,0,0.3)',
+  cardHoverShadow: '0 20px 40px rgba(201,168,76,0.15)',
+  cardHoverLift: '-6px',
+  inputHeight: '48px',
+  labelGap: '8px',
+  inputFocusRing: '3px',
+  inputFocusColor: '#c9a84c',
+  checkboxSize: '20px',
+  navHeight: '72px',
+  navBg: '#0a0a0a',
+  navBorder: '#c9a84c',
+  navBlur: '10px',
+  overlayOpacity: '0.85',
+  modalMaxW: '500px',
+  modalPadding: '40px',
+  closeBtnSize: '40px',
+
+  // Effects
+  transitionFast: '150ms ease',
+  transitionNormal: '300ms ease',
+  transitionSlow: '500ms ease',
+  transitionBounce: '300ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+  shadowSm: '0 2px 8px rgba(0,0,0,0.2)',
+  shadowMd: '0 8px 24px rgba(0,0,0,0.3)',
+  shadowLg: '0 20px 40px rgba(0,0,0,0.4)',
+  shadowGold: '0 8px 30px rgba(201,168,76,0.3)',
+  shadowInner: 'inset 0 2px 4px rgba(0,0,0,0.2)',
+  animFadeIn: '300ms',
+  animSlideUp: '400ms',
+  animScaleHover: '1.02',
+  animImgScale: '1.08',
+  parallaxSpeed: '0.5',
+  scrollOffset: '100px',
+  reduceMotion: false
+};
+
+// ============================================
+// DOM ELEMENTS
+// ============================================
+const panels = document.querySelectorAll('.builder-panel');
+const navBtns = document.querySelectorAll('.builder-nav-btn');
+const cssOutput = document.getElementById('cssOutput');
+const livePreviewCard = document.getElementById('livePreviewCard');
+const headingPreview = document.getElementById('headingPreview');
+const bodyPreview = document.getElementById('bodyPreview');
+
+// ============================================
+// NAVIGATION
+// ============================================
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const panelId = btn.dataset.panel;
+    navBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    panels.forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + panelId).classList.add('active');
+  });
+});
+
+// ============================================
+// INPUT SYNC
+// ============================================
+function syncInputs() {
+  // Colors
+  document.querySelectorAll('input[type="color"]').forEach(input => {
+    const key = input.id.replace(/^color/, '').replace(/^([A-Z])/, m => m.toLowerCase());
+    const fullKey = 'color' + key.charAt(0).toUpperCase() + key.slice(1);
+    if (state[fullKey] !== undefined) {
+      input.value = state[fullKey];
+    }
+  });
+
+  // Text inputs
+  document.querySelectorAll('input.builder-input, select.builder-select').forEach(input => {
+    const key = input.id;
+    if (state[key] !== undefined) {
+      input.value = state[key];
+    }
+  });
+
+  // Range inputs
+  document.querySelectorAll('input.builder-range').forEach(input => {
+    const key = input.id;
+    if (state[key] !== undefined) {
+      input.value = state[key];
+      const valEl = document.getElementById(key + 'Val');
+      if (valEl) valEl.textContent = state[key];
+    }
+  });
+
+  // Checkboxes
+  document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+    const key = input.id;
+    if (state[key] !== undefined) {
+      input.checked = state[key];
+    }
+  });
+}
+
+function bindInputs() {
+  // All inputs
+  document.querySelectorAll('input, select').forEach(input => {
+    const key = input.id;
+    if (state[key] === undefined) return;
+
+    if (input.type === 'color') {
+      input.addEventListener('input', () => {
+        state[key] = input.value;
+        applyToRoot();
+        updatePreview();
+      });
+    } else if (input.type === 'range') {
+      input.addEventListener('input', () => {
+        state[key] = input.value;
+        const valEl = document.getElementById(key + 'Val');
+        if (valEl) valEl.textContent = input.value;
+        applyToRoot();
+        updatePreview();
+      });
+    } else if (input.type === 'checkbox') {
+      input.addEventListener('change', () => {
+        state[key] = input.checked;
+        applyToRoot();
+        updatePreview();
+      });
+    } else {
+      input.addEventListener('change', () => {
+        state[key] = input.value;
+        applyToRoot();
+        updatePreview();
+      });
+    }
+  });
+
+  // Font select preview updates
+  document.getElementById('fontHeading').addEventListener('change', (e) => {
+    headingPreview.querySelectorAll('.font-preview-text').forEach(el => {
+      el.style.fontFamily = e.target.value;
+    });
+  });
+
+  document.getElementById('fontBody').addEventListener('change', (e) => {
+    bodyPreview.querySelectorAll('.font-preview-text').forEach(el => {
+      el.style.fontFamily = e.target.value;
+    });
+  });
+}
+
+// ============================================
+// APPLY TO CSS ROOT
+// ============================================
+function applyToRoot() {
+  const root = document.documentElement;
+
+  // Map state keys to CSS custom properties
+  const cssMap = {
+    // Colors
+    colorGold: '--color-gold',
+    colorGoldLight: '--color-gold-light',
+    colorGoldDark: '--color-gold-dark',
+    colorBlack: '--color-black',
+    colorDark: '--color-dark',
+    colorDarker: '--color-darker',
+    colorCream: '--color-cream',
+    colorTextMuted: '--color-text-muted',
+    colorSuccess: '--color-success',
+    colorError: '--color-error',
+    colorInfo: '--color-info',
+    colorWarning: '--color-warning',
+    colorCardBg: '--color-card-bg',
+    colorBorder: '--color-border',
+    colorInputBg: '--color-input-bg',
+    colorInputBorder: '--color-input-border',
+    colorInputFocus: '--color-input-focus',
+    colorOverlay: '--color-overlay',
+
+    // Typography
+    fontHeading: '--font-heading',
+    fontBody: '--font-body',
+    fontButton: '--font-button',
+    textH1: '--text-h1',
+    textH2: '--text-h2',
+    textH3: '--text-h3',
+    textH4: '--text-h4',
+    textBodyLg: '--text-body-lg',
+    textBody: '--text-body',
+    textSm: '--text-sm',
+    textCaption: '--text-caption',
+    weightLight: '--weight-light',
+    weightRegular: '--weight-regular',
+    weightMedium: '--weight-medium',
+    weightBold: '--weight-bold',
+    leadingTight: '--leading-tight',
+    leadingNormal: '--leading-normal',
+    leadingRelaxed: '--leading-relaxed',
+    trackingTight: '--tracking-tight',
+    trackingNormal: '--tracking-normal',
+    trackingWide: '--tracking-wide',
+
+    // Spacing
+    space1: '--space-1',
+    space2: '--space-2',
+    space3: '--space-3',
+    space4: '--space-4',
+    space5: '--space-5',
+    space6: '--space-6',
+    space8: '--space-8',
+    space10: '--space-10',
+    radiusNone: '--radius-none',
+    radiusSm: '--radius-sm',
+    radiusMd: '--radius-md',
+    radiusLg: '--radius-lg',
+    radiusXl: '--radius-xl',
+    radius2xl: '--radius-2xl',
+    radiusFull: '--radius-full',
+    radiusBtn: '--radius-btn',
+    radiusCard: '--radius-card',
+    radiusInput: '--radius-input',
+    radiusModal: '--radius-modal',
+    borderThin: '--border-thin',
+    borderDefault: '--border-default',
+    borderThick: '--border-thick',
+    focusRing: '--focus-ring',
+    containerMax: '--container-max',
+    containerPad: '--container-pad',
+    sectionPy: '--section-py',
+    sectionPx: '--section-px',
+    gapDefault: '--gap-default',
+    gapSm: '--gap-sm',
+
+    // Components
+    btnPy: '--btn-py',
+    btnPx: '--btn-px',
+    btnHoverLift: '--btn-hover-lift',
+    btnHoverShadow: '--btn-hover-shadow',
+    cardShadow: '--card-shadow',
+    cardHoverShadow: '--card-hover-shadow',
+    cardHoverLift: '--card-hover-lift',
+    inputHeight: '--input-height',
+    labelGap: '--label-gap',
+    inputFocusRing: '--input-focus-ring',
+    inputFocusColor: '--input-focus-color',
+    checkboxSize: '--checkbox-size',
+    navHeight: '--nav-height',
+    navBg: '--nav-bg',
+    navBorder: '--nav-border',
+    navBlur: '--nav-blur',
+    overlayOpacity: '--overlay-opacity',
+    modalMaxW: '--modal-max-w',
+    modalPadding: '--modal-padding',
+    closeBtnSize: '--close-btn-size',
+
+    // Effects
+    transitionFast: '--transition-fast',
+    transitionNormal: '--transition-normal',
+    transitionSlow: '--transition-slow',
+    transitionBounce: '--transition-bounce',
+    shadowSm: '--shadow-sm',
+    shadowMd: '--shadow-md',
+    shadowLg: '--shadow-lg',
+    shadowGold: '--shadow-gold',
+    shadowInner: '--shadow-inner',
+    animFadeIn: '--anim-fade-in',
+    animSlideUp: '--anim-slide-up',
+    animScaleHover: '--anim-scale-hover',
+    animImgScale: '--anim-img-scale',
+    parallaxSpeed: '--parallax-speed',
+    scrollOffset: '--scroll-offset'
+  };
+
+  Object.entries(cssMap).forEach(([key, cssVar]) => {
+    if (state[key] !== undefined) {
+      root.style.setProperty(cssVar, state[key]);
+    }
+  });
+
+  // Special handling for reduce motion
+  if (state.reduceMotion) {
+    root.style.setProperty('--transition-fast', '0ms');
+    root.style.setProperty('--transition-normal', '0ms');
+    root.style.setProperty('--transition-slow', '0ms');
+    root.style.setProperty('--anim-fade-in', '0ms');
+    root.style.setProperty('--anim-slide-up', '0ms');
+  }
+}
+
+// ============================================
+// UPDATE PREVIEW
+// ============================================
+function updatePreview() {
+  // Update live preview card
+  const card = livePreviewCard;
+  if (card) {
+    card.style.setProperty('--font-heading', state.fontHeading);
+    card.style.setProperty('--font-body', state.fontBody);
+    card.style.setProperty('--font-button', state.fontButton);
+    card.style.setProperty('--color-gold', state.colorGold);
+    card.style.setProperty('--color-gold-light', state.colorGoldLight);
+    card.style.setProperty('--color-gold-dark', state.colorGoldDark);
+    card.style.setProperty('--color-black', state.colorBlack);
+    card.style.setProperty('--color-dark', state.colorDark);
+    card.style.setProperty('--color-cream', state.colorCream);
+    card.style.setProperty('--color-text', state.colorCream);
+    card.style.setProperty('--color-text-muted', state.colorTextMuted);
+    card.style.setProperty('--color-card-bg', state.colorCardBg);
+    card.style.setProperty('--color-border', state.colorBorder);
+    card.style.setProperty('--color-input-bg', state.colorInputBg);
+    card.style.setProperty('--color-input-border', state.colorInputBorder);
+    card.style.setProperty('--radius-card', state.radiusCard);
+    card.style.setProperty('--radius-btn', state.radiusBtn);
+    card.style.setProperty('--radius-input', state.radiusInput);
+    card.style.setProperty('--btn-py', state.btnPy);
+    card.style.setProperty('--btn-px', state.btnPx);
+    card.style.setProperty('--transition-normal', state.transitionNormal);
+    card.style.setProperty('--shadow-md', state.shadowMd);
+    card.style.setProperty('--shadow-gold', state.shadowGold);
+  }
+}
+
+// ============================================
+// GENERATE CSS OUTPUT
+// ============================================
+function generateCSS() {
+  let css = ':root {\n';
+
+  const categories = {
+    '/* === BRAND COLORS === */': [
+      'colorGold', 'colorGoldLight', 'colorGoldDark',
+      'colorBlack', 'colorDark', 'colorDarker',
+      'colorCream', 'colorTextMuted'
+    ],
+    '/* === SEMANTIC COLORS === */': [
+      'colorSuccess', 'colorError', 'colorInfo', 'colorWarning'
+    ],
+    '/* === COMPONENT COLORS === */': [
+      'colorCardBg', 'colorBorder', 'colorInputBg', 'colorInputBorder', 'colorInputFocus', 'colorOverlay'
+    ],
+    '/* === TYPOGRAPHY === */': [
+      'fontHeading', 'fontBody', 'fontButton',
+      'textH1', 'textH2', 'textH3', 'textH4', 'textBodyLg', 'textBody', 'textSm', 'textCaption',
+      'weightLight', 'weightRegular', 'weightMedium', 'weightBold',
+      'leadingTight', 'leadingNormal', 'leadingRelaxed',
+      'trackingTight', 'trackingNormal', 'trackingWide'
+    ],
+    '/* === SPACING === */': [
+      'space1', 'space2', 'space3', 'space4', 'space5', 'space6', 'space8', 'space10'
+    ],
+    '/* === BORDER RADIUS === */': [
+      'radiusNone', 'radiusSm', 'radiusMd', 'radiusLg', 'radiusXl', 'radius2xl', 'radiusFull',
+      'radiusBtn', 'radiusCard', 'radiusInput', 'radiusModal'
+    ],
+    '/* === BORDERS === */': [
+      'borderThin', 'borderDefault', 'borderThick', 'focusRing'
+    ],
+    '/* === LAYOUT === */': [
+      'containerMax', 'containerPad', 'sectionPy', 'sectionPx', 'gapDefault', 'gapSm'
+    ],
+    '/* === COMPONENTS === */': [
+      'btnPy', 'btnPx', 'btnHoverLift', 'btnHoverShadow',
+      'cardShadow', 'cardHoverShadow', 'cardHoverLift',
+      'inputHeight', 'labelGap', 'inputFocusRing', 'inputFocusColor', 'checkboxSize',
+      'navHeight', 'navBg', 'navBorder', 'navBlur',
+      'overlayOpacity', 'modalMaxW', 'modalPadding', 'closeBtnSize'
+    ],
+    '/* === EFFECTS === */': [
+      'transitionFast', 'transitionNormal', 'transitionSlow', 'transitionBounce',
+      'shadowSm', 'shadowMd', 'shadowLg', 'shadowGold', 'shadowInner',
+      'animFadeIn', 'animSlideUp', 'animScaleHover', 'animImgScale',
+      'parallaxSpeed', 'scrollOffset'
+    ]
+  };
+
+  Object.entries(categories).forEach(([comment, keys]) => {
+    css += '\n  ' + comment + '\n';
+    keys.forEach(key => {
+      if (state[key] !== undefined) {
+        const cssVar = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+        css += `  --${cssVar}: ${state[key]};\n`;
+      }
+    });
+  });
+
+  css += '}\n';
+  return css;
+}
+
+// ============================================
+// EXPORT BUTTONS
+// ============================================
+document.getElementById('btnGenerateCSS').addEventListener('click', () => {
+  const css = generateCSS();
+  cssOutput.textContent = css;
+  cssOutput.classList.add('visible');
+});
+
+document.getElementById('btnCopyCSS').addEventListener('click', () => {
+  const css = generateCSS();
+  navigator.clipboard.writeText(css).then(() => {
+    alert('CSS copied to clipboard!');
+  });
+});
+
+document.getElementById('btnDownloadCSS').addEventListener('click', () => {
+  const css = generateCSS();
+  const blob = new Blob([css], { type: 'text/css' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'design-tokens.css';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('btnApplyLive').addEventListener('click', () => {
+  applyToRoot();
+  updatePreview();
+  alert('Applied to live preview! Check the preview card below.');
+});
+
+// ============================================
+// PRESETS
+// ============================================
+const presets = {
+  'Current (Gold/Black/Cream)': {
+    colorGold: '#c9a84c', colorGoldLight: '#f0d878', colorGoldDark: '#8b6914',
+    colorBlack: '#0a0a0a', colorDark: '#1a1a1a', colorDarker: '#121212',
+    colorCream: '#f5f0e8', colorTextMuted: '#999999',
+    fontHeading: "'Playfair Display', serif", fontBody: "'Inter', sans-serif", fontButton: "'Playfair Display', serif"
+  },
+  'Miss SA Red/Gold': {
+    colorGold: '#d4a843', colorGoldLight: '#f0d878', colorGoldDark: '#8b6914',
+    colorBlack: '#0a0a0a', colorDark: '#1a1a1a', colorDarker: '#121212',
+    colorCream: '#ffffff', colorTextMuted: '#cccccc',
+    colorError: '#c0392b', colorSuccess: '#27ae60',
+    fontHeading: "'Playfair Display', serif", fontBody: "'Montserrat', sans-serif", fontButton: "'Montserrat', sans-serif",
+    colorCardBg: '#141414', colorBorder: '#c0392b', colorInputBorder: '#c0392b'
+  },
+  'Modern Luxury (Dark/Emerald)': {
+    colorGold: '#10b981', colorGoldLight: '#34d399', colorGoldDark: '#059669',
+    colorBlack: '#030712', colorDark: '#111827', colorDarker: '#0f172a',
+    colorCream: '#f8fafc', colorTextMuted: '#94a3b8',
+    fontHeading: "'DM Serif Display', serif", fontBody: "'Outfit', sans-serif", fontButton: "'Outfit', sans-serif",
+    colorCardBg: '#1e293b', colorBorder: '#334155', colorInputBg: '#0f172a', colorInputBorder: '#475569'
+  },
+  'Classic Editorial (Black/White)': {
+    colorGold: '#1a1a1a', colorGoldLight: '#404040', colorGoldDark: '#000000',
+    colorBlack: '#ffffff', colorDark: '#f5f5f5', colorDarker: '#eeeeee',
+    colorCream: '#0a0a0a', colorTextMuted: '#666666',
+    fontHeading: "'Bodoni Moda', serif", fontBody: "'Lora', serif", fontButton: "'Lora', serif",
+    colorCardBg: '#ffffff', colorBorder: '#e0e0e0', colorInputBg: '#ffffff', colorInputBorder: '#cccccc'
+  },
+  'Warm Sunset (Coral/Gold)': {
+    colorGold: '#f97316', colorGoldLight: '#fb923c', colorGoldDark: '#ea580c',
+    colorBlack: '#1c1917', colorDark: '#292524', colorDarker: '#1c1917',
+    colorCream: '#fef3e2', colorTextMuted: '#a8a29e',
+    fontHeading: "'Fraunces', serif", fontBody: "'DM Sans', sans-serif", fontButton: "'DM Sans', sans-serif",
+    colorCardBg: '#292524', colorBorder: '#44403c', colorInputBg: '#1c1917', colorInputBorder: '#57534e'
+  },
+  'Midnight Navy (Deep Blue/Gold)': {
+    colorGold: '#fbbf24', colorGoldLight: '#fcd34d', colorGoldDark: '#d97706',
+    colorBlack: '#0f172a', colorDark: '#1e293b', colorDarker: '#0f172a',
+    colorCream: '#f8fafc', colorTextMuted: '#94a3b8',
+    fontHeading: "'Cormorant Garamond', serif", fontBody: "'Inter', sans-serif", fontButton: "'Inter', sans-serif",
+    colorCardBg: '#1e293b', colorBorder: '#334155', colorInputBg: '#0f172a', colorInputBorder: '#475569'
+  }
+};
+
+function renderPresets() {
+  const grid = document.getElementById('presetGrid');
+  Object.entries(presets).forEach(([name, values]) => {
+    const card = document.createElement('div');
+    card.className = 'preset-card';
+    card.innerHTML = `
+      <div class="preset-swatch">
+        <div class="preset-color" style="background: ${values.colorGold}"></div>
+        <div class="preset-color" style="background: ${values.colorGoldLight}"></div>
+        <div class="preset-color" style="background: ${values.colorBlack}"></div>
+        <div class="preset-color" style="background: ${values.colorCream}"></div>
+      </div>
+      <div class="preset-name">${name}</div>
+      <div class="preset-desc">${values.fontHeading.split("'")[1]} + ${values.fontBody.split("'")[1]}</div>
+    `;
+    card.addEventListener('click', () => applyPreset(name, values));
+    grid.appendChild(card);
+  });
+}
+
+const missSaPresets = {
+  'Miss SA 2026 Official': {
+    colorGold: '#d4a843', colorGoldLight: '#f0d878', colorGoldDark: '#8b6914',
+    colorBlack: '#0a0a0a', colorDark: '#1a1a1a', colorDarker: '#121212',
+    colorCream: '#ffffff', colorTextMuted: '#cccccc',
+    colorError: '#c0392b', colorSuccess: '#27ae60', colorInfo: '#3498db',
+    fontHeading: "'Playfair Display', serif", fontBody: "'Montserrat', sans-serif", fontButton: "'Montserrat', sans-serif",
+    colorCardBg: '#141414', colorBorder: '#c0392b', colorInputBg: '#0a0a0a', colorInputBorder: '#c0392b',
+    radiusCard: '12px', radiusBtn: '6px', btnHoverLift: '-3px'
+  },
+  'Miss SA Editorial': {
+    colorGold: '#c9a84c', colorGoldLight: '#e8d5a0', colorGoldDark: '#8b6914',
+    colorBlack: '#0a0a0a', colorDark: '#1a1a1a', colorDarker: '#121212',
+    colorCream: '#f5f0e8', colorTextMuted: '#999999',
+    fontHeading: "'Bodoni Moda', serif", fontBody: "'Lora', serif", fontButton: "'Lora', serif",
+    colorCardBg: '#1a1a1a', colorBorder: '#2a2a2a', colorInputBg: '#0a0a0a', colorInputBorder: '#444444',
+    trackingWide: '0.05em', leadingRelaxed: '1.9'
+  },
+  'Miss SA Impact (Red Accent)': {
+    colorGold: '#d4a843', colorGoldLight: '#f0d878', colorGoldDark: '#8b6914',
+    colorBlack: '#0a0a0a', colorDark: '#1a1a1a', colorDarker: '#121212',
+    colorCream: '#ffffff', colorTextMuted: '#cccccc',
+    colorError: '#c0392b', colorSuccess: '#27ae60',
+    fontHeading: "'Playfair Display', serif", fontBody: "'Montserrat', sans-serif", fontButton: "'Montserrat', sans-serif",
+    colorCardBg: '#141414', colorBorder: '#c0392b', colorInputBorder: '#c0392b',
+    shadowGold: '0 8px 30px rgba(192,57,43,0.3)'
+  }
+};
+
+function renderMissSaPresets() {
+  const grid = document.getElementById('missSaPresets');
+  Object.entries(missSaPresets).forEach(([name, values]) => {
+    const card = document.createElement('div');
+    card.className = 'preset-card';
+    card.innerHTML = `
+      <div class="preset-swatch">
+        <div class="preset-color" style="background: ${values.colorGold}"></div>
+        <div class="preset-color" style="background: ${values.colorError || values.colorGoldLight}"></div>
+        <div class="preset-color" style="background: ${values.colorBlack}"></div>
+        <div class="preset-color" style="background: ${values.colorCream}"></div>
+      </div>
+      <div class="preset-name">${name}</div>
+      <div class="preset-desc">${values.fontHeading.split("'")[1]} + ${values.fontBody.split("'")[1]}</div>
+    `;
+    card.addEventListener('click', () => applyPreset(name, values));
+    grid.appendChild(card);
+  });
+}
+
+function applyPreset(name, values) {
+  Object.assign(state, values);
+  syncInputs();
+  applyToRoot();
+  updatePreview();
+
+  // Update active state
+  document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+  event.target.closest('.preset-card')?.classList.add('active');
+
+  console.log(`Applied preset: ${name}`);
+}
+
+// ============================================
+// INITIALIZE
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  bindInputs();
+  syncInputs();
+  applyToRoot();
+  updatePreview();
+  renderPresets();
+  renderMissSaPresets();
+
+  // Update range value displays
+  document.querySelectorAll('input.builder-range').forEach(input => {
+    const valEl = document.getElementById(input.id + 'Val');
+    if (valEl) valEl.textContent = input.value;
+  });
+});
+
+console.log('Design System Builder loaded. All tokens mapped to CSS custom properties.');
+</script>
+</body>
+</html>
