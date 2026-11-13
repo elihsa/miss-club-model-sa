@@ -1,0 +1,331 @@
+key,value
+aboutImage,https://missclubmodel.vercel.app/assets/photos/about-bg.webp
+aboutImageAlt,Miss Club Model SA About Section
+aboutSubtitle,Empowering Women Across South Africa
+aboutText1,Miss Club Model SA celebrates elegance, intelligence, and empowerment. We provide a platform for extraordinary women to showcase their talent, advocate for meaningful causes, and inspire communities across South Africa.
+aboutText2,Our mission is to create opportunities for young women to grow, lead, and make an impact. Through our events, mentorship programs, and community initiatives, we're building the next generation of South African leaders.
+aboutTitle,Our Vision
+animFadeIn,300ms
+animImgScale,1.08
+animScaleHover,1.02
+animSlideUp,400ms
+applySubtitle,Take the first step towards your journey with Miss Club Model SA
+applyTitle,Apply Now
+approvedBadge,Approved
+approvedCandidatesLabel,Approved Candidates
+borderDefault,1px
+borderThick,2px
+borderThin,1px
+btnHoverLift,-2px
+btnHoverShadow,0 8px 24px rgba(201,168,76,0.3)
+btnPrimaryStyle,filled
+btnPx,36px
+btnPy,16px
+btnRegisterInterest,Register Interest
+btnSubmitApplication,Submit Application
+btnTellMeMore,Tell Me More
+candidate1Event,Miss Club Model SA Gala 2026
+candidate1Location,Cape Town, Western Cape
+candidate1Name,Thandiwe Mkhize
+candidate1Photo,https://missclubmodel.vercel.app/assets/photos/candidate1.webp
+candidate2Event,Miss Club Model SA Gala 2026
+candidate2Location,Johannesburg, Gauteng
+candidate2Name,Aisha Patel
+candidate2Photo,https://missclubmodel.vercel.app/assets/photos/candidate2.webp
+candidate3Event,Miss Club Model SA Gala 2026
+candidate3Location,Durban, KwaZulu-Natal
+candidate3Name,Lerato Molefe
+candidate3Photo,https://missclubmodel.vercel.app/assets/photos/candidate3.webp
+candidate4Event,Miss Club Model SA Gala 2026
+candidate4Location,Pretoria, Gauteng
+candidate4Name,Siphesihle Nkosi
+candidate4Photo,https://missclubmodel.vercel.app/assets/photos/candidate4.webp
+candidatesSubtitle,Meet our inspiring candidates
+candidatesTitle,Our Candidates
+cardHoverLift,-6px
+cardHoverShadow,0 20px 40px rgba(201,168,76,0.15)
+cardShadow,0 4px 20px rgba(0,0,0,0.3)
+cardStyle,bordered
+checkboxSize,20px
+closeBtnSize,40px
+colorBlack,#0a0a0a
+colorBorder,#2a2a2a
+colorCardBg,#1a1a1a
+colorCream,#f5f0e8
+colorDark,#1a1a1a
+colorDarker,#121212
+colorError,#e74c3c
+colorGold,#c9a84c
+colorGoldDark,#8b6914
+colorGoldLight,#f0d878
+colorInfo,#3498db
+colorInputBg,#0a0a0a
+colorInputBorder,#444444
+colorInputFocus,#c9a84c
+colorOverlay,#000000
+colorSuccess,#27ae60
+colorTextMuted,#999999
+colorWarning,#f39c12
+contactAddress,South Africa
+contactEmail,kiyanoschoonraad98@gmail.com
+contactIconAddress,location
+contactIconEmail,mail
+contactIconPhone,phone
+contactPhone,074 148 8883
+contactSubtitle,Get in touch with us
+contactTitle,Contact Us
+containerMax,1400px
+containerPad,40px
+eventBtnCreate,Create Event
+eventCreationSubtitle,Add a new event to the calendar
+eventCreationTitle,Create New Event
+eventLabelDate,Event Date
+eventLabelDescription,Event Description
+eventLabelLocation,Location
+eventLabelName,Event Name
+eventLabelPoster,Event Poster
+eventLabelTime,Event Time
+eventLinkBack,Back to Events
+eventPlaceholderDate,YYYY-MM-DD
+eventPlaceholderDescription,Describe the event...
+eventPlaceholderLocation,e.g. Sandton Convention Centre
+eventPlaceholderName,e.g. Miss Club Model SA Gala 2026
+eventPlaceholderPoster,Upload poster image
+eventPlaceholderTime,HH:MM
+eventsPageSubtitle,Discover upcoming events and experiences
+eventsPageTitle,Events
+eventsSubtitle,Upcoming events and experiences
+eventsTitle,Events
+filterAll,All Events
+focusRing,3px
+fontBody,'Inter', sans-serif
+fontButton,'Playfair Display', serif
+fontHeading,'Playfair Display', serif
+footerPrivacy,Privacy Policy
+footerTerms,Terms & Conditions
+footerText,© 2026 Miss Club Model SA. All rights reserved.
+gallery1,https://missclubmodel.vercel.app/assets/photos/gallery1.webp
+gallery1Desc,Where elegance meets excitement
+gallery1Img,https://missclubmodel.vercel.app/assets/photos/gallery1-fallback.jpg
+gallery1ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery1-fallback.jpg
+gallery1Title,Club Atmosphere
+gallery2,https://missclubmodel.vercel.app/assets/photos/gallery2.webp
+gallery2Desc,Celebrating sisterhood and style
+gallery2Img,https://missclubmodel.vercel.app/assets/photos/gallery2-fallback.jpg
+gallery2ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery2-fallback.jpg
+gallery2Title,Sisterhood
+gallery3,https://missclubmodel.vercel.app/assets/photos/gallery3.webp
+gallery3Desc,Confidence in every step
+gallery3Img,https://missclubmodel.vercel.app/assets/photos/gallery3-fallback.jpg
+gallery3ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery3-fallback.jpg
+gallery3Title,Confidence
+gallery4,https://missclubmodel.vercel.app/assets/photos/gallery4.webp
+gallery4Desc,Moments that matter
+gallery4Img,https://missclubmodel.vercel.app/assets/photos/gallery4-fallback.jpg
+gallery4ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery4-fallback.jpg
+gallery4Title,Moments
+gallery5,https://missclubmodel.vercel.app/assets/photos/gallery5.webp
+gallery5Desc,Elegance redefined
+gallery5Img,https://missclubmodel.vercel.app/assets/photos/gallery5-fallback.jpg
+gallery5ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery5-fallback.jpg
+gallery5Title,Elegance
+gallery6,https://missclubmodel.vercel.app/assets/photos/gallery6.webp
+gallery6Desc,The journey continues
+gallery6Img,https://missclubmodel.vercel.app/assets/photos/gallery6-fallback.jpg
+gallery6ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery6-fallback.jpg
+gallery6Title,Journey
+gallerySubtitle,Highlights from our events
+galleryTitle,Gallery
+gapDefault,30px
+gapSm,16px
+heroCTA,Apply Now
+heroLogo,Miss Club Model SA
+heroMission,Empowering Women Across South Africa
+heroTagline,Where Elegance Meets Opportunity
+inputFocusColor,#c9a84c
+inputFocusRing,3px
+inputHeight,48px
+joinBtnSubmit,Join Waitlist
+joinFormIntro,Be the first to know when tickets go on sale
+joinFormTitle,Join the Waitlist
+joinLabelEmail,Email Address
+joinLabelFavorite,Favorite Candidate
+joinLabelName,Full Name
+joinLabelPhone,Phone Number
+joinOptionSelect,Select a candidate
+joinPlaceholderEmail,you@example.com
+joinPlaceholderName,Your Name
+joinPlaceholderPhone,082 123 4567
+joinTextTerms,By joining, you agree to receive updates about this event
+labelAddress,Physical Address
+labelCity,City
+labelDOB,Date of Birth
+labelEducation,Education Level
+labelEmail,Email Address
+labelEmergencyName,Emergency Contact Name
+labelEmergencyPhone,Emergency Contact Phone
+labelEssay,Personal Essay
+labelEvent,Select Event
+labelFilter,Filter
+labelFullName,Full Name
+labelFullbody,Full Body Photo
+labelGap,8px
+labelHeadshot,Headshot Photo
+labelHeight,Height (cm)
+labelInstagram,Instagram Handle
+labelOccupation,Occupation
+labelPhone,Phone Number
+labelPlatform,Platform / Cause
+labelProvince,Province
+labelSortBy,Sort By
+labelTalent,Talent / Skill
+labelVideo,Video Introduction
+leadingNormal,1.6
+leadingRelaxed,1.8
+leadingTight,1.2
+linkBackHome,Back to Home
+modalBtnSubmit,Submit
+modalIntro,Want more details about this event? Share your info and we'll keep you updated.
+modalLabelEmail,Email Address
+modalLabelFavorite,Favorite Candidate
+modalLabelPhone,Phone Number
+modalMaxW,500px
+modalOptionSelect,Select a candidate
+modalPadding,40px
+modalPlaceholderEmail,you@example.com
+modalPlaceholderPhone,082 123 4567
+modalTextTerms,By submitting, you agree to receive event updates
+modalTitle,Tell Me More
+navAbout,About
+navAdmin,Admin
+navApply,Apply
+navBg,#0a0a0a
+navBlur,10px
+navBorder,#c9a84c
+navCandidates,Candidates
+navContact,Contact
+navEvents,Events
+navGallery,Gallery
+navHeight,72px
+navHome,Home
+navVenuePartner,Venue Partner
+optionAllEvents,All Events
+optionDateAsc,Date: Oldest First
+optionDateDesc,Date: Newest First
+optionNameAsc,Name: A-Z
+optionNameDesc,Name: Z-A
+optionPast,Past Events
+optionSelectEvent,Select an event
+optionSelectProvince,Select a province
+optionUpcoming,Upcoming Events
+overlayOpacity,0.85
+parallaxSpeed,0.5
+placeholderAddress,123 Main Street, City
+placeholderCity,e.g. Cape Town
+placeholderDOB,YYYY-MM-DD
+placeholderEducation,e.g. Bachelor's Degree
+placeholderEmail,you@example.com
+placeholderEmergencyName,Jane Doe
+placeholderEmergencyPhone,082 123 4567
+placeholderEssay,Tell us about yourself, your aspirations, and why you want to join Miss Club Model SA...
+placeholderFullName,Thandiwe Mkhize
+placeholderHeight,165
+placeholderInstagram,@yourhandle
+placeholderOccupation,e.g. Student, Model, Entrepreneur
+placeholderPhone,082 123 4567
+placeholderPlatform,e.g. Women's Education, Mental Health, Environment
+placeholderTalent,e.g. Dancing, Public Speaking, Singing
+provinceEC,Eastern Cape
+provinceFS,Free State
+provinceGP,Gauteng
+provinceKZN,KwaZulu-Natal
+provinceLP,Limpopo
+provinceMP,Mpumalanga
+provinceNC,Northern Cape
+provinceNW,North West
+provinceWC,Western Cape
+radius2xl,24px
+radiusBtn,8px
+radiusCard,16px
+radiusFull,9999px
+radiusInput,8px
+radiusLg,12px
+radiusMd,8px
+radiusModal,16px
+radiusNone,0
+radiusSm,4px
+radiusXl,16px
+reduceMotion,false
+scrollOffset,100px
+sectionPx,40px
+sectionPy,100px
+shadowGold,0 8px 30px rgba(201,168,76,0.3)
+shadowInner,inset 0 2px 4px rgba(0,0,0,0.2)
+shadowLg,0 20px 40px rgba(0,0,0,0.4)
+shadowMd,0 8px 24px rgba(0,0,0,0.3)
+shadowSm,0 2px 8px rgba(0,0,0,0.2)
+siteTitle,Miss Club Model SA
+space1,0.25rem
+space10,4rem
+space2,0.5rem
+space3,0.75rem
+space4,1rem
+space5,1.5rem
+space6,2rem
+space8,3rem
+textBody,1rem
+textBodyLg,clamp(1.15rem, 2.5vw, 1.3rem)
+textCaption,0.85rem
+textFullbodyUpload,Upload a full-body photo (JPG/PNG/WebP, max 5MB)
+textH1,clamp(3rem, 8vw, 5rem)
+textH2,clamp(2rem, 5vw, 2.8rem)
+textH3,clamp(1.3rem, 3vw, 1.5rem)
+textH4,clamp(1.1rem, 2.5vw, 1.25rem)
+textHeadshotUpload,Upload a headshot photo (JPG/PNG/WebP, max 5MB)
+textLoadingEvents,Loading events...
+textMediaRelease,I consent to the use of my photos and videos for promotional purposes
+textNoEvents,No events found
+textSm,0.9rem
+textTerms,I agree to the Terms & Conditions and Privacy Policy
+textVideoUpload,Upload a 60-second video introduction (MP4/WebM, max 50MB)
+trackingNormal,0
+trackingTight,-0.02em
+trackingWide,0.02em
+transitionBounce,300ms cubic-bezier(0.34, 1.56, 0.64, 1)
+transitionFast,150ms ease
+transitionNormal,300ms ease
+transitionSlow,500ms ease
+venueBtnSubmit,Submit Venue Proposal
+venueLabelAddress,Venue Address
+venueLabelAvailability,Available Dates
+venueLabelCapacity,Capacity
+venueLabelDescription,Venue Description
+venueLabelEmail,Contact Email
+venueLabelEquipment,Equipment Available
+venueLabelLocation,Location/City
+venueLabelName,Your Name
+venueLabelPhone,Contact Phone
+venueLabelVenueName,Venue Name
+venueLabelWebsite,Venue Website
+venueLinkBack,Back to Events
+venuePartnerIntro,Partner with us to host Miss Club Model SA events
+venuePlaceholderAddress,123 Venue Street, City
+venuePlaceholderAvailability,e.g. March - June 2026
+venuePlaceholderCapacity,e.g. 500
+venuePlaceholderDescription,Describe your venue facilities, ambiance, and unique features...
+venuePlaceholderEmail,venue@example.com
+venuePlaceholderEquipment,e.g. Stage, Sound System, Lighting, Dressing Rooms
+venuePlaceholderLocation,e.g. Sandton, Johannesburg
+venuePlaceholderName,John Smith
+venuePlaceholderPhone,082 123 4567
+venuePlaceholderVenueName,The Grand Ballroom
+venuePlaceholderWebsite,https://venue.example.com
+venueSubtitle,Become a venue partner
+venueTextTerms,By submitting, you agree to our venue partnership terms
+venueTitle,Venue Partner
+visionText,To be the leading platform that celebrates and empowers South African women through elegance, leadership, and community impact.
+visionTitle,Our Vision
+weightBold,600
+weightLight,300
+weightMedium,500
+weightRegular,400
