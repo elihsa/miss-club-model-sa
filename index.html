@@ -100,8 +100,10 @@
     backdrop-filter: blur(10px);
   }
   nav .logo-text {
-    font-size: 1.3rem; color: var(--gold); font-weight: 600;
+    font-size: 1.3rem; color: var(--gold); font-weight: 400;
     letter-spacing: 2px; text-decoration: none;
+    font-style: italic;
+    font-family: var(--font-heading);
   }
   nav ul { list-style: none; display: flex; gap: 8px; }
   nav a {
@@ -140,21 +142,23 @@
   /* SECTIONS */
   section { padding: var(--section-py) var(--section-px); max-width: var(--container-max); margin: 0 auto; }
 
-  /* IMPACT METRICS BAR */
+  /* IMPACT METRICS BAR - Full width to match hero background */
   .metrics-bar {
     background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
     border-top: 1px solid var(--gold-dark);
     border-bottom: 1px solid var(--gold-dark);
     padding: 50px var(--section-px);
     margin: 0;
+    width: 100%;
   }
   .metrics-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 30px;
-    max-width: var(--container-max);
+    max-width: 100%;
     margin: 0 auto;
     text-align: center;
+    width: 100%;
   }
   .metric-item {
     padding: 20px;
@@ -658,7 +662,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#home" class="logo-text" data-cms-key="siteTitle">Miss Club Model SA</a>
+  <a href="#home" class="logo-text" data-cms-key="navLogo">Miss Club Model SA</a>
   <div class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('open')">☰</div>
   <ul>
     <li><a href="#home" data-cms-key="navHome">Home</a></li>
@@ -669,6 +673,7 @@
     <li><a href="#apply" data-cms-key="navApply">Apply</a></li>
     <li><a href="#venue-partner" data-cms-key="navVenuePartner">Venue Partner</a></li>
     <li><a href="#contact" data-cms-key="navContact">Contact</a></li>
+    <li><a href="/admin.html" data-cms-key="navAdmin" style="color: var(--gold); border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;">Admin</a></li>
   </ul>
 </nav>
 
@@ -760,10 +765,10 @@
   <p class="section-subtitle reveal reveal-delay-1" data-cms-key="gallerySubtitle">Moments of joy, elegance, and sisterhood that define our community</p>
 
   <div class="gallery-grid">
-    <div class="gallery-item reveal" data-cms-key="gallery1">
+    <div class="gallery-item reveal">
       <picture>
-        <source srcset="assets/photos/women_club_1.webp" type="image/webp" data-cms-key="gallery1Img">
-        <img src="assets/photos/women_club_1.jpg" alt="Women enjoying club atmosphere" data-cms-key="gallery1ImgFallback">
+        <source srcset="assets/photos/women_club_1.webp" type="image/webp" data-cms-key="gallery1">
+        <img src="assets/photos/women_club_1.jpg" alt="Women enjoying club atmosphere" data-cms-key="gallery1">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -773,10 +778,10 @@
       </div>
     </div>
 
-    <div class="gallery-item reveal reveal-delay-1" data-cms-key="gallery2">
+    <div class="gallery-item reveal reveal-delay-1">
       <picture>
-        <source srcset="assets/photos/women_toasting_1.webp" type="image/webp" data-cms-key="gallery2Img">
-        <img src="assets/photos/women_toasting_1.jpg" alt="Women toasting with drinks" data-cms-key="gallery2ImgFallback">
+        <source srcset="assets/photos/women_toasting_1.webp" type="image/webp" data-cms-key="gallery2">
+        <img src="assets/photos/women_toasting_1.jpg" alt="Women toasting with drinks" data-cms-key="gallery2">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -786,10 +791,10 @@
       </div>
     </div>
 
-    <div class="gallery-item reveal reveal-delay-2" data-cms-key="gallery3">
+    <div class="gallery-item reveal reveal-delay-2">
       <picture>
-        <source srcset="assets/photos/women_laughing_1.webp" type="image/webp" data-cms-key="gallery3Img">
-        <img src="assets/photos/women_laughing_1.jpg" alt="Women laughing and having fun" data-cms-key="gallery3ImgFallback">
+        <source srcset="assets/photos/women_laughing_1.webp" type="image/webp" data-cms-key="gallery3">
+        <img src="assets/photos/women_laughing_1.jpg" alt="Women laughing and having fun" data-cms-key="gallery3">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -799,10 +804,10 @@
       </div>
     </div>
 
-    <div class="gallery-item reveal reveal-delay-3" data-cms-key="gallery4">
+    <div class="gallery-item reveal reveal-delay-3">
       <picture>
-        <source srcset="assets/photos/women_celebrating_1.webp" type="image/webp" data-cms-key="gallery4Img">
-        <img src="assets/photos/women_celebrating_1.jpg" alt="Women celebrating indoors" data-cms-key="gallery4ImgFallback">
+        <source srcset="assets/photos/women_celebrating_1.webp" type="image/webp" data-cms-key="gallery4">
+        <img src="assets/photos/women_celebrating_1.jpg" alt="Women celebrating indoors" data-cms-key="gallery4">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -812,10 +817,10 @@
       </div>
     </div>
 
-    <div class="gallery-item reveal reveal-delay-4" data-cms-key="gallery5">
+    <div class="gallery-item reveal reveal-delay-4">
       <picture>
-        <source srcset="assets/photos/women_bar_2.webp" type="image/webp" data-cms-key="gallery5Img">
-        <img src="assets/photos/women_bar_2.jpg" alt="Women at bar having drinks" data-cms-key="gallery5ImgFallback">
+        <source srcset="assets/photos/women_bar_2.webp" type="image/webp" data-cms-key="gallery5">
+        <img src="assets/photos/women_bar_2.jpg" alt="Women at bar having drinks" data-cms-key="gallery5">
       </picture>
       <div class="gallery-overlay">
         <div>
@@ -825,10 +830,10 @@
       </div>
     </div>
 
-    <div class="gallery-item reveal reveal-delay-4" data-cms-key="gallery6">
+    <div class="gallery-item reveal reveal-delay-4">
       <picture>
-        <source srcset="assets/photos/women_drinks_1.webp" type="image/webp" data-cms-key="gallery6Img">
-        <img src="assets/photos/women_drinks_1.jpg" alt="Women with cocktails" data-cms-key="gallery6ImgFallback">
+        <source srcset="assets/photos/women_drinks_1.webp" type="image/webp" data-cms-key="gallery6">
+        <img src="assets/photos/women_drinks_1.jpg" alt="Women with cocktails" data-cms-key="gallery6">
       </picture>
       <div class="gallery-overlay">
         <div>

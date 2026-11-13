@@ -1,5 +1,5 @@
 key,value
-aboutImage,https://missclubmodel.vercel.app/assets/photos/about-bg.webp
+aboutImage,https://missclubmodel.vercel.app/assets/photos/women_club_1.webp
 aboutImageAlt,Miss Club Model SA About Section
 aboutSubtitle,Empowering Women Across South Africa
 aboutText1,Miss Club Model SA celebrates elegance, intelligence, and empowerment. We provide a platform for extraordinary women to showcase their talent, advocate for meaningful causes, and inspire communities across South Africa.
@@ -27,19 +27,19 @@ btnTellMeMore,Tell Me More
 candidate1Event,Miss Club Model SA Gala 2026
 candidate1Location,Cape Town, Western Cape
 candidate1Name,Thandiwe Mkhize
-candidate1Photo,https://missclubmodel.vercel.app/assets/photos/candidate1.webp
+candidate1Photo,https://missclubmodel.vercel.app/assets/photos/women_club_1.webp
 candidate2Event,Miss Club Model SA Gala 2026
 candidate2Location,Johannesburg, Gauteng
 candidate2Name,Aisha Patel
-candidate2Photo,https://missclubmodel.vercel.app/assets/photos/candidate2.webp
+candidate2Photo,https://missclubmodel.vercel.app/assets/photos/women_toasting_1.webp
 candidate3Event,Miss Club Model SA Gala 2026
 candidate3Location,Durban, KwaZulu-Natal
 candidate3Name,Lerato Molefe
-candidate3Photo,https://missclubmodel.vercel.app/assets/photos/candidate3.webp
+candidate3Photo,https://missclubmodel.vercel.app/assets/photos/women_laughing_1.webp
 candidate4Event,Miss Club Model SA Gala 2026
 candidate4Location,Pretoria, Gauteng
 candidate4Name,Siphesihle Nkosi
-candidate4Photo,https://missclubmodel.vercel.app/assets/photos/candidate4.webp
+candidate4Photo,https://missclubmodel.vercel.app/assets/photos/women_celebrating_1.webp
 candidatesSubtitle,Meet our inspiring candidates
 candidatesTitle,Our Candidates
 cardHoverLift,-6px
@@ -104,40 +104,41 @@ fontHeading,'Playfair Display', serif
 footerPrivacy,Privacy Policy
 footerTerms,Terms & Conditions
 footerText,© 2026 Miss Club Model SA. All rights reserved.
-gallery1,https://missclubmodel.vercel.app/assets/photos/gallery1.webp
+gallery1,https://missclubmodel.vercel.app/assets/photos/women_club_1.webp
 gallery1Desc,Where elegance meets excitement
-gallery1Img,https://missclubmodel.vercel.app/assets/photos/gallery1-fallback.jpg
-gallery1ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery1-fallback.jpg
+gallery1Img,https://missclubmodel.vercel.app/assets/photos/women_club_1.jpg
+gallery1ImgFallback,https://missclubmodel.vercel.app/assets/photos/women_club_1.jpg
 gallery1Title,Club Atmosphere
-gallery2,https://missclubmodel.vercel.app/assets/photos/gallery2.webp
+gallery2,https://missclubmodel.vercel.app/assets/photos/women_toasting_1.webp
 gallery2Desc,Celebrating sisterhood and style
-gallery2Img,https://missclubmodel.vercel.app/assets/photos/gallery2-fallback.jpg
-gallery2ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery2-fallback.jpg
+gallery2Img,https://missclubmodel.vercel.app/assets/photos/women_toasting_1.jpg
+gallery2ImgFallback,https://missclubmodel.vercel.app/assets/photos/women_toasting_1.jpg
 gallery2Title,Sisterhood
-gallery3,https://missclubmodel.vercel.app/assets/photos/gallery3.webp
+gallery3,https://missclubmodel.vercel.app/assets/photos/women_laughing_1.webp
 gallery3Desc,Confidence in every step
-gallery3Img,https://missclubmodel.vercel.app/assets/photos/gallery3-fallback.jpg
-gallery3ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery3-fallback.jpg
+gallery3Img,https://missclubmodel.vercel.app/assets/photos/women_laughing_1.jpg
+gallery3ImgFallback,https://missclubmodel.vercel.app/assets/photos/women_laughing_1.jpg
 gallery3Title,Confidence
-gallery4,https://missclubmodel.vercel.app/assets/photos/gallery4.webp
+gallery4,https://missclubmodel.vercel.app/assets/photos/women_celebrating_1.webp
 gallery4Desc,Moments that matter
-gallery4Img,https://missclubmodel.vercel.app/assets/photos/gallery4-fallback.jpg
-gallery4ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery4-fallback.jpg
+gallery4Img,https://missclubmodel.vercel.app/assets/photos/women_celebrating_1.jpg
+gallery4ImgFallback,https://missclubmodel.vercel.app/assets/photos/women_celebrating_1.jpg
 gallery4Title,Moments
-gallery5,https://missclubmodel.vercel.app/assets/photos/gallery5.webp
+gallery5,https://missclubmodel.vercel.app/assets/photos/women_bar_2.webp
 gallery5Desc,Elegance redefined
-gallery5Img,https://missclubmodel.vercel.app/assets/photos/gallery5-fallback.jpg
-gallery5ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery5-fallback.jpg
+gallery5Img,https://missclubmodel.vercel.app/assets/photos/women_bar_2.jpg
+gallery5ImgFallback,https://missclubmodel.vercel.app/assets/photos/women_bar_2.jpg
 gallery5Title,Elegance
-gallery6,https://missclubmodel.vercel.app/assets/photos/gallery6.webp
+gallery6,https://missclubmodel.vercel.app/assets/photos/women_drinks_1.webp
 gallery6Desc,The journey continues
-gallery6Img,https://missclubmodel.vercel.app/assets/photos/gallery6-fallback.jpg
-gallery6ImgFallback,https://missclubmodel.vercel.app/assets/photos/gallery6-fallback.jpg
+gallery6Img,https://missclubmodel.vercel.app/assets/photos/women_drinks_1.jpg
+gallery6ImgFallback,https://missclubmodel.vercel.app/assets/photos/women_drinks_1.jpg
 gallery6Title,Journey
 gallerySubtitle,Highlights from our events
 galleryTitle,Gallery
 gapDefault,30px
 gapSm,16px
+heroBackground,https://missclubmodel.vercel.app/assets/photos/women_celebrating_1.webp
 heroCTA,Apply Now
 heroLogo,Miss Club Model SA
 heroMission,Empowering Women Across South Africa
@@ -208,6 +209,7 @@ navEvents,Events
 navGallery,Gallery
 navHeight,72px
 navHome,Home
+navLogo,Miss Club Model SA
 navVenuePartner,Venue Partner
 optionAllEvents,All Events
 optionDateAsc,Date: Oldest First
@@ -312,7 +314,7 @@ venuePartnerIntro,Partner with us to host Miss Club Model SA events
 venuePlaceholderAddress,123 Venue Street, City
 venuePlaceholderAvailability,e.g. March - June 2026
 venuePlaceholderCapacity,e.g. 500
-venuePlaceholderDescription,Describe your venue facilities, ambiance, and unique features...
+venuePlaceholderDescription,Describe your venue facilities, ambiance, and what makes it special for hosting events...
 venuePlaceholderEmail,venue@example.com
 venuePlaceholderEquipment,e.g. Stage, Sound System, Lighting, Dressing Rooms
 venuePlaceholderLocation,e.g. Sandton, Johannesburg
