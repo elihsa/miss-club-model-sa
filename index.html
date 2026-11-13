@@ -1100,6 +1100,11 @@ function renderCandidateFilters(events) {
   container.innerHTML = '';
   if (allBtn) container.appendChild(allBtn);
 
+  // Add event listener to "All" button
+  if (allBtn) {
+    allBtn.addEventListener('click', () => filterCandidatesByEvent('all'));
+  }
+
   (events || []).forEach(event => {
     const btn = document.createElement('button');
     btn.className = 'filter-btn';
@@ -1301,16 +1306,17 @@ async function loadCMSContent() {
       const key = el.getAttribute('data-cms-key');
       if (content[key]) {
         // Handle images
-        if (el.tagName === 'IMG' || el.classList.contains('candidate-photo') || el.classList.contains('about-image') || el.classList.contains('gallery-item')) {
-          if (el.tagName === 'IMG') {
-            el.src = content[key];
-          } else {
-            el.style.backgroundImage = `url(${content[key]})`;
-            if (el.classList.contains('gallery-item')) {
-              const source = el.querySelector('source');
-              if (source) source.srcset = content[key];
-            }
-          }
+        if (el.tagName === 'IMG') {
+          el.src = content[key];
+        } else if (el.classList.contains('gallery-item')) {
+          // Gallery items have picture > source + img structure
+          const img = el.querySelector('img');
+          const source = el.querySelector('source');
+          if (img) img.src = content[key];
+          if (source) source.srcset = content[key];
+        } else if (el.classList.contains('about-image') || el.classList.contains('candidate-photo')) {
+          // Background images on divs
+          el.style.backgroundImage = `url(${content[key]})`;
           el.textContent = '';
         } else {
           el.textContent = content[key];
