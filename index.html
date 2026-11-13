@@ -1870,6 +1870,9 @@ async function loadCMSContent() {
         // Handle images
         if (el.tagName === 'IMG') {
           el.src = content[key];
+        } else if (el.tagName === 'SOURCE') {
+          // Picture source elements - update srcset
+          el.srcset = content[key];
         } else if (el.classList.contains('gallery-item')) {
           // Gallery items have picture > source + img structure
           const img = el.querySelector('img');
