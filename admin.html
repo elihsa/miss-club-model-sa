@@ -423,6 +423,15 @@ try {
   if (dashboardView) dashboardView.style.display = 'none';
 }
 
+// Verify supabase is available
+if (!supabase) {
+  console.error('Supabase client is null - module import likely failed');
+  const loginView = document.getElementById('loginView');
+  const dashboardView = document.getElementById('dashboardView');
+  if (loginView) loginView.style.display = 'block';
+  if (dashboardView) dashboardView.style.display = 'none';
+}
+
 const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com'];
 
 let allRecords = [];
@@ -583,6 +592,12 @@ const posterPreview = document.getElementById('posterPreview');
 
 // Check session on load
 async function checkSession() {
+  // If supabase is null, show login immediately
+  if (!supabase) {
+    console.error('checkSession: supabase is null, showing login');
+    showLogin();
+    return;
+  }
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
     console.log('checkSession result:', { session: !!session, user: session?.user?.email, error });
