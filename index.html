@@ -6,7 +6,7 @@
 <title>Miss Club Model SA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --gold: #c9a84c;
@@ -20,6 +20,19 @@
     --green: #27ae60;
     --orange: #f39c12;
     --blue: #3498db;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-button: 'Playfair Display', serif;
+    --container-max: 1400px;
+    --section-py: 100px;
+    --section-px: 40px;
+    --radius-card: 16px;
+    --radius-btn: 8px;
+    --transition-normal: 300ms ease;
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.3);
+    --shadow-gold: 0 8px 30px rgba(201,168,76,0.3);
+    --anim-fade-in: 300ms;
+    --anim-slide-up: 400ms;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,16 +40,36 @@
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     background: var(--black);
     color: var(--cream);
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Scroll-triggered animations */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity var(--anim-fade-in) ease, transform var(--anim-slide-up) ease;
+  }
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 100ms; }
+  .reveal-delay-2 { transition-delay: 200ms; }
+  .reveal-delay-3 { transition-delay: 300ms; }
+  .reveal-delay-4 { transition-delay: 400ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+
   /* Typography */
   h1, h2, h3, h4, .logo-text, .hero h1, .section-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
     font-weight: 500;
   }
 
@@ -83,22 +116,110 @@
     display: inline-block; padding: 16px 36px;
     background: var(--gold); color: var(--black);
     text-decoration: none; font-weight: 600; font-size: 1rem;
-    border: 2px solid var(--gold); border-radius: 8px;
+    border: 2px solid var(--gold); border-radius: var(--radius-btn);
     transition: all 0.3s; cursor: pointer;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-button);
   }
-  .btn:hover { background: transparent; color: var(--gold); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+  .btn:hover { background: transparent; color: var(--gold); transform: translateY(-2px); box-shadow: var(--shadow-gold); }
   .btn:active { transform: translateY(0); }
 
   .btn-secondary {
     background: var(--dark); color: var(--cream); border: 1px solid var(--gold-dark);
-    padding: 12px 24px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.9rem;
+    padding: 12px 24px; border-radius: var(--radius-btn); cursor: pointer; font-family: inherit; font-size: 0.9rem;
     transition: all 0.3s;
   }
   .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
 
+  .btn-outline {
+    background: transparent; color: var(--gold); border: 2px solid var(--gold);
+    padding: 12px 28px; border-radius: var(--radius-btn); cursor: pointer; font-family: var(--font-button); font-weight: 600; font-size: 0.95rem;
+    transition: all 0.3s;
+  }
+  .btn-outline:hover { background: var(--gold); color: var(--black); }
+
   /* SECTIONS */
-  section { padding: 100px 40px; max-width: 1400px; margin: 0 auto; }
+  section { padding: var(--section-py) var(--section-px); max-width: var(--container-max); margin: 0 auto; }
+
+  /* IMPACT METRICS BAR */
+  .metrics-bar {
+    background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+    border-top: 1px solid var(--gold-dark);
+    border-bottom: 1px solid var(--gold-dark);
+    padding: 50px var(--section-px);
+    margin: 0;
+  }
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    text-align: center;
+  }
+  .metric-item {
+    padding: 20px;
+    position: relative;
+  }
+  .metric-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -15px;
+    top: 30%;
+    height: 40%;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--gold-dark), transparent);
+  }
+  .metric-number {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .metric-label {
+    font-size: 0.95rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* COUNTDOWN TIMER */
+  .countdown-timer {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 30px 0;
+  }
+  .countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+  }
+  .countdown-value {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    background: linear-gradient(135deg, var(--black) 0%, var(--dark) 100%);
+    border: 2px solid var(--gold-dark);
+    border-radius: 12px;
+    padding: 16px 24px;
+    min-width: 80px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+  }
+  .countdown-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    text-align: center;
+  }
 
   /* HERO */
   .hero {
@@ -107,7 +228,7 @@
     align-items: center; justify-content: center; text-align: center;
     padding: 140px 20px 80px;
     background: linear-gradient(rgba(10,10,10,0.7), rgba(10,10,10,0.85)),
-                url('assets/photos/women_celebrating_1.webp');
+                var(--cms-hero-background, url('assets/photos/women_celebrating_1.webp'));
     background-size: cover; background-position: center; background-attachment: fixed;
   }
   .hero::before {
@@ -119,14 +240,14 @@
   .hero .tagline {
     font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--gold-light);
     margin-bottom: 24px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    font-style: italic; font-family: 'Playfair Display', serif; font-weight: 400;
+    font-style: italic; font-family: var(--font-heading); font-weight: 400;
   }
   .hero .mission {
     font-size: clamp(1.1rem, 2.5vw, 1.3rem); max-width: 750px;
     margin: 0 auto 40px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     line-height: 1.8; color: #ddd;
   }
-  .hero .btn { box-shadow: 0 10px 30px rgba(201,168,76,0.3); }
+  .hero .btn { box-shadow: var(--shadow-gold); }
 
   /* Scroll indicator */
   .scroll-indicator {
@@ -218,6 +339,104 @@
   .event-card p { color: #aaa; line-height: 1.8; margin-bottom: 20px; flex: 1; }
   .event-card .btn { align-self: flex-start; padding: 12px 28px; font-size: 0.95rem; }
 
+  /* FINALIST SPOTLIGHT CARDS - Miss SA Style */
+  .spotlight-section {
+    background: var(--black);
+    position: relative;
+  }
+  .spotlight-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+  }
+  .spotlight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .spotlight-card {
+    position: relative;
+    background: var(--dark);
+    border: 1px solid var(--gold-dark);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s;
+  }
+  .spotlight-card:hover {
+    transform: translateY(-10px) scale(1.015);
+    box-shadow: 0 30px 60px rgba(201,168,76,0.2);
+    border-color: var(--gold);
+  }
+  .spotlight-image {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+    transition: transform 0.6s;
+  }
+  .spotlight-card:hover .spotlight-image {
+    transform: scale(1.05);
+  }
+  .spotlight-content {
+    padding: 30px;
+    position: relative;
+  }
+  .spotlight-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(201,168,76,0.15);
+    color: var(--gold-light);
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .spotlight-card h3 {
+    color: var(--gold);
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .spotlight-meta {
+    display: flex;
+    gap: 16px;
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .spotlight-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .spotlight-card p {
+    color: #ccc;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .spotlight-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: gap 0.3s;
+  }
+  .spotlight-cta:hover {
+    gap: 12px;
+    color: var(--gold-light);
+  }
+  .spotlight-cta svg { width: 18px; height: 18px; }
+
   /* CANDIDATES */
   #candidates { background: var(--dark); }
   .candidates-toolbar { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
@@ -300,7 +519,7 @@
     width: 100%; padding: 18px; font-size: 1.1rem;
     margin-top: 8px; background: var(--gold); color: var(--black);
     border: 2px solid var(--gold); border-radius: 8px;
-    font-weight: 600; font-family: 'Playfair Display', serif;
+    font-weight: 600; font-family: var(--font-button);
     cursor: pointer; transition: all 0.3s;
   }
   .form-submit:hover { background: transparent; color: var(--gold); transform: translateY(-2px); }
@@ -337,6 +556,58 @@
   .contact-card h3 { color: var(--gold); margin-bottom: 16px; font-size: 1.3rem; }
   .contact-card p { color: #aaa; font-size: 1.05rem; }
 
+  /* NEWSLETTER SIGNUP */
+  .newsletter-section {
+    background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+    border-top: 1px solid var(--gold-dark);
+    padding: 80px var(--section-px);
+  }
+  .newsletter-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .newsletter-content h2 {
+    font-family: var(--font-heading);
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+  }
+  .newsletter-content p {
+    color: #aaa;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+  .newsletter-form {
+    display: flex;
+    gap: 12px;
+    max-width: 450px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .newsletter-form input {
+    flex: 1;
+    min-width: 250px;
+    padding: 16px 20px;
+    background: var(--black);
+    border: 2px solid var(--gold-dark);
+    border-radius: var(--radius-btn);
+    color: var(--cream);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .newsletter-form input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  }
+  .newsletter-form .btn {
+    white-space: nowrap;
+  }
+
   /* FOOTER */
   footer {
     text-align: center; padding: 50px 40px;
@@ -346,6 +617,12 @@
   footer a:hover { color: var(--gold-light); }
 
   /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .metric-item:not(:last-child)::after { display: none; }
+    .metric-item:nth-child(2)::after { display: none; }
+  }
+
   @media (max-width: 768px) {
     nav { padding: 15px 20px; }
     nav ul { display: none; position: absolute; top: 100%; left: 0; width: 100%;
@@ -363,6 +640,9 @@
     .contact-grid { grid-template-columns: 1fr; }
     .events-toolbar, .candidates-toolbar { flex-direction: column; align-items: stretch; }
     .events-toolbar select { width: 100%; }
+    .countdown-value { padding: 12px 16px; min-width: 70px; }
+    .newsletter-form { flex-direction: column; }
+    .newsletter-form input { min-width: 100%; }
   }
 
   @media (max-width: 480px) {
@@ -370,6 +650,7 @@
     .hero .tagline { font-size: 1.1rem; }
     .hero .mission { font-size: 1rem; }
     .section-title { font-size: 1.8rem; }
+    .metrics-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -393,7 +674,7 @@
 
 <!-- HERO -->
 <section class="hero" id="home">
-  <div class="hero-content">
+  <div class="hero-content reveal">
     <picture>
       <source srcset="logo.webp" type="image/webp">
       <img class="logo" src="logo.png" alt="Miss Club Model SA Logo" width="380" height="auto" data-cms-key="heroLogo">
@@ -404,6 +685,25 @@
       We provide a platform for extraordinary women to showcase their talent,
       advocate for meaningful causes, and inspire communities across South Africa.
     </p>
+    <!-- Countdown Timer - Miss SA Style -->
+    <div class="countdown-timer" id="countdownTimer" style="display:none;">
+      <div class="countdown-item">
+        <span class="countdown-value" id="countdownDays">00</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-value" id="countdownHours">00</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-value" id="countdownMinutes">00</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-value" id="countdownSeconds">00</span>
+        <span class="countdown-label">Seconds</span>
+      </div>
+    </div>
     <a href="#apply" class="btn" data-cms-key="heroCTA">Apply Now</a>
   </div>
   <div class="scroll-indicator">
@@ -413,20 +713,42 @@
   </div>
 </section>
 
+<!-- IMPACT METRICS BAR - Miss SA Style -->
+<section class="metrics-bar" aria-label="Impact Metrics">
+  <div class="metrics-grid">
+    <div class="metric-item reveal">
+      <div class="metric-number" data-count="500" data-cms-key="metricCandidates">500+</div>
+      <div class="metric-label" data-cms-key="metricCandidatesLabel">Candidates Empowered</div>
+    </div>
+    <div class="metric-item reveal reveal-delay-1">
+      <div class="metric-number" data-count="25" data-cms-key="metricEvents">25+</div>
+      <div class="metric-label" data-cms-key="metricEventsLabel">Events Hosted</div>
+    </div>
+    <div class="metric-item reveal reveal-delay-2">
+      <div class="metric-number" data-count="9" data-cms-key="metricProvinces">9</div>
+      <div class="metric-label" data-cms-key="metricProvincesLabel">Provinces Reached</div>
+    </div>
+    <div class="metric-item reveal reveal-delay-3">
+      <div class="metric-number" data-count="100" data-cms-key="metricCommunities">100+</div>
+      <div class="metric-label" data-cms-key="metricCommunitiesLabel">Communities Impacted</div>
+    </div>
+  </div>
+</section>
+
 <!-- ABOUT -->
 <section id="about">
-  <h2 class="section-title" data-cms-key="aboutTitle">About the Pageant</h2>
-  <p class="section-subtitle" data-cms-key="aboutSubtitle">More than a beauty pageant — a celebration of character, leadership, and purpose</p>
+  <h2 class="section-title reveal" data-cms-key="aboutTitle">About the Pageant</h2>
+  <p class="section-subtitle reveal reveal-delay-1" data-cms-key="aboutSubtitle">More than a beauty pageant — a celebration of character, leadership, and purpose</p>
   <div class="about-grid">
     <div class="about-text">
-      <p data-cms-key="aboutText1">Miss Club Model SA is more than a beauty pageant — it is a celebration of character, leadership, and purpose. Founded to uplift and empower women, our pageant seeks candidates who embody grace, intelligence, and a commitment to positive change.</p>
-      <p data-cms-key="aboutText2">Our judging criteria evaluate poise, communication, community involvement, and personal platform. We believe true beauty shines through action and advocacy.</p>
-      <div class="vision-box">
+      <p class="reveal reveal-delay-2" data-cms-key="aboutText1">Miss Club Model SA is more than a beauty pageant — it is a celebration of character, leadership, and purpose. Founded to uplift and empower women, our pageant seeks candidates who embody grace, intelligence, and a commitment to positive change.</p>
+      <p class="reveal reveal-delay-3" data-cms-key="aboutText2">Our judging criteria evaluate poise, communication, community involvement, and personal platform. We believe true beauty shines through action and advocacy.</p>
+      <div class="vision-box reveal reveal-delay-4">
         <h3 data-cms-key="visionTitle">Our Vision</h3>
         <p data-cms-key="visionText">To crown ambassadors who will represent South Africa with dignity and drive meaningful social impact.</p>
       </div>
     </div>
-    <div class="about-image" data-cms-key="aboutImage">
+    <div class="about-image reveal reveal-delay-2" data-cms-key="aboutImage">
       <span data-cms-key="aboutImageAlt">Elegance in Every Moment</span>
     </div>
   </div>
@@ -434,11 +756,11 @@
 
 <!-- GALLERY -->
 <section id="gallery">
-  <h2 class="section-title" data-cms-key="galleryTitle">The Miss Club Model Experience</h2>
-  <p class="section-subtitle" data-cms-key="gallerySubtitle">Moments of joy, elegance, and sisterhood that define our community</p>
+  <h2 class="section-title reveal" data-cms-key="galleryTitle">The Miss Club Model Experience</h2>
+  <p class="section-subtitle reveal reveal-delay-1" data-cms-key="gallerySubtitle">Moments of joy, elegance, and sisterhood that define our community</p>
 
   <div class="gallery-grid">
-    <div class="gallery-item" data-cms-key="gallery1">
+    <div class="gallery-item reveal" data-cms-key="gallery1">
       <picture>
         <source srcset="assets/photos/women_club_1.webp" type="image/webp" data-cms-key="gallery1Img">
         <img src="assets/photos/women_club_1.jpg" alt="Women enjoying club atmosphere" data-cms-key="gallery1ImgFallback">
@@ -451,7 +773,7 @@
       </div>
     </div>
 
-    <div class="gallery-item" data-cms-key="gallery2">
+    <div class="gallery-item reveal reveal-delay-1" data-cms-key="gallery2">
       <picture>
         <source srcset="assets/photos/women_toasting_1.webp" type="image/webp" data-cms-key="gallery2Img">
         <img src="assets/photos/women_toasting_1.jpg" alt="Women toasting with drinks" data-cms-key="gallery2ImgFallback">
@@ -464,7 +786,7 @@
       </div>
     </div>
 
-    <div class="gallery-item" data-cms-key="gallery3">
+    <div class="gallery-item reveal reveal-delay-2" data-cms-key="gallery3">
       <picture>
         <source srcset="assets/photos/women_laughing_1.webp" type="image/webp" data-cms-key="gallery3Img">
         <img src="assets/photos/women_laughing_1.jpg" alt="Women laughing and having fun" data-cms-key="gallery3ImgFallback">
@@ -477,7 +799,7 @@
       </div>
     </div>
 
-    <div class="gallery-item" data-cms-key="gallery4">
+    <div class="gallery-item reveal reveal-delay-3" data-cms-key="gallery4">
       <picture>
         <source srcset="assets/photos/women_celebrating_1.webp" type="image/webp" data-cms-key="gallery4Img">
         <img src="assets/photos/women_celebrating_1.jpg" alt="Women celebrating indoors" data-cms-key="gallery4ImgFallback">
@@ -490,7 +812,7 @@
       </div>
     </div>
 
-    <div class="gallery-item" data-cms-key="gallery5">
+    <div class="gallery-item reveal reveal-delay-4" data-cms-key="gallery5">
       <picture>
         <source srcset="assets/photos/women_bar_2.webp" type="image/webp" data-cms-key="gallery5Img">
         <img src="assets/photos/women_bar_2.jpg" alt="Women at bar having drinks" data-cms-key="gallery5ImgFallback">
@@ -503,7 +825,7 @@
       </div>
     </div>
 
-    <div class="gallery-item" data-cms-key="gallery6">
+    <div class="gallery-item reveal reveal-delay-4" data-cms-key="gallery6">
       <picture>
         <source srcset="assets/photos/women_drinks_1.webp" type="image/webp" data-cms-key="gallery6Img">
         <img src="assets/photos/women_drinks_1.jpg" alt="Women with cocktails" data-cms-key="gallery6ImgFallback">
@@ -520,8 +842,8 @@
 
 <!-- EVENTS -->
 <section id="events">
-  <h2 class="section-title" data-cms-key="eventsTitle">Events</h2>
-  <p class="section-subtitle" data-cms-key="eventsSubtitle">Discover upcoming Miss Club Model SA events and experiences</p>
+  <h2 class="section-title reveal" data-cms-key="eventsTitle">Events</h2>
+  <p class="section-subtitle reveal reveal-delay-1" data-cms-key="eventsSubtitle">Discover upcoming Miss Club Model SA events and experiences</p>
 
   <div class="events-toolbar">
     <label for="eventSort" style="display:flex; align-items:center; gap:10px; color:var(--gold); font-weight:600;">Sort by:</label>
@@ -547,10 +869,23 @@
   </div>
 </section>
 
+<!-- FINALIST SPOTLIGHT - Miss SA Style Editorial Cards -->
+<section class="spotlight-section" id="spotlight">
+  <h2 class="section-title reveal" data-cms-key="spotlightTitle">Finalist Spotlight</h2>
+  <p class="section-subtitle reveal reveal-delay-1" data-cms-key="spotlightSubtitle">Meet the remarkable women leading with purpose and grace</p>
+
+  <div class="spotlight-grid" id="spotlightGrid">
+    <!-- Spotlight cards loaded dynamically from candidates API -->
+    <div class="spotlight-card reveal" style="grid-column:1/-1; text-align:center; padding:60px;">
+      <p style="color:#888;">Loading finalists...</p>
+    </div>
+  </div>
+</section>
+
 <!-- CANDIDATES -->
 <section id="candidates">
-  <h2 class="section-title" data-cms-key="candidatesTitle">Meet the Candidates</h2>
-  <p class="section-subtitle" data-cms-key="candidatesSubtitle">Get to know the remarkable women competing for the crown</p>
+  <h2 class="section-title reveal" data-cms-key="candidatesTitle">All Candidates</h2>
+  <p class="section-subtitle reveal reveal-delay-1" data-cms-key="candidatesSubtitle">Get to know the remarkable women competing for the crown</p>
 
   <div class="candidates-toolbar" id="candidateFilter">
     <button class="filter-btn active" data-event="all" data-cms-key="filterAll">All Candidates</button>
@@ -596,11 +931,11 @@
 <!-- APPLY SECTION -->
 <section id="apply">
   <div class="apply-header">
-    <h2 class="section-title" data-cms-key="applyTitle">Apply</h2>
-    <p class="section-subtitle" data-cms-key="applySubtitle">Take the first step towards your legacy. Complete all required fields to submit your entry.</p>
+    <h2 class="section-title reveal" data-cms-key="applyTitle">Apply</h2>
+    <p class="section-subtitle reveal reveal-delay-1" data-cms-key="applySubtitle">Take the first step towards your legacy. Complete all required fields to submit your entry.</p>
   </div>
 
-  <div class="form-section">
+  <div class="form-section reveal reveal-delay-2">
     <form id="applicationForm" enctype="multipart/form-data">
       <!-- Personal Info -->
       <div class="form-row">
@@ -766,14 +1101,14 @@
 <!-- VENUE PARTNER -->
 <section id="venue-partner">
   <div class="venue-content">
-    <h2 class="section-title" data-cms-key="venueTitle">Become a Venue Partner</h2>
-    <p class="section-subtitle" data-cms-key="venueSubtitle">Host Miss Club Model SA events at your venue. We seek elegant, professional spaces aligned with our brand.</p>
+    <h2 class="section-title reveal" data-cms-key="venueTitle">Become a Venue Partner</h2>
+    <p class="section-subtitle reveal reveal-delay-1" data-cms-key="venueSubtitle">Host Miss Club Model SA events at your venue. We seek elegant, professional spaces aligned with our brand.</p>
 
-    <div class="venue-intro" data-cms-key="venuePartnerIntro">
+    <div class="venue-intro reveal reveal-delay-2" data-cms-key="venuePartnerIntro">
       Host Miss Club Model SA events at your venue. We're always looking for elegant, professional spaces that align with our brand of elegance and empowerment.
     </div>
 
-    <div class="venue-form-container">
+    <div class="venue-form-container reveal reveal-delay-3">
       <form id="venueForm" enctype="multipart/form-data">
         <div class="form-row">
           <div class="form-group">
@@ -840,22 +1175,35 @@
 
 <!-- CONTACT -->
 <section id="contact">
-  <h2 class="section-title" data-cms-key="contactTitle">Contact Us</h2>
-  <p class="section-subtitle" data-cms-key="contactSubtitle">We'd love to hear from you</p>
+  <h2 class="section-title reveal" data-cms-key="contactTitle">Contact Us</h2>
+  <p class="section-subtitle reveal reveal-delay-1" data-cms-key="contactSubtitle">We'd love to hear from you</p>
 
   <div class="contact-grid">
-    <div class="contact-card">
+    <div class="contact-card reveal reveal-delay-2">
       <h3 data-cms-key="contactIconEmail">📧 Email</h3>
       <p data-cms-key="contactEmail">contact@missclubmodelsa.co.za</p>
     </div>
-    <div class="contact-card">
+    <div class="contact-card reveal reveal-delay-3">
       <h3 data-cms-key="contactIconPhone">📞 Phone</h3>
       <p data-cms-key="contactPhone">+27 XX XXX XXXX</p>
     </div>
-    <div class="contact-card">
+    <div class="contact-card reveal reveal-delay-4">
       <h3 data-cms-key="contactIconAddress">📍 Office</h3>
       <p data-cms-key="contactAddress">South Africa</p>
     </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER SIGNUP - Miss SA Style -->
+<section class="newsletter-section">
+  <div class="newsletter-content reveal">
+    <h2 data-cms-key="newsletterTitle">Stay Updated</h2>
+    <p data-cms-key="newsletterDesc">Get the latest news, event announcements, and candidate spotlights delivered to your inbox.</p>
+    <form class="newsletter-form" id="newsletterForm">
+      <input type="email" name="email" placeholder="Enter your email address" required data-cms-key="newsletterPlaceholder">
+      <button type="submit" class="btn" data-cms-key="newsletterBtn">Subscribe</button>
+    </form>
+    <p id="newsletterMessage" style="margin-top: 16px; font-size: 0.9rem; color: #888;"></p>
   </div>
 </section>
 
@@ -880,6 +1228,113 @@ const UPLOAD_BUCKET = 'videos';
 
 let allEvents = [];
 let allCandidates = [];
+
+// ============================================
+// COUNTDOWN TIMER - Miss SA Style
+// ============================================
+function initCountdownTimer() {
+  const timerEl = document.getElementById('countdownTimer');
+  if (!timerEl) return;
+
+  // Get next event date from CMS or use first upcoming event
+  const getNextEventDate = async () => {
+    try {
+      const response = await fetch('/api/events');
+      const events = await response.json();
+      const now = new Date();
+      const upcoming = (events || [])
+        .filter(e => e.event_date && new Date(e.event_date) > now)
+        .sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+      return upcoming[0]?.event_date ? new Date(upcoming[0].event_date) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  let targetDate = null;
+
+  const updateTimer = () => {
+    if (!targetDate) return;
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      document.getElementById('countdownDays').textContent = '00';
+      document.getElementById('countdownHours').textContent = '00';
+      document.getElementById('countdownMinutes').textContent = '00';
+      document.getElementById('countdownSeconds').textContent = '00';
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('countdownDays').textContent = String(days).padStart(2, '0');
+    document.getElementById('countdownHours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('countdownMinutes').textContent = String(minutes).padStart(2, '0');
+    document.getElementById('countdownSeconds').textContent = String(seconds).padStart(2, '0');
+  };
+
+  getNextEventDate().then(date => {
+    if (date) {
+      targetDate = date;
+      timerEl.style.display = 'flex';
+      updateTimer();
+      setInterval(updateTimer, 1000);
+    }
+  });
+}
+
+// ============================================
+// ANIMATED COUNTERS FOR METRICS
+// ============================================
+function initMetricCounters() {
+  const counters = document.querySelectorAll('[data-count]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.count) || 0;
+        const duration = 2000;
+        const startTime = Date.now();
+        const startValue = 0;
+
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          // Easing: easeOutQuart
+          const eased = 1 - Math.pow(1 - progress, 4);
+          const current = Math.floor(startValue + (target - startValue) * eased);
+          el.textContent = current.toLocaleString() + (target >= 100 ? '+' : '');
+          if (progress < 1) requestAnimationFrame(animate);
+        };
+        animate();
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  counters.forEach(c => observer.observe(c));
+}
+
+// ============================================
+// SCROLL REVEAL ANIMATIONS
+// ============================================
+function initScrollReveal() {
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+}
 
 // ============================================
 // IMAGE AUTO-RESIZE (prevents large file breaks)
@@ -1090,6 +1545,8 @@ async function loadCandidatesAndFilters() {
     renderCandidateFilters(allEvents);
     // Render candidates
     renderCandidates('all');
+    // Render spotlight cards (top 4 or all approved)
+    renderSpotlightCards(allCandidates);
   } catch (err) {
     console.error('Failed to load candidates/filters:', err);
   }
@@ -1153,6 +1610,61 @@ function renderCandidates(eventId) {
       </article>
     `;
   }).join('');
+}
+
+// ============================================
+// SPOTLIGHT CARDS - Miss SA Style
+// ============================================
+function renderSpotlightCards(candidates) {
+  const grid = document.getElementById('spotlightGrid');
+  if (!grid) return;
+
+  // Filter approved candidates, take up to 4 for spotlight
+  const approved = (candidates || []).filter(c => c.status === 'approved');
+  const spotlight = approved.length > 0 ? approved.slice(0, 4) : (candidates || []).slice(0, 4);
+
+  if (spotlight.length === 0) {
+    grid.innerHTML = '<p style="text-align:center; color:#888; grid-column:1/-1;">No finalists to spotlight yet.</p>';
+    return;
+  }
+
+  grid.innerHTML = spotlight.map((c, index) => {
+    const event = allEvents.find(e => e.id === c.event_id);
+    const delayClass = index < 4 ? `reveal-delay-${index}` : '';
+    return `
+      <article class="spotlight-card reveal ${delayClass}">
+        <img class="spotlight-image" src="${c.headshot_url || 'assets/photos/women_club_1.webp'}" alt="${c.full_name || 'Candidate'}" loading="lazy">
+        <div class="spotlight-content">
+          <span class="spotlight-badge">${c.city || 'Finalist'}${c.province ? ', ' + c.province : ''}</span>
+          <h3>${c.full_name || 'Candidate'}</h3>
+          <div class="spotlight-meta">
+            ${event ? `<span>🏷️ ${event.name}</span>` : ''}
+            ${c.platform ? `<span>🎯 ${c.platform.substring(0, 30)}...</span>` : ''}
+          </div>
+          <p>${c.essay ? c.essay.substring(0, 120) + '...' : 'A passionate advocate for change and empowerment.'}</p>
+          <a href="#apply" class="spotlight-cta" data-event="${c.event_id}">
+            Learn More
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  // Add click handlers for spotlight CTAs
+  grid.querySelectorAll('.spotlight-cta').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const eventId = btn.dataset.event;
+      const select = document.getElementById('eventSelect');
+      if (select && eventId) {
+        select.value = eventId;
+        document.getElementById('apply').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
 }
 
 // ============================================
@@ -1275,6 +1787,44 @@ document.getElementById('venueForm').addEventListener('submit', async function(e
 });
 
 // ============================================
+// NEWSLETTER SIGNUP
+// ============================================
+document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const msgEl = document.getElementById('newsletterMessage');
+  const btn = this.querySelector('.btn');
+  const email = this.querySelector('input[name="email"]').value;
+
+  btn.textContent = 'Subscribing...';
+  btn.disabled = true;
+  msgEl.textContent = '';
+  msgEl.style.color = '#888';
+
+  try {
+    const response = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    const result = await response.json();
+    if (result.status === 'success') {
+      msgEl.textContent = '✓ Subscribed! Check your inbox for confirmation.';
+      msgEl.style.color = 'var(--green)';
+      this.reset();
+    } else {
+      throw new Error(result.message || 'Subscription failed');
+    }
+  } catch (err) {
+    msgEl.textContent = '✗ ' + err.message;
+    msgEl.style.color = 'var(--red)';
+  }
+
+  btn.textContent = 'Subscribe';
+  btn.disabled = false;
+});
+
+// ============================================
 // EVENT FILTER/SORT HANDLERS
 // ============================================
 document.getElementById('eventFilter')?.addEventListener('change', () => renderEvents(allEvents));
@@ -1288,6 +1838,9 @@ document.addEventListener('DOMContentLoaded', () => {
   loadEventsForDisplay();
   loadCandidatesAndFilters();
   loadCMSContent();
+  initCountdownTimer();
+  initMetricCounters();
+  initScrollReveal();
 });
 </script>
 
@@ -1318,7 +1871,7 @@ async function loadCMSContent() {
           const source = el.querySelector('source');
           if (img) img.src = content[key];
           if (source) source.srcset = content[key];
-        } else if (el.classList.contains('about-image') || el.classList.contains('candidate-photo')) {
+        } else if (el.classList.contains('about-image') || el.classList.contains('candidate-photo') || el.classList.contains('spotlight-image')) {
           // Background images on divs
           el.style.backgroundImage = `url(${content[key]})`;
           el.textContent = '';
@@ -1341,6 +1894,11 @@ async function loadCMSContent() {
     if (content.heroBackground) {
       const hero = document.querySelector('.hero');
       if (hero) hero.style.backgroundImage = `linear-gradient(rgba(10,10,10,0.7), rgba(10,10,10,0.85)), url('${content.heroBackground}')`;
+    }
+    // Special handling for about image background
+    if (content.aboutImage) {
+      const aboutImg = document.querySelector('.about-image');
+      if (aboutImg) aboutImg.style.backgroundImage = `linear-gradient(rgba(10,10,10,0.6), rgba(10,10,10,0.8)), url('${content.aboutImage}')`;
     }
   } catch (err) {
     console.error('CMS load failed:', err);
