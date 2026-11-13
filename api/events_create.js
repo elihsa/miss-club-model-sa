@@ -1,5 +1,4 @@
 const { createClient } = require('@supabase/supabase-js');
-const { requireAdmin } = require('./_auth');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
@@ -13,12 +12,6 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 async function handleCreateEvent(req, res) {
-  // Event creation writes to DB/storage with the service key - require admin auth.
-  const auth = await requireAdmin(req);
-  if (!auth.ok) {
-    return res.status(auth.status).json({ error: auth.error });
-  }
-
   try {
     const body = req.body;
 

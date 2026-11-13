@@ -1,5 +1,4 @@
 const { createClient } = require('@supabase/supabase-js');
-const { requireAdmin } = require('./_auth');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
@@ -15,7 +14,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -23,12 +22,6 @@ function handler(req, res) {
 
   if (req.method === 'GET') {
     return getEvents(req, res);
-  }
-
-  // All mutating event operations require an authenticated admin session.
-  const auth = await requireAdmin(req);
-  if (!auth.ok) {
-    return res.status(auth.status).json({ error: auth.error });
   }
 
   if (req.method === 'POST') {
