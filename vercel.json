@@ -19,6 +19,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" }
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/design-system", "destination": "/design-system-builder.html" }
   ]
 }
