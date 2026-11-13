@@ -287,7 +287,7 @@ textHeadshotUpload|Upload a headshot photo (JPG/PNG/WebP| max 5MB)
 textLoadingEvents|Loading events...
 textMediaRelease|I consent to the use of my photos and videos for promotional purposes
 textNoEvents|No events found
-textPrivacyPolicy|I have read and accept the Privacy Policy (POPIA Compliant)
+textPrivacyPolicy|I have read and accept the <a href="/privacy.html" target="_blank">Privacy Policy (POPIA Compliant)</a>
 textSm|0.9rem
 textTerms|I agree to the <a href="/terms.html" target="_blank">Terms & Conditions</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a> and confirm all information provided is accurate.
 textVideoUpload|Upload a 60-second video introduction (MP4/WebM| max 50MB)
@@ -324,7 +324,7 @@ venuePlaceholderPhone|082 123 4567
 venuePlaceholderVenueName|The Grand Ballroom
 venuePlaceholderWebsite|https://venue.example.com
 venueSubtitle|Become a venue partner
-venueTextTerms|By submitting| you agree to our venue partnership terms| Terms & Conditions| and Privacy Policy
+venueTextTerms|By submitting| you agree to our venue partnership terms| <a href="/terms.html" target="_blank">Terms & Conditions</a>| and <a href="/privacy.html" target="_blank">Privacy Policy</a>
 venueTitle|Venue Partner
 visionText|To be the leading platform that celebrates and empowers South African women through elegance| leadership| and community impact.
 visionTitle|Our Vision
