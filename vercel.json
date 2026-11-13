@@ -16,10 +16,29 @@
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-XSS-Protection", "value": "1; mode=block" }
       ]
+    },
+    {
+      "source": "/api/cms",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" }
+      ]
+    },
+    {
+      "source": "/api/events",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=30, s-maxage=120, stale-while-revalidate=300" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     }
   ],
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/design-system", "destination": "/design-system-builder.html" }
+    { "source": "/design-system", "destination": "/design-system-builder.html" },
+    { "source": "/apply", "destination": "/index.html#apply" }
   ]
 }
