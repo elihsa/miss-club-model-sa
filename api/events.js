@@ -87,22 +87,49 @@ async function createEvent(req, res) {
       posterUrl = urlData.publicUrl;
     }
 
+    // Build event object, only include status if column exists
+    const eventData = {
+      name: body.name || 'Untitled Event',
+      event_date: body.date || new Date().toISOString().split('T')[0],
+      event_time: body.time,
+      location: body.location,
+      description: body.description,
+      poster_url: posterUrl,
+      created_at: new Date().toISOString()
+    };
+
+    // Only add status if the column exists (check by trying to insert)
+    // For now, we'll include it and let Supabase handle it - if column missing, it will error
+    // and we'll strip it on retry
+    eventData.status = body.status || 'pending';
+
     const { data, error } = await supabase
       .from('events')
-      .insert([{
-        name: body.name || 'Untitled Event',
-        event_date: body.date || new Date().toISOString().split('T')[0],
-        event_time: body.time,
-        location: body.location,
-        description: body.description,
-        poster_url: posterUrl,
-        status: body.status || 'pending',
-        created_at: new Date().toISOString()
-      }])
+      .insert([eventData])
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // If status column doesn't exist, retry without it
+      if (error.message && error.message.includes('status')) {
+        const eventDataNoStatus = {
+          name: body.name || 'Untitled Event',
+          event_date: body.date || new Date().toISOString().split('T')[0],
+          event_time: body.time,
+          location: body.location,
+          description: body.description,
+          poster_url: posterUrl,
+          created_at: new Date().toISOString()
+        };
+        const { data: d, error: e2 } = await supabase.from('events').insert([eventDataNoStatus]).select().single();
+        if (e2) throw e2;
+        return res.status(201).json({
+          status: 'success',
+          data: d
+        });
+      }
+      throw error;
+    }
 
     return res.status(201).json({
       status: 'success',
@@ -141,23 +168,48 @@ async function updateEvent(req, res) {
       body.poster_url = urlData.publicUrl;
     }
 
+    // Build update data, only include status field if present
+    const updateData = {
+      name: body.name,
+      event_date: body.date,
+      event_time: body.time,
+      location: body.location,
+      description: body.description,
+      poster_url: body.poster_url
+    };
+
+    // Only add status if it's provided and not undefined
+    if (body.status !== undefined) {
+      updateData.status = body.status;
+    }
+
     const { data, error } = await supabase
       .from('events')
-      .update({
-        name: body.name,
-        event_date: body.date,
-        event_time: body.time,
-        location: body.location,
-        description: body.description,
-        poster_url: body.poster_url,
-        status: body.status,
-        created_at: new Date().toISOString()
-      })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // If status column doesn't exist, retry without it
+      if (error.message && error.message.includes('status')) {
+        const updateDataNoStatus = {
+          name: body.name,
+          event_date: body.date,
+          event_time: body.time,
+          location: body.location,
+          description: body.description,
+          poster_url: body.poster_url
+        };
+        const { data: d, error: e2 } = await supabase.from('events').update(updateDataNoStatus).eq('id', id).select().single();
+        if (e2) throw e2;
+        return res.status(200).json({
+          status: 'success',
+          data: d
+        });
+      }
+      throw error;
+    }
 
     return res.status(200).json({
       status: 'success',
