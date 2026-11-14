@@ -1380,6 +1380,14 @@ setTimeout(() => {
     dashboardView.style.display = 'none';
   }
 }, 2000);
+
+// Expose functions to window for inline onclick handlers
+window.viewRecord = viewRecord;
+window.editRecord = editRecord;
+window.updateStatus = updateStatus;
+window.saveEmailSettings = saveEmailSettings;
+window.toggleGlobalEmail = toggleGlobalEmail;
+window.openMediaModal = openMediaModal;
 </script>
 
 <!-- Fallback non-module script for immediate login display -->
