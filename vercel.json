@@ -3,7 +3,7 @@
   "public": true,
   "cleanUrls": true,
   "trailingSlash": false,
-  "buildCommand": "npm run build",
+  "buildCommand": "node scripts/build-info.js",
   "devCommand": "vercel dev",
   "installCommand": "npm install",
   "framework": null,

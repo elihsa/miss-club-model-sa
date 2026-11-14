@@ -1,0 +1,11 @@
+{
+  "build": "v1.0.0 #63",
+  "buildNumber": 63,
+  "version": "1.0.0",
+  "commit": "7952146",
+  "branch": "master",
+  "commitDate": "2026-11-14T09:49:00+02:00",
+  "buildTime": "2026-11-14T08:08:35.832Z",
+  "buildTimeLocal": "14 Nov 2026, 10:08:35",
+  "generatedBy": "scripts/build-info.js"
+}

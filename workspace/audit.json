@@ -1,0 +1,272 @@
+{
+  "colors": {
+    "--gold": "#c9a84c",
+    "--gold-light": "#f0d878",
+    "--gold-dark": "#8b6914",
+    "--black": "#0a0a0a",
+    "--dark": "#1a1a1a",
+    "--cream": "#f5f0e8",
+    "--red": "#e74c3c",
+    "--green": "#27ae60",
+    "--darker": "#121212",
+    "--builder-bg": "#0a0a0a",
+    "--builder-surface": "#141414",
+    "--builder-surface-hover": "#1e1e1e",
+    "--builder-border": "#2a2a2a",
+    "--builder-gold": "#c9a84c",
+    "--builder-gold-light": "#f0d878",
+    "--builder-gold-dark": "#8b6914",
+    "--builder-cream": "#f5f0e8",
+    "--builder-text": "#f5f0e8",
+    "--builder-text-muted": "#999",
+    "--builder-red": "#e74c3c",
+    "--builder-green": "#27ae60",
+    "--builder-blue": "#3498db",
+    "--blue": "#3498db",
+    "--orange": "#f39c12",
+    "--font-heading": "'Playfair Display', serif",
+    "--font-body": "'Inter', sans-serif",
+    "--font-button": "'Playfair Display', serif",
+    "--container-max": "1400px",
+    "--section-py": "100px",
+    "--section-px": "40px",
+    "--radius-card": "16px",
+    "--radius-btn": "8px",
+    "--transition-normal": "300ms ease",
+    "--shadow-md": "0 8px 24px rgba(0,0,0,0.3)",
+    "--shadow-gold": "0 8px 30px rgba(201,168,76,0.3)",
+    "--anim-fade-in": "300ms",
+    "--anim-slide-up": "400ms",
+    "--gray": "#666"
+  },
+  "fonts": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;900&family=Montserrat:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600;700&family=DM+Serif+Display:ital,wght@0,400;1,400&display=swap",
+    "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap"
+  ],
+  "supabase": {
+    "project_url": "https://ekvwgxnryasrvltyukvj.supabase.co",
+    "project_id": "ekvwgxnryasrvltyukvj"
+  },
+  "endpoints": [
+    {
+      "path": "/api/submit",
+      "methods": [
+        "OPTIONS",
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/events_create",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/candidates",
+      "methods": [
+        "GET",
+        "OPTIONS"
+      ]
+    },
+    {
+      "path": "/api/admin",
+      "methods": [
+        "OPTIONS"
+      ]
+    },
+    {
+      "path": "/api/events",
+      "methods": [
+        "DELETE",
+        "GET",
+        "OPTIONS",
+        "POST",
+        "PUT"
+      ]
+    },
+    {
+      "path": "/api/interested_parties",
+      "methods": [
+        "OPTIONS",
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/event-interest",
+      "methods": [
+        "OPTIONS",
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/subscribe",
+      "methods": [
+        "OPTIONS"
+      ]
+    },
+    {
+      "path": "/api/upload",
+      "methods": [
+        "OPTIONS"
+      ]
+    },
+    {
+      "path": "/api/organizers",
+      "methods": [
+        "OPTIONS",
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/settings",
+      "methods": [
+        "GET",
+        "OPTIONS",
+        "POST",
+        "PUT"
+      ]
+    },
+    {
+      "path": "/api/cms",
+      "methods": [
+        "OPTIONS"
+      ]
+    }
+  ],
+  "envVars": [
+    "CANDIDATE_EMAIL",
+    "EVENT_EMAIL",
+    "GLOBAL_EMAIL",
+    "RESEND_API_KEY",
+    "SUPABASE_SERVICE_KEY",
+    "SUPABASE_URL",
+    "VENUE_EMAIL"
+  ],
+  "tables": [
+    {
+      "name": "applications",
+      "columns": [
+        "created_at",
+        "data",
+        "email",
+        "full_name",
+        "phone",
+        "platform"
+      ]
+    },
+    {
+      "name": "event_interest_subscriptions",
+      "columns": [
+        "data",
+        "email",
+        "event_id",
+        "favorite_candidate",
+        "full_name",
+        "phone"
+      ]
+    },
+    {
+      "name": "event_organizers",
+      "columns": [
+        "availability",
+        "capacity",
+        "data",
+        "email",
+        "equipment",
+        "full_name",
+        "phone",
+        "terms_accepted",
+        "venue_address",
+        "venue_description",
+        "venue_location",
+        "venue_name",
+        "website_url"
+      ]
+    },
+    {
+      "name": "events",
+      "columns": [
+        "data",
+        "email",
+        "event_id",
+        "favorite_candidate",
+        "full_name",
+        "phone"
+      ]
+    },
+    {
+      "name": "interested_parties",
+      "columns": [
+        "data",
+        "email",
+        "event_id",
+        "favorite_candidate",
+        "full_name",
+        "phone"
+      ]
+    },
+    {
+      "name": "site_settings",
+      "columns": [
+        "data",
+        "value"
+      ]
+    },
+    {
+      "name": "videos",
+      "columns": []
+    }
+  ],
+  "storage": {
+    "buckets": [
+      "events",
+      "videos"
+    ]
+  },
+  "deployment": {
+    "version": 2,
+    "public": true,
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "buildCommand": "npm run build",
+    "devCommand": "vercel dev",
+    "installCommand": "npm install",
+    "framework": null,
+    "outputDirectory": ".",
+    "headers": [
+      {
+        "source": "/(.*)",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          },
+          {
+            "key": "X-XSS-Protection",
+            "value": "1; mode=block"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/admin",
+        "destination": "/admin.html"
+      },
+      {
+        "source": "/design-system",
+        "destination": "/design-system-builder.html"
+      }
+    ]
+  },
+  "cms": {
+    "google_sheet_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTfyDuaZ3UGKmMCNsKGYwG0oqfADQJMcNnrWkt0qYjhjTuNWL0LTGpWM-WORdoz10AW7P1_QxJNW2G_/pub?gid=1299416052&single=true&output=csv"
+  }
+}
