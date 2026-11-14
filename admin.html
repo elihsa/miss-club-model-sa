@@ -1208,13 +1208,24 @@ editForm.addEventListener('submit', async (e) => {
   const formData = new FormData(editForm);
   const updates = Object.fromEntries(formData);
 
-  const { error } = await supabase
-    .from(currentTable)
-    .update(updates)
-    .eq('id', currentRecordId);
+  const response = await fetch('/api/admin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer admin-session'
+    },
+    body: JSON.stringify({
+      action: 'updateRecord',
+      table: currentTable,
+      id: currentRecordId,
+      data: updates
+    })
+  });
 
-  if (error) {
-    alert('Error updating record: ' + error.message);
+  const result = await response.json();
+
+  if (result.error) {
+    alert('Error updating record: ' + result.error);
   } else {
     editModal.classList.remove('show');
     loadData();
@@ -1262,32 +1273,25 @@ eventCreationForm.addEventListener('submit', async (e) => {
 
 // Update status
 async function updateStatus(id, newStatus) {
-  // For event_interest_subscriptions, the id is the email (composite key with event_id)
-  if (currentTable === 'event_interest_subscriptions') {
-    const record = allRecords.find(r => r.email === id);
-    if (!record) return;
-    
-    const { error } = await supabase
-      .from('event_interest_subscriptions')
-      .update({ status: newStatus })
-      .eq('event_id', record.event_id)
-      .eq('email', record.email);
+  // Call the admin API endpoint (uses service role key server-side)
+  const response = await fetch('/api/admin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer admin-session'
+    },
+    body: JSON.stringify({
+      action: 'updateStatus',
+      table: currentTable,
+      id: id,
+      status: newStatus
+    })
+  });
 
-    if (error) {
-      alert('Error updating status: ' + error.message);
-    } else {
-      loadData();
-    }
-    return;
-  }
-
-  const { error } = await supabase
-    .from(currentTable)
-    .update({ status: newStatus })
-    .eq('id', id);
-
-  if (error) {
-    alert('Error updating status: ' + error.message);
+  const result = await response.json();
+  
+  if (result.error) {
+    alert('Error updating status: ' + result.error);
   } else {
     loadData();
   }
