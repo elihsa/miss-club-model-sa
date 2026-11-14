@@ -119,8 +119,7 @@ async function updateRecord(req, res, table, id, data) {
     }
 
     // Remove fields that shouldn't be updated
-    const { created_at, id: _, ...updateData } = data;
-    updateData.updated_at = new Date().toISOString();
+    const { created_at, id: _, updated_at, ...updateData } = data;
 
     const { data: result, error } = await supabase
       .from(table)
