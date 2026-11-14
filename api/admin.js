@@ -65,6 +65,19 @@ async function updateStatus(req, res, table, id, newStatus) {
       return res.status(400).json({ error: 'Missing required parameters' });
     }
 
+    // Validate status against allowed values for each table
+    const allowedStatuses = {
+      'applications': ['undecided', 'approved', 'declined', 'deleted'],
+      'candidates': ['undecided', 'approved', 'declined', 'deleted'],
+      'event_organizers': ['pending', 'approved', 'declined', 'deleted'],
+      'interested_parties': ['pending', 'approved', 'declined', 'deleted'],
+      'event_interest_subscriptions': ['pending', 'approved', 'declined', 'deleted']
+    };
+
+    if (!allowedStatuses[table] || !allowedStatuses[table].includes(newStatus)) {
+      return res.status(400).json({ error: `Invalid status '${newStatus}' for table '${table}'` });
+    }
+
     let error;
     
     if (table === 'event_interest_subscriptions') {
