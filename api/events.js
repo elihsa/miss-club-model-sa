@@ -41,10 +41,20 @@ function handler(req, res) {
 
 async function getEvents(req, res) {
   try {
-    const { data, error } = await supabase
+    // Public API - only show launched events
+    // Admin panel can pass ?admin=true to see all events
+    const isAdmin = req.query.admin === 'true';
+    
+    let query = supabase
       .from('events')
       .select('*')
       .order('event_date', { ascending: true });
+    
+    if (!isAdmin) {
+      query = query.eq('status', 'launched');
+    }
+    
+    const { data, error } = await query;
 
     if (error) throw error;
 
@@ -86,6 +96,7 @@ async function createEvent(req, res) {
         location: body.location,
         description: body.description,
         poster_url: posterUrl,
+        status: body.status || 'pending',
         created_at: new Date().toISOString()
       }])
       .select()
@@ -139,6 +150,7 @@ async function updateEvent(req, res) {
         location: body.location,
         description: body.description,
         poster_url: body.poster_url,
+        status: body.status,
         created_at: new Date().toISOString()
       })
       .eq('id', id)

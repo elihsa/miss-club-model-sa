@@ -88,7 +88,8 @@ async function updateStatus(req, res, table, id, newStatus) {
       'candidates': ['undecided', 'approved', 'declined', 'deleted'],
       'event_organizers': ['pending', 'approved', 'declined', 'deleted'],
       'interested_parties': ['pending', 'approved', 'declined', 'confirmed', 'cancelled'],
-      'event_interest_subscriptions': ['active', 'unsubscribed']
+      'event_interest_subscriptions': ['active', 'unsubscribed'],
+      'events': ['pending', 'launched']
     };
 
     if (!allowedStatuses[table] || !allowedStatuses[table].includes(newStatus)) {

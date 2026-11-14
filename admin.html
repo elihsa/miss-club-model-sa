@@ -382,6 +382,14 @@
         <input type="text" name="poster_url" placeholder="https://... (or leave empty to upload later)">
         <div class="media-preview" id="posterPreview"></div>
       </div>
+      <div class="form-group full-width">
+        <label>Status *</label>
+        <select name="status" required>
+          <option value="pending" selected>Pending (Design Phase - Hidden from site)</option>
+          <option value="launched">Launched (Live on site & in forms)</option>
+        </select>
+        <small style="color:#888; font-size:0.75rem;">Pending events are not visible on the public site or in submission forms.</small>
+      </div>
       <div class="modal-actions">
         <button type="button" class="modal-close" id="eventModalClose">Cancel</button>
         <button type="submit" class="btn-primary">Create Event</button>
@@ -586,11 +594,12 @@ const tableSchemas = {
       { key: 'location', label: 'Location', required: true },
       { key: 'description', label: 'Description' },
       { key: 'poster_url', label: 'Poster' },
+      { key: 'status', label: 'Status' },
       { key: 'created_at', label: 'Created' },
     ],
-    defaultColumns: ['name', 'event_date', 'location', 'poster_url', 'created_at'],
-    statusOptions: [],
-    hasStatus: false,
+    defaultColumns: ['name', 'event_date', 'location', 'status', 'poster_url', 'created_at'],
+    statusOptions: ['pending', 'launched'],
+    hasStatus: true,
     hasActions: true,
   },
   event_interest_subscriptions: {
@@ -785,10 +794,18 @@ async function loadData() {
     return;
   }
 
-  const { data, error } = await supabase
+  let query = supabase
     .from(currentTable)
-    .select('*')
-    .order('created_at', { ascending: false });
+    .select('*');
+
+  // For events in admin panel, load ALL events (not just launched)
+  if (currentTable === 'events') {
+    query = query.order('event_date', { ascending: true });
+  } else {
+    query = query.order('created_at', { ascending: false });
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('Load error:', error);
@@ -1001,6 +1018,10 @@ function renderTable() {
           if (status !== 'unsubscribed') {
             actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${recordId}', 'unsubscribed')" title="Mark Unsubscribed">✗ Unsubscribe</button>`;
           }
+        } else if (currentTable === 'events') {
+          // Events have Edit and Delete buttons
+          actionsHtml += `<button class="action-btn btn-edit" onclick="editRecord('${recordId}')">Edit</button>`;
+          actionsHtml += `<button class="action-btn btn-delete" onclick="deleteEvent('${recordId}')" ${status === 'launched' ? 'disabled title="Cannot delete launched event"' : ''}>Delete</button>`;
         } else if (currentTable !== 'interested_parties') {
           actionsHtml += `<button class="action-btn btn-approve" onclick="updateStatus('${recordId}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>Approve</button>`;
           actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${recordId}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>Decline</button>`;
@@ -1412,6 +1433,33 @@ async function updateStatus(id, newStatus) {
     alert('Error updating status: ' + result.error);
   } else {
     loadData();
+  }
+}
+
+// Delete event
+async function deleteEvent(id) {
+  if (!confirm('Are you sure you want to delete this event? This cannot be undone.')) return;
+  
+  const response = await fetch('/api/admin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer admin-session'
+    },
+    body: JSON.stringify({
+      action: 'deleteRecord',
+      table: 'events',
+      id: id
+    })
+  });
+
+  const result = await response.json();
+  
+  if (result.error) {
+    alert('Error deleting event: ' + result.error);
+  } else {
+    loadData();
+    loadEventCache();
   }
 }
 
