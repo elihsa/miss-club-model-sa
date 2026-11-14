@@ -48,7 +48,10 @@ async function getSettings(req, res) {
           venue_partner_email: 'elihsa@gmail.com',
           event_registration_email: 'elihsa@gmail.com',
           send_all_to_same: false,
-          global_email: 'elihsa@gmail.com'
+          global_email: 'elihsa@gmail.com',
+          candidate_signature: '',
+          venue_signature: '',
+          event_signature: ''
         }
       });
     }

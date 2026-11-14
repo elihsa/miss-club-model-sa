@@ -392,6 +392,10 @@
           <option value="" data-cms-key="modalOptionSelect">Select a candidate or leave blank</option>
         </select>
       </div>
+      <div class="form-group">
+        <label data-cms-key="modalLabelMessage">Leave us a message (Optional)</label>
+        <textarea name="message" id="modalMessage" rows="4" placeholder="Tell us why you're interested in this event..."></textarea>
+      </div>
       <div class="form-group checkbox-group">
         <input type="checkbox" name="terms_accepted" required id="modalTerms">
         <label for="modalTerms" data-cms-key="modalTextTerms">I agree to the <a href="https://missclubmodel.vercel.app/terms" target="_blank">Terms & Conditions</a> and <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy</a> and consent to receive event updates and communications.</label>
@@ -614,6 +618,10 @@ function renderEvents() {
                     ${eventCandidates.map(app => `<option value="${app.full_name}">${app.full_name}</option>`).join('')}
                   </select>
                 </div>
+              </div>
+              <div class="form-group">
+                <label data-cms-key="joinLabelMessage">Leave us a message (Optional)</label>
+                <textarea name="message" rows="4" placeholder="Tell us why you're interested in this event..."></textarea>
               </div>
               <div class="form-group checkbox-group">
                 <input type="checkbox" name="terms_accepted" required id="terms-${event.id}">

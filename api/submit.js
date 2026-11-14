@@ -108,6 +108,9 @@ async function sendAdminNotification(emailData, settings) {
 async function sendUserConfirmationEmail(emailData) {
   if (!resendClient) return;
 
+  const settings = await getEmailSettings();
+  const signature = settings.candidate_signature || '';
+
   const subject = `👑 Application Received - Miss Club Model SA`;
   const html = `
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
@@ -117,6 +120,7 @@ async function sendUserConfirmationEmail(emailData) {
       <p>We've received your application${emailData.event_name ? ` for <strong>${emailData.event_name}</strong>` : ''}.</p>
       <p>Our team will review your submission and contact you within 5-7 business days.</p>
       <hr style="border-color: #c9a84c;">
+      ${signature ? `<div style="margin-top:20px; padding-top:20px; border-top:1px solid #c9a84c;">${signature.replace(/\n/g, '<br>')}</div>` : ''}
       <p><a href="https://missclubmodel.vercel.app" style="background: #c9a84c; color: #0a0a0a; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">Visit Miss Club Model SA</a></p>
     </div>
   `;

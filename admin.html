@@ -473,7 +473,7 @@ const tableSchemas = {
       { key: 'created_at', label: 'Date' },
     ],
     defaultColumns: ['full_name', 'email', 'event_id', 'status', 'created_at'],
-    statusOptions: ['pending'],
+    statusOptions: ['pending', 'approved', 'declined', 'confirmed', 'cancelled'],
     hasStatus: true,
     hasActions: true,
   },
@@ -532,6 +532,9 @@ const tableSchemas = {
       { key: 'event_registration_email', label: 'Event Registration Email' },
       { key: 'send_all_to_same', label: 'Send All to Same' },
       { key: 'global_email', label: 'Global Email (when send_all_to_same=true)' },
+      { key: 'candidate_signature', label: 'Candidate Application Signature' },
+      { key: 'venue_signature', label: 'Venue Partner Signature' },
+      { key: 'event_signature', label: 'Event Registration Signature' },
     ],
     defaultColumns: ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'send_all_to_same', 'global_email'],
     statusOptions: [],
@@ -953,6 +956,28 @@ async function viewRecord(id) {
     if (record.fullbody_url) mediaItems.push({ type: 'image', url: record.fullbody_url, label: 'Full Body' });
     if (record.video_url) mediaItems.push({ type: 'video', url: record.video_url, label: 'Video' });
 
+    // Build detail grid with ALL fields from the record (excluding media URLs which are shown in carousel)
+    const excludedKeys = ['headshot_url', 'fullbody_url', 'video_url', 'id', 'created_at'];
+    let detailGridHtml = '';
+    for (const [key, value] of Object.entries(record)) {
+      if (value === null || value === undefined || value === '') continue;
+      if (excludedKeys.includes(key)) continue;
+      
+      // Format key nicely
+      const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      
+      // Format value
+      let displayValue = value;
+      if (key === 'status') {
+        displayValue = `<span class="status-badge status-${value}">${value}</span>`;
+      } else if (key === 'event_id' && value) {
+        const event = eventCache.find(e => e.id === value);
+        displayValue = event?.name || value;
+      }
+      
+      detailGridHtml += `<div class="detail-field"><label>${label}</label><span>${displayValue}</span></div>`;
+    }
+
     html = `
       <div class="detail-header">
         ${record.headshot_url ? `<img class="detail-avatar" src="${record.headshot_url}" alt="${record.full_name}">` : '<div class="detail-avatar" style="background:var(--dark); border:2px solid var(--gold-dark); display:flex; align-items:center; justify-content:center; color:var(--gold);">No Photo</div>'}
@@ -969,19 +994,14 @@ async function viewRecord(id) {
               <div class="carousel-item">
                 ${m.type === 'video'
                   ? `<video src="${m.url}" muted controls onclick="this.play()"></video>`
-                  : `<img src="${m.url}" onclick="openMediaModal('${m.url}', false)">`
-                }
+                  : `<img src="${m.url}" onclick="openMediaModal('${m.url}', false)">`}
               </div>
             `).join('')}
           </div>
         </div>
       ` : ''}
       <div class="detail-grid">
-        <div class="detail-field"><label>Phone</label><span>${record.phone || '—'}</span></div>
-        <div class="detail-field"><label>Age</label><span>${record.age || '—'}</span></div>
-        <div class="detail-field"><label>Location</label><span>${record.location || '—'}</span></div>
-        <div class="detail-field"><label>Event</label><span>${record.event_id ? (eventCache.find(e => e.id === record.event_id)?.name || record.event_id) : '—'}</span></div>
-        <div class="detail-field"><label>Status</label><span><span class="status-badge status-${record.status || 'undecided'}">${record.status || 'undecided'}</span></span></div>
+        ${detailGridHtml}
         <div class="detail-field"><label>Applied</label><span>${record.created_at ? new Date(record.created_at).toLocaleString() : '—'}</span></div>
       </div>
     `;
@@ -1042,7 +1062,10 @@ function renderEmailSettingsForm() {
     venue_partner_email: 'elihsa@gmail.com',
     event_registration_email: 'elihsa@gmail.com',
     send_all_to_same: false,
-    global_email: 'elihsa@gmail.com'
+    global_email: 'elihsa@gmail.com',
+    candidate_signature: '',
+    venue_signature: '',
+    event_signature: ''
   };
 
   const visibleCols = getVisibleColumns(currentTable);
@@ -1059,6 +1082,8 @@ function renderEmailSettingsForm() {
     const value = record[colKey];
     if (colKey === 'send_all_to_same') {
       cellsHtml += `<td><input type="checkbox" id="settings_send_all_to_same" ${value ? 'checked' : ''} onchange="toggleGlobalEmail()"></td>`;
+    } else if (colKey === 'candidate_signature' || colKey === 'venue_signature' || colKey === 'event_signature') {
+      cellsHtml += `<td><textarea id="settings_${colKey}" class="settings-input" style="width:100%; min-height:80px; padding:8px 12px; background:var(--black); border:1px solid var(--gold-dark); border-radius:6px; color:var(--cream); font-family:inherit; resize:vertical;">${value || ''}</textarea></td>`;
     } else {
       cellsHtml += `<td><input type="email" id="settings_${colKey}" value="${value || ''}" class="settings-input" style="width:100%; padding:8px 12px; background:var(--black); border:1px solid var(--gold-dark); border-radius:6px; color:var(--cream); font-family:inherit;"></td>`;
     }
@@ -1095,13 +1120,16 @@ async function saveEmailSettings() {
     venue_partner_email: document.getElementById('settings_venue_partner_email')?.value || 'elihsa@gmail.com',
     event_registration_email: document.getElementById('settings_event_registration_email')?.value || 'elihsa@gmail.com',
     send_all_to_same: document.getElementById('settings_send_all_to_same')?.checked || false,
-    global_email: document.getElementById('settings_global_email')?.value || 'elihsa@gmail.com'
+    global_email: document.getElementById('settings_global_email')?.value || 'elihsa@gmail.com',
+    candidate_signature: document.getElementById('settings_candidate_signature')?.value || '',
+    venue_signature: document.getElementById('settings_venue_signature')?.value || '',
+    event_signature: document.getElementById('settings_event_signature')?.value || ''
   };
 
-  // Validate emails
+  // Validate emails (skip signature fields)
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   for (const [key, value] of Object.entries(settings)) {
-    if (key !== 'send_all_to_same' && value && !emailRegex.test(value)) {
+    if (key !== 'send_all_to_same' && !key.endsWith('_signature') && value && !emailRegex.test(value)) {
       alert(`Invalid email format for ${key}`);
       return;
     }

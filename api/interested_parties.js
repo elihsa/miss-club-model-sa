@@ -72,6 +72,9 @@ function handler(req, res) {
 async function sendUserConfirmationEmail(emailData) {
   if (!resendClient) return;
 
+  const settings = await getEmailSettings();
+  const signature = settings.event_signature || '';
+
   const subject = `🎟️ Event Registration Confirmation - ${emailData.event_name}`;
   const html = `
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
@@ -85,6 +88,7 @@ async function sendUserConfirmationEmail(emailData) {
       <p>🎯 Candidates: ${emailData.favorite_candidate ? emailData.favorite_candidate : 'See candidates on the event page'}</p>
       <p>📧 Keep this email as your confirmation.</p>
       <hr style="border-color: #c9a84c;">
+      ${signature ? `<div style="margin-top:20px; padding-top:20px; border-top:1px solid #c9a84c;">${signature.replace(/\\n/g, '<br>')}</div>` : ''}
       <p><a href="https://missclubmodel.vercel.app" style="background: #c9a84c; color: #0a0a0a; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">Back to Miss Club Model SA</a></p>
     </div>
   `;

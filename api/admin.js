@@ -70,7 +70,7 @@ async function updateStatus(req, res, table, id, newStatus) {
       'applications': ['undecided', 'approved', 'declined', 'deleted'],
       'candidates': ['undecided', 'approved', 'declined', 'deleted'],
       'event_organizers': ['pending', 'approved', 'declined', 'deleted'],
-      'interested_parties': ['pending', 'approved', 'declined', 'deleted'],
+      'interested_parties': ['pending', 'approved', 'declined', 'confirmed', 'cancelled'],
       'event_interest_subscriptions': ['active', 'unsubscribed']
     };
 
@@ -121,17 +121,49 @@ async function updateRecord(req, res, table, id, data) {
     // Remove fields that shouldn't be updated
     const { created_at, id: _, updated_at, ...updateData } = data;
 
-    const { data: result, error } = await supabase
-      .from(table)
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
+    // Filter out null/undefined/empty-string fields that might cause issues
+    // but keep explicit booleans and 0
+    const cleanData = {};
+    for (const [key, value] of Object.entries(updateData)) {
+      if (value !== null && value !== undefined && value !== '') {
+        cleanData[key] = value;
+      }
+    }
+
+    // Try update; if a column doesn't exist, filter it out and retry
+    let attempt = { ...cleanData };
+    let result, error;
+
+    for (let retry = 0; retry <= 1; retry++) {
+      const response = await supabase
+        .from(table)
+        .update(attempt)
+        .eq('id', id)
+        .select()
+        .single();
+
+      result = response.data;
+      error = response.error;
+
+      if (!error || !error.message?.includes('Could not find')) {
+        break; // Success or non-column error
+      }
+
+      // Extract the bad column name and remove it
+      const colMatch = error.message.match(/'([^']+)'/);
+      if (colMatch && colMatch[1]) {
+        const badCol = colMatch[1];
+        delete attempt[badCol];
+        console.warn(`Removed non-existent column '${badCol}' from update on '${table}'`);
+      } else {
+        break; // Can't parse column name, stop retrying
+      }
+    }
 
     if (error) throw error;
 
-    return res.status(200).json({ 
-      status: 'success', 
+    return res.status(200).json({
+      status: 'success',
       message: 'Record updated successfully',
       data: result
     });
