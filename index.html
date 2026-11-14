@@ -1967,6 +1967,37 @@ async function loadCMSContent() {
 
 // Load CMS content on page load
 document.addEventListener('DOMContentLoaded', loadCMSContent);
+
+// Set dynamic site name from settings
+async function setSiteName() {
+  try {
+    const response = await fetch('/api/settings');
+    const result = await response.json();
+    if (result.status === 'success' && result.data) {
+      const siteName = result.data.site_name || 'Miss Club Model SA';
+      
+      // Update page title
+      document.title = siteName;
+      
+      // Update logo text (fallback if data-cms-key not populated yet)
+      const logo = document.querySelector('.logo-text');
+      if (logo) logo.textContent = siteName;
+      
+      // Update nav admin button
+      const adminBtn = document.querySelector('.nav-admin-btn');
+      if (adminBtn) adminBtn.textContent = `Admin - ${siteName}`;
+      
+      // Store for later use
+      window.siteName = siteName;
+    }
+  } catch (err) {
+    console.error('Failed to set site name:', err);
+  }
+}
+
+// Run after a short delay to ensure CMS content is loaded
+setTimeout(setSiteName, 500);
+setInterval(setSiteName, 5000);
 </script>
 </body>
 </html>
