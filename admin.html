@@ -609,10 +609,11 @@ const tableSchemas = {
       { key: 'phone', label: 'Phone' },
       { key: 'event_id', label: 'Event' },
       { key: 'favorite_candidate', label: 'Favorite Candidate' },
+      { key: 'message', label: 'Message / Comment' },
       { key: 'status', label: 'Status' },
       { key: 'subscribed_at', label: 'Subscribed' },
     ],
-    defaultColumns: ['email', 'event_id', 'favorite_candidate', 'status', 'subscribed_at'],
+    defaultColumns: ['email', 'event_id', 'favorite_candidate', 'message', 'status', 'subscribed_at'],
     statusOptions: ['active', 'unsubscribed'],
     hasStatus: true,
     hasActions: true,
@@ -629,7 +630,7 @@ const tableSchemas = {
       { key: 'venue_signature', label: 'Venue Partner Signature' },
       { key: 'event_signature', label: 'Event Registration Signature' },
     ],
-    defaultColumns: ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'send_all_to_same', 'global_email'],
+    defaultColumns: ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'send_all_to_same', 'global_email', 'candidate_signature', 'venue_signature', 'event_signature'],
     statusOptions: [],
     hasStatus: false,
     hasActions: false,
@@ -1006,12 +1007,8 @@ function renderTable() {
       actionsHtml = '<div class="action-btns">';
       actionsHtml += `<button class="action-btn btn-view" onclick="viewRecord('${recordId}')">View</button>`;
       if (schema.hasStatus) {
-        // Skip edit button for event_interest_subscriptions
-        if (currentTable !== 'event_interest_subscriptions') {
-          actionsHtml += `<button class="action-btn btn-edit" onclick="editRecord('${recordId}')">Edit</button>`;
-        }
         if (currentTable === 'event_interest_subscriptions') {
-          // event_interest_subscriptions uses 'active'/'unsubscribed' status
+          // event_interest_subscriptions uses 'active'/'unsubscribed' status - no edit button
           if (status !== 'active') {
             actionsHtml += `<button class="action-btn btn-approve" onclick="updateStatus('${recordId}', 'active')" title="Mark Active">✓ Active</button>`;
           }
@@ -1019,10 +1016,17 @@ function renderTable() {
             actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${recordId}', 'unsubscribed')" title="Mark Unsubscribed">✗ Unsubscribe</button>`;
           }
         } else if (currentTable === 'events') {
-          // Events have Edit and Delete buttons
+          // Events have Edit and Delete buttons only (no generic edit/approve/decline)
           actionsHtml += `<button class="action-btn btn-edit" onclick="editRecord('${recordId}')">Edit</button>`;
           actionsHtml += `<button class="action-btn btn-delete" onclick="deleteEvent('${recordId}')" ${status === 'launched' ? 'disabled title="Cannot delete launched event"' : ''}>Delete</button>`;
-        } else if (currentTable !== 'interested_parties') {
+        } else if (currentTable === 'interested_parties') {
+          // Event registrations: View + status buttons only (no edit)
+          actionsHtml += `<button class="action-btn btn-approve" onclick="updateStatus('${recordId}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>Approve</button>`;
+          actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${recordId}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>Decline</button>`;
+          actionsHtml += `<button class="action-btn btn-delete" onclick="updateStatus('${recordId}', 'deleted')" ${status === 'deleted' ? 'disabled' : ''}>Delete</button>`;
+        } else {
+          // Other tables (applications, event_organizers): generic edit + status buttons
+          actionsHtml += `<button class="action-btn btn-edit" onclick="editRecord('${recordId}')">Edit</button>`;
           actionsHtml += `<button class="action-btn btn-approve" onclick="updateStatus('${recordId}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>Approve</button>`;
           actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${recordId}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>Decline</button>`;
           actionsHtml += `<button class="action-btn btn-delete" onclick="updateStatus('${recordId}', 'deleted')" ${status === 'deleted' ? 'disabled' : ''}>Delete</button>`;

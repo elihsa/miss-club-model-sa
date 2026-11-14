@@ -35,6 +35,33 @@ const sqlStatements = [
     created_at TIMESTAMPTZ DEFAULT NOW()
   );`,
 
+  // 1b. Create event_interest_subscriptions table
+  `CREATE TABLE IF NOT EXISTS event_interest_subscriptions (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    event_id UUID NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT,
+    full_name TEXT,
+    favorite_candidate TEXT,
+    message TEXT,
+    status TEXT DEFAULT 'active',
+    subscribed_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(event_id, email)
+  );`,
+
+  // 1c. Enable RLS on event_interest_subscriptions
+  `ALTER TABLE event_interest_subscriptions ENABLE ROW LEVEL SECURITY;`,
+
+  // 1d. Policy: Allow anonymous inserts to event_interest_subscriptions
+  `DROP POLICY IF EXISTS "Allow anon insert event_interest" ON event_interest_subscriptions;`,
+  `CREATE POLICY "Allow anon insert event_interest" ON event_interest_subscriptions
+    FOR INSERT TO anon WITH CHECK (true);`,
+
+  // 1e. Policy: Allow authenticated reads
+  `DROP POLICY IF EXISTS "Allow authenticated read event_interest" ON event_interest_subscriptions;`,
+  `CREATE POLICY "Allow authenticated read event_interest" ON event_interest_subscriptions
+    FOR SELECT TO authenticated USING (true);`,
+
   // 2. Enable RLS
   `ALTER TABLE applications ENABLE ROW LEVEL SECURITY;`,
 

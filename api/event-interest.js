@@ -175,6 +175,7 @@ async function submitEventInterest(req, res) {
         email: body.email,
         phone: body.phone,
         favorite_candidate: body.favorite_candidate,
+        message: body.message,
         status: 'active'
       }], { 
         onConflict: 'event_id,email',
