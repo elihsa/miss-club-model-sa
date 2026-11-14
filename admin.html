@@ -269,6 +269,7 @@
     <h1 id="pageTitle">Admin Dashboard</h1>
     <div class="toolbar-right">
       <button class="btn-primary" id="createEventBtn" style="display:none">+ Create Event</button>
+      <button class="btn-primary" id="bulkEmailBtn" style="display:none">📧 Compose Email</button>
       <button class="btn-secondary" id="columnConfigBtn">Columns</button>
     </div>
   </div>
@@ -386,6 +387,89 @@
         <button type="submit" class="btn-primary">Create Event</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- BULK EMAIL MODAL -->
+<div class="modal" id="bulkEmailModal">
+  <div class="modal-content edit-modal bulk-email-form">
+    <h3>📧 Send Bulk Email to Registrations</h3>
+    <div class="bulk-email-section">
+      <div class="form-group">
+        <label>Filter by Event</label>
+        <select id="bulkEmailEventFilter">
+          <option value="">— Select Event —</option>
+        </select>
+      </div>
+      <div class="bulk-recipients-bar">
+        <button class="btn-secondary" id="selectAllRecipients" type="button">Select All</button>
+        <button class="btn-secondary" id="deselectAllRecipients" type="button">Deselect All</button>
+        <span id="recipientCount" style="color:var(--gold); font-size:0.85rem;">0 selected</span>
+      </div>
+      <div class="recipients-list" id="recipientsList">
+        <p style="color:#888; font-size:0.85rem;">Select an event above to load recipients</p>
+      </div>
+    </div>
+    <hr style="border-color:var(--gold-dark); margin:20px 0;">
+    <div class="bulk-email-compose">
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="bulkEmailSubject" placeholder="e.g., Exciting Update about {event_name}!">
+      </div>
+      <div class="form-group">
+        <label>Message Body</label>
+        <div class="email-toolbar">
+          <button type="button" onclick="document.execCommand('bold')" title="Bold" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;font-weight:bold;">B</button>
+          <button type="button" onclick="document.execCommand('italic')" title="Italic" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;font-style:italic;">I</button>
+          <button type="button" onclick="document.execCommand('underline')" title="Underline" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;text-decoration:underline;">U</button>
+          <span style="border-left:1px solid var(--gold-dark);margin:0 6px;"></span>
+          <button type="button" onclick="document.execCommand('formatBlock',false,'<h3>')" title="Heading" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;font-size:0.8rem;">H3</button>
+          <button type="button" onclick="document.execCommand('formatBlock',false,'<p>')" title="Paragraph" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;font-size:0.8rem;">P</button>
+          <span style="border-left:1px solid var(--gold-dark);margin:0 6px;"></span>
+          <button type="button" onclick="document.execCommand('insertUnorderedList')" title="Bullet List" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;">•</button>
+          <button type="button" onclick="document.execCommand('insertOrderedList')" title="Numbered List" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;font-size:0.8rem;">1.</button>
+          <span style="border-left:1px solid var(--gold-dark);margin:0 6px;"></span>
+          <button type="button" onclick="document.execCommand('formatBlock',false,'<blockquote>')" title="Quote" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;font-style:italic;font-size:0.8rem;">Quote</button>
+          <button type="button" onclick="insertEmailImage()" title="Insert Image" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;font-size:0.8rem;">🖼 Image</button>
+          <input type="file" id="emailImageInput" accept="image/*" style="display:none" onchange="handleEmailImageUpload(event)">
+          <button type="button" onclick="insertEmailLink()" title="Insert Link" style="padding:6px 10px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;cursor:pointer;font-size:0.8rem;">🔗 Link</button>
+          <span style="border-left:1px solid var(--gold-dark);margin:0 6px;"></span>
+          <select id="emailTextColor" onchange="document.execCommand('foreColor',false,this.value);this.value=''" style="padding:4px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;font-size:0.8rem;">
+            <option value="">Text Color</option>
+            <option value="#c9a84c">Gold</option>
+            <option value="#f5f0e8">Cream</option>
+            <option value="#ffffff">White</option>
+            <option value="#e74c3c">Red</option>
+            <option value="#27ae60">Green</option>
+            <option value="#3498db">Blue</option>
+            <option value="#f39c12">Orange</option>
+          </select>
+          <select id="emailBgColor" onchange="document.execCommand('hiliteColor',false,this.value);this.value=''" style="padding:4px;background:var(--black);color:var(--cream);border:1px solid var(--gold-dark);border-radius:4px;font-size:0.8rem;">
+            <option value="">Hlgt Color</option>
+            <option value="#c9a84c33">Gold</option>
+            <option value="#0a0a0a">Black</option>
+            <option value="#1a1a1a">Dark Gray</option>
+            <option value="#27ae6033">Green</option>
+            <option value="#3498db33">Blue</option>
+          </select>
+        </div>
+        <div id="bulkEmailMessage" contenteditable="true" style="min-height:250px; padding:15px; background:var(--black); border:1px solid var(--gold-dark); border-radius:6px; color:var(--cream); font-family:inherit; line-height:1.8; overflow-y:auto; margin-top:8px;">
+          <p>Dear {name},</p>
+          <p>We hope this message finds you well!</p>
+          <p>We're excited to share an important update regarding the upcoming event.</p>
+          <p>Best regards,<br>The Miss Club Model SA Team</p>
+        </div>
+        <p style="color:#888; font-size:0.75rem; margin-top:6px;">💡 Use <code style="color:var(--gold);">{name}</code> to personalize each email with the recipient's name. An unsubscribe link is automatically added.</p>
+      </div>
+      <div class="form-group">
+        <label>Preview (first recipient)</label>
+        <div id="emailPreview" style="padding:15px; background:var(--dark); border:1px solid var(--gold-dark); border-radius:6px; min-height:80px; font-size:0.85rem; color:var(--cream); line-height:1.8;"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-close" id="bulkEmailModalClose">Cancel</button>
+      <button type="button" class="btn-primary" id="sendBulkEmailBtn">📧 Send to Selected</button>
+    </div>
   </div>
 </div>
 
@@ -586,6 +670,7 @@ const eventModal = document.getElementById('eventModal');
 const eventCreationForm = document.getElementById('eventCreationForm');
 const eventModalClose = document.getElementById('eventModalClose');
 const createEventBtn = document.getElementById('createEventBtn');
+const bulkEmailBtn = document.getElementById('bulkEmailBtn');
 const columnModal = document.getElementById('columnModal');
 const columnList = document.getElementById('columnList');
 const columnModalClose = document.getElementById('columnModalClose');
@@ -688,6 +773,8 @@ async function loadData() {
 
   // Show/hide create event button
   createEventBtn.style.display = currentTable === 'events' ? 'inline-flex' : 'none';
+  // Show/hide bulk email button
+  bulkEmailBtn.style.display = currentTable === 'interested_parties' ? 'inline-flex' : 'none';
 
   // Update filters
   updateFilters(schema);
@@ -1267,6 +1354,9 @@ createEventBtn.addEventListener('click', () => {
   eventModal.classList.add('show');
 });
 
+// Bulk Email
+bulkEmailBtn.addEventListener('click', openBulkEmailModal);
+
 eventModalClose.addEventListener('click', () => eventModal.classList.remove('show'));
 eventModal.addEventListener('click', (e) => { if (e.target === eventModal) eventModal.classList.remove('show'); });
 
@@ -1421,6 +1511,256 @@ setTimeout(() => {
   }
 }, 2000);
 
+// Bulk Email Modal Logic
+const bulkEmailModal = document.getElementById('bulkEmailModal');
+const bulkEmailEventFilter = document.getElementById('bulkEmailEventFilter');
+const bulkEmailSubject = document.getElementById('bulkEmailSubject');
+const bulkEmailMessage = document.getElementById('bulkEmailMessage');
+const emailPreview = document.getElementById('emailPreview');
+const recipientsList = document.getElementById('recipientsList');
+const recipientCount = document.getElementById('recipientCount');
+const selectAllRecipients = document.getElementById('selectAllRecipients');
+const deselectAllRecipients = document.getElementById('deselectAllRecipients');
+const sendBulkEmailBtn = document.getElementById('sendBulkEmailBtn');
+const bulkEmailModalClose = document.getElementById('bulkEmailModalClose');
+
+let bulkEmailRecipients = [];
+
+// Open bulk email modal
+function openBulkEmailModal() {
+  bulkEmailModal.classList.add('show');
+  loadBulkEmailEvents();
+}
+
+// Close bulk email modal
+function closeBulkEmailModal() {
+  bulkEmailModal.classList.remove('show');
+  // Reset form
+  bulkEmailEventFilter.value = '';
+  bulkEmailSubject.value = '';
+  bulkEmailMessage.innerHTML = `<p>Dear {name},</p><p>We hope this message finds you well!</p><p>We're excited to share an important update regarding the upcoming event.</p><p>Best regards,<br>The Miss Club Model SA Team</p>`;
+  recipientsList.innerHTML = '<p style="color:#888; font-size:0.85rem;">Select an event above to load recipients</p>';
+  recipientCount.textContent = '0 selected';
+  emailPreview.innerHTML = '';
+  bulkEmailRecipients = [];
+}
+
+bulkEmailModalClose.addEventListener('click', closeBulkEmailModal);
+bulkEmailModal.addEventListener('click', (e) => { if (e.target === bulkEmailModal) closeBulkEmailModal(); });
+
+// Load events for bulk email filter
+async function loadBulkEmailEvents() {
+  try {
+    const response = await fetch('/api/admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer admin-session' },
+      body: JSON.stringify({ action: 'getEventFilter', table: 'interested_parties' })
+    });
+    const result = await response.json();
+    if (result.status === 'success') {
+      bulkEmailEventFilter.innerHTML = '<option value="">— Select Event —</option>';
+      result.data.forEach(event => {
+        const date = event.event_date ? new Date(event.event_date).toLocaleDateString() : 'TBA';
+        const opt = document.createElement('option');
+        opt.value = event.id;
+        opt.textContent = `${event.name} (${date})`;
+        bulkEmailEventFilter.appendChild(opt);
+      });
+    }
+  } catch (err) {
+    console.error('Load bulk email events error:', err);
+  }
+}
+
+// Load recipients for selected event
+bulkEmailEventFilter.addEventListener('change', async () => {
+  const eventId = bulkEmailEventFilter.value;
+  if (!eventId) {
+    recipientsList.innerHTML = '<p style="color:#888; font-size:0.85rem;">Select an event above to load recipients</p>';
+    recipientCount.textContent = '0 selected';
+    bulkEmailRecipients = [];
+    return;
+  }
+  
+  try {
+    const { data, error } = await supabase
+      .from('interested_parties')
+      .select('id, full_name, email, status')
+      .eq('event_id', eventId)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    bulkEmailRecipients = data || [];
+    renderRecipientList();
+    updatePreview();
+  } catch (err) {
+    console.error('Load recipients error:', err);
+    recipientsList.innerHTML = '<p style="color:var(--red);">Error loading recipients</p>';
+  }
+});
+
+function renderRecipientList() {
+  if (bulkEmailRecipients.length === 0) {
+    recipientsList.innerHTML = '<p style="color:#888; font-size:0.85rem;">No registrations found for this event</p>';
+    recipientCount.textContent = '0 selected';
+    return;
+  }
+  
+  recipientsList.innerHTML = bulkEmailRecipients.map((r, i) => `
+    <label style="display:flex; align-items:center; gap:10px; padding:8px 12px; background:var(--dark); border:1px solid var(--gold-dark); border-radius:6px; margin-bottom:6px; cursor:pointer; transition:all 0.2s;">
+      <input type="checkbox" value="${r.id}" ${r.status === 'cancelled' ? 'disabled' : 'checked'} data-email="${r.email}" data-name="${r.full_name}" onchange="updateRecipientSelection()">
+      <span style="flex:1; color:${r.status === 'cancelled' ? '#666' : 'var(--cream)'};">${r.full_name} (${r.email}) ${r.status === 'cancelled' ? '<span style="color:var(--red); font-size:0.75rem;">[Cancelled]</span>' : ''}</span>
+      <span class="status-badge status-${r.status || 'pending'}" style="font-size:0.7rem;">${r.status || 'pending'}</span>
+    </label>
+  `).join('');
+  updateRecipientSelection();
+}
+
+function updateRecipientSelection() {
+  const checkboxes = recipientsList.querySelectorAll('input[type="checkbox"]:not(:disabled)');
+  const checked = recipientsList.querySelectorAll('input[type="checkbox"]:checked');
+  const count = checked.length;
+  recipientCount.textContent = `${count} of ${checkboxes.length} selected`;
+  
+  // Update preview
+  updatePreview();
+}
+
+// Select all
+selectAllRecipients.addEventListener('click', () => {
+  recipientsList.querySelectorAll('input[type="checkbox"]:not(:disabled)').forEach(cb => cb.checked = true);
+  updateRecipientSelection();
+});
+
+// Deselect all
+deselectAllRecipients.addEventListener('click', () => {
+  recipientsList.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  updateRecipientSelection();
+});
+
+// Update email preview
+function updatePreview() {
+  const subject = bulkEmailSubject.value || 'Preview';
+  const message = bulkEmailMessage.innerHTML || '';
+  const checked = recipientsList.querySelectorAll('input[type="checkbox"]:checked');
+  
+  if (checked.length > 0) {
+    const firstRecipient = checked[0];
+    const name = firstRecipient.dataset.name || 'there';
+    const firstName = name.split(' ')[0];
+    
+    const personalized = message
+      .replace(/\{name\}/g, name)
+      .replace(/\{first_name\}/g, firstName);
+    
+    const eventOption = bulkEmailEventFilter.options[bulkEmailEventFilter.selectedIndex];
+    const eventName = eventOption ? eventOption.textContent.split(' (')[0] : 'the event';
+    
+    emailPreview.innerHTML = `
+      <strong style="color:var(--gold);">Subject: ${subject.replace(/\{name\}/g, name).replace(/\{event_name\}/g, eventName)}</strong><br><br>
+      ${personalized}
+      <hr style="border-color:var(--gold-dark); margin:15px 0;">
+      <span style="color:#666; font-size:0.75rem;">
+        You received this email because you expressed interest in ${eventName}.<br>
+        <a href="https://missclubmodel.vercel.app" style="color:var(--gold);">Unsubscribe</a>
+      </span>
+    `;
+  } else {
+    emailPreview.innerHTML = '<span style="color:#888;">Select recipients to see preview</span>';
+  }
+}
+
+// Update preview on subject/message change
+bulkEmailSubject.addEventListener('input', updatePreview);
+bulkEmailMessage.addEventListener('input', updatePreview);
+
+// Insert image into email
+function insertEmailImage() {
+  document.getElementById('emailImageInput').click();
+}
+
+function handleEmailImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  // Convert to base64
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.execCommand('insertImage', false, e.target.result);
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+// Insert link into email
+function insertEmailLink() {
+  const url = prompt('Enter URL:');
+  if (url) {
+    const text = prompt('Link text:', url);
+    if (text) {
+      document.execCommand('createLink', false, url);
+      // Update link text if needed
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const link = range.commonAncestorContainer.closest('a');
+        if (link) link.textContent = text;
+      }
+    }
+  }
+}
+
+// Send bulk email
+sendBulkEmailBtn.addEventListener('click', async () => {
+  const subject = bulkEmailSubject.value.trim();
+  const message = bulkEmailMessage.innerHTML.trim();
+  const eventId = bulkEmailEventFilter.value;
+  
+  const checked = recipientsList.querySelectorAll('input[type="checkbox"]:checked');
+  const recipientIds = Array.from(checked).map(cb => cb.value);
+  
+  if (!eventId || !subject || !message) {
+    alert('Please select an event, enter a subject, and compose a message.');
+    return;
+  }
+  
+  if (recipientIds.length === 0) {
+    alert('Please select at least one recipient.');
+    return;
+  }
+  
+  if (!confirm(`Send email to ${recipientIds.length} recipient(s)?`)) return;
+  
+  sendBulkEmailBtn.disabled = true;
+  sendBulkEmailBtn.textContent = 'Sending...';
+  
+  try {
+    const response = await fetch('/api/admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer admin-session' },
+      body: JSON.stringify({ action: 'sendBulkEmail', eventId, subject, message, recipientIds })
+    });
+    
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      alert(`✅ Email sent to ${result.sent} recipient(s)`);
+      if (result.failed > 0) {
+        alert(`⚠️ ${result.failed} failed: ${result.results.filter(r => r.status === 'failed').map(r => `${r.email}: ${r.error}`).join(', ')}`);
+      }
+      closeBulkEmailModal();
+    } else {
+      throw new Error(result.error || 'Failed to send bulk email');
+    }
+  } catch (err) {
+    alert('Error sending email: ' + err.message);
+  } finally {
+    sendBulkEmailBtn.disabled = false;
+    sendBulkEmailBtn.textContent = '📧 Send to Selected';
+  }
+});
+
 // Expose functions to window for inline onclick handlers
 window.viewRecord = viewRecord;
 window.editRecord = editRecord;
@@ -1428,6 +1768,11 @@ window.updateStatus = updateStatus;
 window.saveEmailSettings = saveEmailSettings;
 window.toggleGlobalEmail = toggleGlobalEmail;
 window.openMediaModal = openMediaModal;
+window.openBulkEmailModal = openBulkEmailModal;
+window.updateRecipientSelection = updateRecipientSelection;
+window.insertEmailImage = insertEmailImage;
+window.handleEmailImageUpload = handleEmailImageUpload;
+window.insertEmailLink = insertEmailLink;
 </script>
 
 <!-- Fallback non-module script for immediate login display -->
