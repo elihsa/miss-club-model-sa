@@ -1108,7 +1108,7 @@
       <div class="form-group">
         <div class="checkbox-group">
           <input type="checkbox" id="terms" required>
-          <label for="terms" data-cms-key="textTerms">I agree to the <a href="https://missclubmodel.vercel.app/terms" target="_blank">Terms & Conditions</a> and <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy</a> and confirm all information provided is accurate. <span class="required">*</span></label>
+          <label for="terms" data-cms-key="textTerms">I agree to the Terms & Conditions and Privacy Policy and confirm all information provided is accurate. <span class="required">*</span></label>
         </div>
       </div>
       <div class="form-group">
@@ -1120,7 +1120,7 @@
       <div class="form-group">
         <div class="checkbox-group">
           <input type="checkbox" id="privacyPolicy" required>
-          <label for="privacyPolicy" data-cms-key="textPrivacyPolicy">I have read and accept the <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy (POPIA Compliant)</a>. <span class="required">*</span></label>
+          <label for="privacyPolicy" data-cms-key="textPrivacyPolicy">I have read and accept the Privacy Policy (POPIA Compliant). <span class="required">*</span></label>
         </div>
       </div>
 
@@ -1172,9 +1172,9 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label data-cms-key="venueLabelWebsite">Website URL</label>
-            <input type="url" name="website_url" placeholder="https://yourvenue.co.za" data-cms-key="venuePlaceholderWebsite">
-          </div>
+                    <label data-cms-key="venueLabelWebsite">Website URL</label>
+                    <input type="text" name="website_url" placeholder="yourvenue.co.za" data-cms-key="venuePlaceholderWebsite" oninput="formatWebsiteUrl(this)">
+                  </div>
           <div class="form-group">
             <label data-cms-key="venueLabelCapacity">Capacity</label>
             <input type="number" name="capacity" placeholder="Maximum guests" min="1" data-cms-key="venuePlaceholderCapacity">
@@ -1190,13 +1190,13 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label data-cms-key="venueLabelAvailability">Availability</label>
-            <input type="text" name="availability" placeholder="e.g., Weekends only, Mon-Fri 9-5, Flexible" data-cms-key="venuePlaceholderAvailability">
+            <label data-cms-key="venueLabelAvailability">Available Dates</label>
+            <input type="date" name="availability" placeholder="Select date" data-cms-key="venuePlaceholderAvailability">
           </div>
         </div>
         <div class="form-group checkbox-group">
           <input type="checkbox" name="terms_accepted" required id="venueTerms">
-          <label for="venueTerms" data-cms-key="venueTextTerms">I accept the <a href="https://missclubmodel.vercel.app/terms" target="_blank">Terms & Conditions</a> and <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy</a> and understand Miss Club Model SA will review my venue application.</label>
+          <label for="venueTerms" data-cms-key="venueTextTerms">By submitting, you agree to our venue partnership terms, Terms & Conditions, and Privacy Policy</label>
         </div>
         <button type="submit" class="form-submit" data-cms-key="venueBtnSubmit">Submit Venue Application</button>
         <div class="form-message" id="venueFormMessage"></div>
@@ -1771,8 +1771,25 @@ document.getElementById('applicationForm').addEventListener('submit', async func
 });
 
 // ============================================
-// VENUE PARTNER FORM SUBMISSION
+// VENUE PARTNER FORM
 // ============================================
+
+// Auto-format website URL: prepend https://www. if missing
+function formatWebsiteUrl(input) {
+  let val = input.value.trim();
+  if (!val) return;
+  
+  // Remove any existing protocol
+  val = val.replace(/^https?:\/\//i, '').replace(/^www\./i, '');
+  
+  // Auto-format on blur
+  input.addEventListener('blur', function() {
+    if (this.value) {
+      this.value = 'https://www.' + this.value;
+    }
+  }, { once: true });
+}
+
 document.getElementById('venueForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const msgEl = document.getElementById('venueFormMessage');
@@ -1890,37 +1907,45 @@ async function loadCMSContent() {
 
     const content = result.content;
 
+    // Wrap legal terms in links for display
+    const linkMap = {
+      'textTerms': (t) => t.replace('Terms & Conditions', '<a href="/terms.html" target="_blank">Terms & Conditions</a>').replace('Privacy Policy', '<a href="/privacy.html" target="_blank">Privacy Policy</a>'),
+      'textPrivacyPolicy': (t) => t.replace('Privacy Policy', '<a href="/privacy.html" target="_blank">Privacy Policy</a>'),
+      'venueTextTerms': (t) => t.replace('Terms & Conditions', '<a href="/terms.html" target="_blank">Terms & Conditions</a>').replace('Privacy Policy', '<a href="/privacy.html" target="_blank">Privacy Policy</a>'),
+      'modalTextTerms': (t) => t.replace('Terms & Conditions', '<a href="/terms.html" target="_blank">Terms & Conditions</a>').replace('Privacy Policy', '<a href="/privacy.html" target="_blank">Privacy Policy</a>'),
+      'joinTextTerms': (t) => t.replace('Terms & Conditions', '<a href="/terms.html" target="_blank">Terms & Conditions</a>').replace('Privacy Policy', '<a href="/privacy.html" target="_blank">Privacy Policy</a>'),
+    };
+
     // Update CMS placeholders
     document.querySelectorAll('[data-cms-key]').forEach(el => {
       const key = el.getAttribute('data-cms-key');
       if (content[key]) {
+        let value = content[key];
+        // Apply link wrapping for legal terms
+        if (linkMap[key]) {
+          value = linkMap[key](value);
+        }
         // Handle images
         if (el.tagName === 'IMG') {
-          el.src = content[key];
+          el.src = value;
         } else if (el.tagName === 'SOURCE') {
-          // Picture source elements - update srcset
-          el.srcset = content[key];
+          el.srcset = value;
         } else if (el.classList.contains('gallery-item')) {
-          // Gallery items have picture > source + img structure
           const img = el.querySelector('img');
           const source = el.querySelector('source');
-          if (img) img.src = content[key];
-          if (source) source.srcset = content[key];
+          if (img) img.src = value;
+          if (source) source.srcset = value;
         } else if (el.classList.contains('about-image') || el.classList.contains('candidate-photo') || el.classList.contains('spotlight-image')) {
-          // Background images on divs
-          el.style.backgroundImage = `url(${content[key]})`;
+          el.style.backgroundImage = `url(${value})`;
           el.textContent = '';
         } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-          // Form inputs - update placeholder
-          el.placeholder = content[key];
+          el.placeholder = value;
         } else if (el.tagName === 'OPTION') {
-          // Select options - update text content
-          el.textContent = content[key];
+          el.textContent = value;
         } else if (el.tagName === 'LABEL' || el.tagName === 'P' || el.tagName === 'A') {
-          // Labels, paragraphs, and links - use innerHTML to preserve nested markup
-          el.innerHTML = content[key];
+          el.innerHTML = value;
         } else {
-          el.textContent = content[key];
+          el.textContent = value;
         }
       }
     });

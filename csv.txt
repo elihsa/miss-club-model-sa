@@ -1,0 +1,213 @@
+# Navigation
+siteTitle,Miss Club Model SA
+navHome,Home
+navAbout,About
+navGallery,Gallery
+navEvents,Events
+navCandidates,Candidates
+navApply,Apply
+navVenuePartner,Venue Partner
+navContact,Contact
+navAdmin,Admin
+
+# Hero
+heroTagline,Your Legacy Begins Here
+heroMission,Miss Club Model SA celebrates elegance, intelligence, and empowerment. We provide a platform for extraordinary women to showcase their talent, advocate for meaningful causes, and inspire communities across South Africa.
+heroCTA,Apply Now
+
+# About
+aboutTitle,About the Pageant
+aboutSubtitle,More than a beauty pageant — a celebration of character, leadership, and purpose
+aboutText1,Miss Club Model SA is more than a beauty pageant — it is a celebration of character, leadership, and purpose. Founded to uplift and empower women, our pageant seeks candidates who embody grace, intelligence, and a commitment to positive change.
+aboutText2,Our judging criteria evaluate poise, communication, community involvement, and personal platform. We believe true beauty shines through action and advocacy.
+visionTitle,Our Vision
+visionText,To crown ambassadors who will represent South Africa with dignity and drive meaningful social impact.
+aboutImage,https://your-image-url.com/about-bg.webp
+aboutImageAlt,Elegance in Every Moment
+
+# Gallery (6 tiles)
+galleryTitle,The Miss Club Model Experience
+gallerySubtitle,Moments of joy, elegance, and sisterhood that define our community
+gallery1Img,https://your-image-url.com/gallery1.webp
+gallery1Title,Club Atmosphere
+gallery1Desc,Where elegance meets excitement
+... (gallery2-gallery6 same pattern)
+
+# Events
+eventsTitle,Events
+eventsSubtitle,Discover upcoming Miss Club Model SA events and experiences
+eventsPageTitle,Events
+eventsPageSubtitle,Discover upcoming Miss Club Model SA events and register your interest
+labelSortBy,Sort by:
+optionDateAsc,Date: Soonest First
+optionDateDesc,Date: Latest First
+optionNameAsc,Name: A-Z
+optionNameDesc,Name: Z-A
+labelFilter,Filter:
+optionAllEvents,All Events
+optionUpcoming,Upcoming
+optionPast,Past Events
+textLoadingEvents,Loading events...
+textNoEvents,No events match your filters.
+approvedCandidatesLabel,Approved Candidates
+approvedBadge,✓ Approved
+btnRegisterInterest,Register Interest
+btnTellMeMore,Tell Me More
+
+# Tell Me More Modal
+modalTitle,Tell Me More
+modalIntro,Join our mailing list to receive updates on event timing, ticket releases, candidate announcements, and exclusive details for this event.
+modalLabelEmail,Email Address *
+modalPlaceholderEmail,your@email.com
+modalLabelPhone,Phone Number
+modalPlaceholderPhone,+27 XX XXX XXXX
+modalLabelFavorite,Favorite Candidate (Optional)
+modalOptionSelect,Select a candidate or leave blank
+modalTextTerms,I agree to receive event updates and communications.
+modalBtnSubmit,Join Mailing List
+
+# Join Form
+joinFormTitle,Register Interest for [Event Name]
+joinFormIntro,Enter your details below to join this event. We'll send you the event schedule, ticket links, and any other important information after you sign up.
+joinLabelName,Full Name *
+joinPlaceholderName,Enter your full name
+joinLabelEmail,Email Address *
+joinPlaceholderEmail,your@email.com
+joinLabelPhone,Phone Number
+joinPlaceholderPhone,Your phone number
+joinLabelFavorite,Favorite Candidate
+joinOptionSelect,Select your favorite candidate
+joinTextTerms,I agree to receive event updates and communications.
+joinBtnSubmit,Join Event
+
+# Venue Partner
+venueTitle,Become a Venue Partner
+venueSubtitle,Host Miss Club Model SA events at your venue. We seek elegant, professional spaces aligned with our brand.
+venuePartnerIntro,Host Miss Club Model SA events at your venue. We're always looking for elegant, professional spaces that align with our brand of elegance and empowerment.
+venueLabelName,Full Name *
+venuePlaceholderName,Your full name
+venueLabelEmail,Email Address *
+venuePlaceholderEmail,you@domain.com
+venueLabelPhone,Phone Number *
+venuePlaceholderPhone,+27 XX XXX XXXX
+venueLabelVenueName,Venue Name *
+venuePlaceholderVenueName,e.g., The Grand Ballroom, Sun City
+venueLabelLocation,Venue Location *
+venuePlaceholderLocation,City, Province (e.g., Cape Town, Western Cape)
+venueLabelAddress,Venue Address
+venuePlaceholderAddress,Full physical address
+venueLabelWebsite,Website URL
+venuePlaceholderWebsite,https://yourvenue.co.za
+venueLabelCapacity,Capacity
+venuePlaceholderCapacity,Maximum guests
+venueLabelDescription,Venue Description
+venuePlaceholderDescription,Describe your venue, facilities, atmosphere, and what makes it special for hosting events...
+venueLabelEquipment,Available Equipment
+venuePlaceholderEquipment,Sound system, lighting, stage, projector, etc.
+venueLabelAvailability,Availability
+venuePlaceholderAvailability,e.g., Weekends only, Mon-Fri 9-5, Flexible
+venueTextTerms,I accept the Terms & Conditions and understand Miss Club Model SA will review my venue application.
+venueBtnSubmit,Submit Venue Application
+venueLinkBack,← Back to Events
+
+# Event Creation (Admin)
+eventCreationTitle,Create New Event
+eventCreationSubtitle,Admin only: Create a new event with description and poster.
+eventLabelName,Event Name *
+eventPlaceholderName,e.g., Miss Club Model SA Gala 2026
+eventLabelDate,Event Date *
+eventLabelTime,Event Time
+eventLabelLocation,Location *
+eventPlaceholderLocation,e.g., Sun City, South Africa
+eventLabelDescription,Description
+eventPlaceholderDescription,Describe the event, schedule, highlights, ticket info...
+eventLabelPoster,Poster Image URL
+eventPlaceholderPoster,https://... (or leave empty to upload later)
+eventBtnCreate,Create Event
+eventLinkBack,← Back to Events
+
+# Apply Form (all labels, placeholders, options, buttons)
+applyTitle,Apply
+applySubtitle,Take the first step towards your legacy. Complete all required fields to submit your entry.
+labelFullName,Full Name *
+placeholderFullName,Your full legal name
+labelDOB,Date of Birth *
+labelEmail,Email *
+placeholderEmail,you@domain.com
+labelPhone,Phone *
+placeholderPhone,+27 XX XXX XXXX
+labelEvent,Event Applying For *
+optionSelectEvent,Select an event
+optionAllEvents,All Events (General Application)
+labelAddress,Address *
+placeholderAddress,Street address
+labelCity,City
+placeholderCity,City
+labelProvince,Province *
+optionSelectProvince,Select Province
+provinceEC,Eastern Cape
+provinceFS,Free State
+provinceGP,Gauteng
+provinceKZN,KwaZulu-Natal
+provinceLP,Limpopo
+provinceMP,Mpumalanga
+provinceNW,North West
+provinceNC,Northern Cape
+provinceWC,Western Cape
+labelHeight,Height (cm)
+placeholderHeight,e.g., 170
+labelOccupation,Occupation
+placeholderOccupation,Current profession or student
+labelEducation,Education
+placeholderEducation,Highest qualification
+labelInstagram,Instagram Handle
+placeholderInstagram,@username
+labelPlatform,Personal Platform / Advocacy *
+placeholderPlatform,Describe the cause you champion and why it matters to you...
+labelEssay,Why should you win? *
+placeholderEssay,Tell us what makes you the ideal Miss Club Model SA...
+labelTalent,Talent (if applicable)
+placeholderTalent,e.g., Singing, Dance, Poetry, Public Speaking
+labelHeadshot,Headshot Photo *
+textHeadshotUpload,📷 Click to upload headshot (JPG/PNG, auto-resized to 1200px max)
+labelFullbody,Full-Length Photo *
+textFullbodyUpload,📷 Click to upload full-length photo (JPG/PNG, auto-resized to 1200px max)
+labelVideo,Introduction Video *
+textVideoUpload,🎥 Click to upload intro video (MP4, max 2 min, max 50MB)
+labelEmergencyName,Emergency Contact Name
+placeholderEmergencyName,Full name
+labelEmergencyPhone,Emergency Contact Phone
+placeholderEmergencyPhone,+27 XX XXX XXXX
+textTerms,I agree to the Terms & Conditions and confirm all information provided is accurate. *
+textMediaRelease,I grant Miss Club Model SA permission to use my photos and video for promotional purposes. *
+btnSubmitApplication,Submit Application
+
+# Contact
+contactTitle,Contact Us
+contactSubtitle,We'd love to hear from you
+contactIconEmail,📧 Email
+contactEmail,contact@missclubmodelsa.co.za
+contactIconPhone,📞 Phone
+contactPhone,+27 XX XXX XXXX
+contactIconAddress,📍 Office
+contactAddress,South Africa
+
+# Footer
+footerText,© 2026 Miss Club Model SA. All rights reserved. | Privacy Policy | Terms
+footerPrivacy,Privacy Policy
+footerTerms,Terms
+
+# Images (URLs)
+heroBackground,https://your-image-url.com/hero-bg.webp
+heroLogo,https://your-image-url.com/logo.webp
+aboutImage,https://your-image-url.com/about-bg.webp
+candidate1Photo,https://your-image-url.com/candidate1.webp
+candidate2Photo,https://your-image-url.com/candidate2.webp
+candidate3Photo,https://your-image-url.com/candidate3.webp
+candidate4Photo,https://your-image-url.com/candidate4.webp
+gallery1,https://your-image-url.com/gallery1.webp
+gallery2,https://your-image-url.com/gallery2.webp
+gallery3,https://your-image-url.com/gallery3.webp
+gallery4,https://your-image-url.com/gallery4.webp
+gallery5,https://your-image-url.com/gallery5.webp
+gallery6,https://your-image-url.com/gallery6.webp

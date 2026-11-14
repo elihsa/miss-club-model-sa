@@ -157,7 +157,7 @@ joinOptionSelect,Select a candidate
 joinPlaceholderEmail,you@example.com
 joinPlaceholderName,Your Name
 joinPlaceholderPhone,082 123 4567
-joinTextTerms,I agree to the <a href="https://missclubmodel.vercel.app/terms" target="_blank">Terms & Conditions</a> and <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy</a> and consent to receive event updates and communications.
+joinTextTerms,I agree to the Terms & Conditions and Privacy Policy and consent to receive event updates and communications.
 labelAddress,Physical Address
 labelCity,City
 labelDOB,Date of Birth
@@ -195,7 +195,7 @@ modalOptionSelect,Select a candidate
 modalPadding,40px
 modalPlaceholderEmail,you@example.com
 modalPlaceholderPhone,082 123 4567
-modalTextTerms,I agree to the <a href="https://missclubmodel.vercel.app/terms" target="_blank">Terms & Conditions</a> and <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy</a> and consent to receive event updates and communications.
+modalTextTerms,I agree to the Terms & Conditions and Privacy Policy and consent to receive event updates and communications.
 modalTitle,Tell Me More
 navAbout,About
 navAdmin,Admin
@@ -287,9 +287,9 @@ textHeadshotUpload,Upload a headshot photo (JPG/PNG/WebP, max 5MB)
 textLoadingEvents,Loading events...
 textMediaRelease,I consent to the use of my photos and videos for promotional purposes
 textNoEvents,No events found
-textPrivacyPolicy,I have read and accept the <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy (POPIA Compliant)</a>
+textPrivacyPolicy,I have read and accept the Privacy Policy (POPIA Compliant)
 textSm,0.9rem
-textTerms,I agree to the <a href="https://missclubmodel.vercel.app/terms" target="_blank">Terms & Conditions</a> and <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy</a> and confirm all information provided is accurate.
+textTerms,I agree to the Terms & Conditions and Privacy Policy and confirm all information provided is accurate.
 textVideoUpload,Upload a 60-second video introduction (MP4/WebM, max 50MB)
 trackingNormal,0
 trackingTight,-0.02em
@@ -324,7 +324,7 @@ venuePlaceholderPhone,082 123 4567
 venuePlaceholderVenueName,The Grand Ballroom
 venuePlaceholderWebsite,https://venue.example.com
 venueSubtitle,Become a venue partner
-venueTextTerms,By submitting, you agree to our venue partnership terms, <a href="https://missclubmodel.vercel.app/terms" target="_blank">Terms & Conditions</a>, and <a href="https://missclubmodel.vercel.app/privacy" target="_blank">Privacy Policy</a>
+venueTextTerms,By submitting, you agree to our venue partnership terms, Terms & Conditions, and Privacy Policy
 venueTitle,Venue Partner
 visionText,To be the leading platform that celebrates and empowers South African women through elegance, leadership, and community impact.
 visionTitle,Our Vision

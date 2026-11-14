@@ -105,6 +105,35 @@ async function sendOrganizerNotification(emailData, settings) {
   }
 }
 
+async function sendOrganizerConfirmation(emailData) {
+  if (!resendClient) return;
+
+  const subject = `🏛️ Venue Application Received - Miss Club Model SA`;
+  const html = `
+    <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #c9a84c;">🎭 Application Confirmed!</h2>
+      <p><strong>Dear ${emailData.full_name},</strong></p>
+      <p>Thank you for applying as a <strong>Miss Club Model SA Venue Partner</strong>!</p>
+      <p>We've received your application for <strong>${emailData.venue_name}</strong>.</p>
+      <p>Our team will review your submission and contact you within 3-5 business days.</p>
+      <hr style="border-color: #c9a84c;">
+      <p><a href="https://missclubmodel.vercel.app" style="background: #c9a84c; color: #0a0a0a; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">Visit Miss Club Model SA</a></p>
+    </div>
+  `;
+
+  try {
+    await resendClient.emails.send({
+      from: 'Miss Club Model SA <noreply@missclubmodelsa.co.za>',
+      to: emailData.email,
+      subject,
+      html,
+    });
+    console.log('Organizer confirmation email sent to:', emailData.email);
+  } catch (error) {
+    console.error('Failed to send organizer confirmation email:', error.message);
+  }
+}
+
 async function submitOrganizer(req, res) {
   try {
     const body = req.body;
@@ -161,6 +190,13 @@ async function submitOrganizer(req, res) {
       venue_location: body.venue_location,
       created_at: new Date().toISOString()
     }, settings).catch(err => console.error('Email send error:', err));
+
+    // Send user confirmation (async)
+    sendOrganizerConfirmation({
+      full_name: body.full_name,
+      email: body.email,
+      venue_name: body.venue_name
+    }).catch(err => console.error('User email error:', err));
 
     return res.status(201).json({
       status: 'success',

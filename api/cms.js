@@ -43,6 +43,9 @@ function parseCSV(text) {
 
     // Remove surrounding quotes if present
     value = value.replace(/^"|"$/g, '');
+    
+    // Unescape doubled quotes (from CSV export)
+    value = value.replace(/""/g, '"');
 
     if (key) content[key] = value;
   }
