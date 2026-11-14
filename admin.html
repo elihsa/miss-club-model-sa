@@ -903,7 +903,15 @@ function renderTable() {
         if (currentTable !== 'event_interest_subscriptions') {
           actionsHtml += `<button class="action-btn btn-edit" onclick="editRecord('${recordId}')">Edit</button>`;
         }
-        if (currentTable !== 'interested_parties') {
+        if (currentTable === 'event_interest_subscriptions') {
+          // event_interest_subscriptions uses 'active'/'unsubscribed' status
+          if (status !== 'active') {
+            actionsHtml += `<button class="action-btn btn-approve" onclick="updateStatus('${recordId}', 'active')" title="Mark Active">✓ Active</button>`;
+          }
+          if (status !== 'unsubscribed') {
+            actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${recordId}', 'unsubscribed')" title="Mark Unsubscribed">✗ Unsubscribe</button>`;
+          }
+        } else if (currentTable !== 'interested_parties') {
           actionsHtml += `<button class="action-btn btn-approve" onclick="updateStatus('${recordId}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>Approve</button>`;
           actionsHtml += `<button class="action-btn btn-decline" onclick="updateStatus('${recordId}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>Decline</button>`;
           actionsHtml += `<button class="action-btn btn-delete" onclick="updateStatus('${recordId}', 'deleted')" ${status === 'deleted' ? 'disabled' : ''}>Delete</button>`;
