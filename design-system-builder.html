@@ -817,11 +817,16 @@
           <div class="control-hint">Used for: h1-h4, .section-title, .logo-text, buttons</div>
         </div>
 
-        <div class="font-preview" id="headingPreview">
-          <div class="font-preview-text" style="font-family: 'Playfair Display', serif;">Miss Club Model SA — Heading Preview</div>
-          <div class="font-preview-text body" style="font-family: 'Playfair Display', serif;">Section Title Example</div>
-          <div class="font-preview-text caption" style="font-family: 'Playfair Display', serif;">Button Text & Labels</div>
-        </div>
+        <!-- Preview for Heading Font -->
+        <p class="preview-desc">Below is a live preview of the selected heading font. It shows the main page title, a section title and a button label – the exact elements that use `--font-heading`.</p>
+        <details class="preview-section" open>
+          <summary>Heading preview (updates with font)</summary>
+          <div class="font-preview" id="headingPreview">
+            <div class="font-preview-text" style="font-family: 'Playfair Display', serif;">Miss Club Model SA — Heading Preview</div>
+            <div class="font-preview-text body" style="font-family: 'Playfair Display', serif;">Section Title Example</div>
+            <div class="font-preview-text caption" style="font-family: 'Playfair Display', serif;">Button Text & Labels</div>
+          </div>
+        </details>
 
         <div class="control-group">
           <label class="control-label">Body Font (--font-body)</label>
@@ -838,11 +843,16 @@
           <div class="control-hint">Used for: paragraphs, form inputs, body text, navigation</div>
         </div>
 
-        <div class="font-preview" id="bodyPreview">
-          <div class="font-preview-text" style="font-family: 'Inter', sans-serif;">Miss Club Model SA — Body Preview</div>
-          <div class="font-preview-text body" style="font-family: 'Inter', sans-serif;">This is body text at regular size. It should be highly readable at small sizes.</div>
-          <div class="font-preview-text caption" style="font-family: 'Inter', sans-serif;">Caption / metadata text</div>
-        </div>
+        <!-- Preview for Body Font -->
+        <p class="preview-desc">Live preview of the body font. This is the font used for all paragraph text, form inputs, navigation links and metadata across the site.</p>
+        <details class="preview-section" open>
+          <summary>Body text preview (updates with font)</summary>
+          <div class="font-preview" id="bodyPreview">
+            <div class="font-preview-text" style="font-family: 'Inter', sans-serif;">Miss Club Model SA — Body Preview</div>
+            <div class="font-preview-text body" style="font-family: 'Inter', sans-serif;">This is body text at regular size. It should be highly readable at small sizes.</div>
+            <div class="font-preview-text caption" style="font-family: 'Inter', sans-serif;">Caption / metadata text</div>
+          </div>
+        </details>
 
         <div class="control-group">
           <label class="control-label">Button/Accent Font (--font-button)</label>
@@ -854,9 +864,13 @@
             <option value="'Outfit', sans-serif">Outfit (Contemporary)</option>
           </select>
           <div class="control-hint">Used for: .btn, .form-submit, primary CTAs</div>
-+          <div class="button-preview" style="margin-top:10px;">
-+            <button class="btn-primary" style="font-family: var(--font-button);">Button Sample</button>
-+          </div>
+          <p class="preview-desc" style="margin-top:8px; font-size:0.85rem; color:#aaa;">This button shows exactly how all primary buttons, form submit buttons and call‑to‑action elements will look with the selected font.</p>
+          <details class="preview-section" open>
+            <summary>Button preview (updates with font)</summary>
+            <div class="button-preview" style="margin-top:10px; background:var(--dark); border:1px solid var(--gold-dark); border-radius:6px; padding:10px;">
+              <button class="btn-primary" style="font-family: var(--font-button);">Button Sample</button>
+            </div>
+          </details>
         </div>
       </div>
 
