@@ -1,7 +1,7 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+const { setCors } = require('./cors');
+
+async function handler(req, res) {
+  setCors(req, res);
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
@@ -43,7 +43,7 @@ function parseCSV(text) {
 
     // Remove surrounding quotes if present
     value = value.replace(/^"|"$/g, '');
-    
+
     // Unescape doubled quotes (from CSV export)
     value = value.replace(/""/g, '"');
 
@@ -51,3 +51,5 @@ function parseCSV(text) {
   }
   return content;
 }
+
+module.exports = handler;

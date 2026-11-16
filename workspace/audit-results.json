@@ -1,0 +1,176 @@
+{
+  "html": {
+    "files": [
+      {
+        "name": "index.html",
+        "size": 80408,
+        "lines": 2006
+      },
+      {
+        "name": "events.html",
+        "size": 43946,
+        "lines": 885
+      },
+      {
+        "name": "admin.html",
+        "size": 81189,
+        "lines": 1844
+      },
+      {
+        "name": "terms.html",
+        "size": 26558,
+        "lines": 442
+      },
+      {
+        "name": "privacy.html",
+        "size": 30822,
+        "lines": 499
+      },
+      {
+        "name": "contact.html",
+        "size": 6562,
+        "lines": 159
+      },
+      {
+        "name": "design-system-builder.html",
+        "size": 80692,
+        "lines": 2246
+      }
+    ],
+    "errors": [],
+    "warnings": [
+      {
+        "file": "admin.html",
+        "issues": [
+          "Missing #buildInfo element for build tracking"
+        ]
+      },
+      {
+        "file": "design-system-builder.html",
+        "issues": [
+          "Missing #buildInfo element for build tracking"
+        ]
+      }
+    ]
+  },
+  "js": {
+    "files": [
+      {
+        "name": "api/admin.js",
+        "size": 13779
+      },
+      {
+        "name": "api/candidates.js",
+        "size": 1254
+      },
+      {
+        "name": "api/cms.js",
+        "size": 1814
+      },
+      {
+        "name": "api/event-interest.js",
+        "size": 7758
+      },
+      {
+        "name": "api/events.js",
+        "size": 7012
+      },
+      {
+        "name": "api/events_create.js",
+        "size": 1669
+      },
+      {
+        "name": "api/interested_parties.js",
+        "size": 7721
+      },
+      {
+        "name": "api/organizers.js",
+        "size": 7575
+      },
+      {
+        "name": "api/settings.js",
+        "size": 3743
+      },
+      {
+        "name": "api/submit.js",
+        "size": 7359
+      },
+      {
+        "name": "api/subscribe.js",
+        "size": 3757
+      },
+      {
+        "name": "api/upload.js",
+        "size": 2943
+      },
+      {
+        "name": "scripts/build-info-runtime.js",
+        "size": 775
+      },
+      {
+        "name": "scripts/build-info.js",
+        "size": 2173
+      },
+      {
+        "name": "scripts/track-time.js",
+        "size": 4537
+      }
+    ],
+    "errors": [],
+    "warnings": []
+  },
+  "api": {
+    "routes": [],
+    "errors": []
+  },
+  "spec": {
+    "checks": [
+      {
+        "name": "Color scheme (black/gold/cream)",
+        "status": "PASS"
+      },
+      {
+        "name": "Build info system present",
+        "status": "PASS"
+      },
+      {
+        "name": "Event interest message field",
+        "status": "PASS"
+      },
+      {
+        "name": "Email signatures (3 types)",
+        "status": "PASS"
+      },
+      {
+        "name": "Dynamic site name",
+        "status": "PASS"
+      },
+      {
+        "name": "Legal links dynamic wrapping",
+        "status": "PASS"
+      },
+      {
+        "name": "Supabase skills installed",
+        "status": "PASS"
+      },
+      {
+        "name": "Vercel build command updated",
+        "status": "PASS"
+      }
+    ],
+    "failures": []
+  },
+  "build": {
+    "info": {
+      "build": "v1.0.0 #63",
+      "buildNumber": 63,
+      "version": "1.0.0",
+      "commit": "7952146",
+      "branch": "master",
+      "commitDate": "2026-11-14T09:49:00+02:00",
+      "buildTime": "2026-11-14T08:08:35.832Z",
+      "buildTimeLocal": "14 Nov 2026, 10:08:35",
+      "generatedBy": "scripts/build-info.js"
+    }
+  }
+}

@@ -27,7 +27,7 @@ function git(cmd) {
 let buildNumber = 0;
 try {
   buildNumber = parseInt(execSync('git rev-list --count HEAD', { cwd: root }).toString().trim(), 10);
-} catch (e) {
+} catch {
   buildNumber = 0; // no git available — fall back to timestamp seconds
 }
 if (!buildNumber) {

@@ -65,7 +65,7 @@ function stop() {
   const start = new Date(data.activeSession);
   const end = new Date();
   const duration = end - start;
-  
+
   data.sessions.push({
     start: data.activeSession,
     end: end.toISOString(),
@@ -73,7 +73,7 @@ function stop() {
   });
   data.activeSession = null;
   saveTracking(data);
-  
+
   console.log('✓ Session ended');
   console.log(`  Duration: ${formatDuration(duration)}`);
   console.log(`  Total sessions: ${data.sessions.length}`);
@@ -85,16 +85,16 @@ function report() {
     console.log('No sessions recorded yet');
     return;
   }
-  
+
   const total = data.sessions.reduce((sum, s) => sum + s.duration, 0);
   const avg = total / data.sessions.length;
-  
+
   console.log('=== Development Time Report ===');
   console.log(`Tracking started: ${new Date(data.createdAt).toLocaleString()}`);
   console.log(`Total sessions: ${data.sessions.length}`);
   console.log(`Total time: ${formatDuration(total)}`);
   console.log(`Average session: ${formatDuration(avg)}`);
-  
+
   if (data.activeSession) {
     const activeDuration = Date.now() - new Date(data.activeSession);
     console.log(`Active session: ${formatDuration(activeDuration)} (ongoing)`);
@@ -104,15 +104,15 @@ function report() {
 function since(dateStr) {
   const data = loadTracking();
   const sinceDate = new Date(dateStr);
-  
+
   if (isNaN(sinceDate.getTime())) {
     console.error('Invalid date format. Use ISO format (e.g., 2026-11-01T00:00:00)');
     process.exit(1);
   }
-  
+
   const filtered = data.sessions.filter(s => new Date(s.start) >= sinceDate);
   const total = filtered.reduce((sum, s) => sum + s.duration, 0);
-  
+
   console.log(`=== Time Since ${sinceDate.toLocaleString()} ===`);
   console.log(`Sessions: ${filtered.length}`);
   console.log(`Total time: ${formatDuration(total)}`);

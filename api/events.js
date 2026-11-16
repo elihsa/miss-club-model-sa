@@ -11,10 +11,10 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
+const { setCors } = require('./cors');
+
 function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setCors(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -44,19 +44,30 @@ async function getEvents(req, res) {
     // Public API - only show launched events
     // Admin panel can pass ?admin=true to see all events
     const isAdmin = req.query.admin === 'true';
-    
+
     let query = supabase
       .from('events')
       .select('*')
       .order('event_date', { ascending: true });
-    
+
     if (!isAdmin) {
       query = query.eq('status', 'launched');
     }
-    
+
     const { data, error } = await query;
 
-    if (error) throw error;
+    if (error) {
+      // If status column doesn't exist, retry without filter
+      if (error.message && error.message.includes('status')) {
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('events')
+          .select('*')
+          .order('event_date', { ascending: true });
+        if (fallbackError) throw fallbackError;
+        return res.status(200).json(fallbackData || []);
+      }
+      throw error;
+    }
 
     return res.status(200).json(data || []);
   } catch (error) {
@@ -71,7 +82,7 @@ async function createEvent(req, res) {
 
     let posterUrl = null;
     if (body.poster) {
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('events')
         .upload(`posters/${Date.now()}-${body.poster.name}`, body.poster, {
           cacheControl: '3600',
@@ -152,7 +163,7 @@ async function updateEvent(req, res) {
         await supabase.storage.from('events').remove([`posters/${oldFileName}`]);
       }
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('events')
         .upload(`posters/${Date.now()}-${body.poster.name}`, body.poster, {
           cacheControl: '3600',

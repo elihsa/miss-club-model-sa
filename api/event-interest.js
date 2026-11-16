@@ -30,7 +30,7 @@ async function getEmailSettings() {
       .select('value')
       .eq('key', 'email_settings')
       .single();
-    
+
     if (error || !data) {
       return {
         candidate_application_email: process.env.CANDIDATE_EMAIL || 'elihsa@gmail.com',
@@ -53,10 +53,10 @@ async function getEmailSettings() {
   }
 }
 
+const { setCors } = require('./cors');
+
 function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setCors(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -108,8 +108,8 @@ async function sendAdminNotification(emailData, settings) {
   if (!resendClient) return;
 
   // Determine recipient
-  const recipient = settings.send_all_to_same 
-    ? settings.global_email 
+  const recipient = settings.send_all_to_same
+    ? settings.global_email
     : settings.event_registration_email;
 
   const subject = `Miss Club Model SA: New Event Interest - ${emailData.event_name}`;
@@ -177,9 +177,9 @@ async function submitEventInterest(req, res) {
         favorite_candidate: body.favorite_candidate,
         message: body.message,
         status: 'active'
-      }], { 
+      }], {
         onConflict: 'event_id,email',
-        ignoreDuplicates: false 
+        ignoreDuplicates: false
       })
       .select()
       .single();
@@ -187,8 +187,8 @@ async function submitEventInterest(req, res) {
     if (error) {
       // Check if it's a duplicate
       if (error.code === '23505') {
-        return res.status(409).json({ 
-          status: 'success', 
+        return res.status(409).json({
+          status: 'success',
           message: 'You\'re already on the list for this event!',
           data: null
         });

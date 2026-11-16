@@ -41,6 +41,7 @@
   nav .logo-text { font-size: 1.3rem; color: var(--gold); font-weight: 600; letter-spacing: 2px; }
   nav a { color: var(--cream); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; margin-left: 20px; }
   nav a:hover { color: var(--gold); }
+  .nav-actions { display: flex; gap: 10px; align-items: center; }
   .btn-logout {
     background: var(--red); color: var(--cream); border: none; padding: 8px 16px;
     border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 0.85rem;
@@ -190,6 +191,21 @@
   .detail-field label { color: var(--gold); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
   .detail-field span { color: #ddd; word-break: break-word; }
 
+  .detail-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gold-dark);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .detail-actions .action-btn {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    min-width: 120px;
+  }
+
   /* EDIT MODAL */
   .edit-modal { max-width: 700px; }
   .edit-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -239,8 +255,8 @@
 <!-- NAV -->
 <nav>
   <div class="logo-text">Miss Club Model SA - Admin</div>
-  <div>
-    <a href="/">View Site</a>
+  <div class="nav-actions">
+    <a href="/" class="btn-secondary" style="text-decoration:none; display:inline-block;">Visit Site</a>
     <button class="btn-logout" id="logoutBtn" style="display:none">Logout</button>
   </div>
 </nav>
@@ -662,7 +678,6 @@ const loginForm = document.getElementById('loginForm');
 const loginError = document.getElementById('loginError');
 const tabsContainer = document.getElementById('tabs');
 const statsGrid = document.getElementById('statsGrid');
-const filters = document.getElementById('filters');
 const tableHead = document.getElementById('tableHead');
 const tableBody = document.getElementById('tableBody');
 const statusFilter = document.getElementById('statusFilter');
@@ -821,23 +836,23 @@ async function loadData() {
 
 async function loadEmailSettings() {
   try {
-    const { data, error } = await supabase
-      .from('site_settings')
-      .select('value')
-      .eq('key', 'email_settings')
-      .single();
+    const response = await fetch('/api/settings');
+    const result = await response.json();
 
-    if (error || !data) {
+    if (result.status === 'success' && result.data) {
+      allRecords = [result.data];
+    } else {
       // Use defaults
       allRecords = [{
         candidate_application_email: 'elihsa@gmail.com',
         venue_partner_email: 'elihsa@gmail.com',
         event_registration_email: 'elihsa@gmail.com',
         send_all_to_same: false,
-        global_email: 'elihsa@gmail.com'
+        global_email: 'elihsa@gmail.com',
+        candidate_signature: '',
+        venue_signature: '',
+        event_signature: ''
       }];
-    } else {
-      allRecords = [data.value];
     }
     updateStats();
     renderTable();
@@ -849,7 +864,10 @@ async function loadEmailSettings() {
       venue_partner_email: 'elihsa@gmail.com',
       event_registration_email: 'elihsa@gmail.com',
       send_all_to_same: false,
-      global_email: 'elihsa@gmail.com'
+      global_email: 'elihsa@gmail.com',
+      candidate_signature: '',
+      venue_signature: '',
+      event_signature: ''
     }];
     updateStats();
     renderTable();
@@ -988,7 +1006,7 @@ function renderTable() {
         }
       } else if (colKey === 'event_id' && value) {
         const event = allRecords.find(e => e.id === value && currentTable === 'events') ||
-                      window.eventCache?.find(e => e.id === value);
+                      eventCache?.find(e => e.id === value);
         cellsHtml += `<td class="event-col">${event?.name || value}</td>`;
       } else if (colKey === 'status') {
         cellsHtml += `<td><span class="status-badge status-${status}">${status}</span></td>`;
@@ -1041,6 +1059,7 @@ function renderTable() {
 
 // Cache events for event_id lookups
 let eventCache = [];
+
 async function loadEventCache() {
   const { data } = await supabase.from('events').select('id, name');
   eventCache = data || [];
@@ -1116,6 +1135,12 @@ async function viewRecord(id) {
         ${detailGridHtml}
         <div class="detail-field"><label>Applied</label><span>${record.created_at ? new Date(record.created_at).toLocaleString() : '—'}</span></div>
       </div>
+      <div class="detail-actions">
+        <button class="action-btn btn-edit" onclick="modalEditRecord('${id}')">Edit</button>
+        <button class="action-btn btn-approve" onclick="modalUpdateStatus('${id}', 'approved')" ${record.status === 'approved' ? 'disabled' : ''}>Approve</button>
+        <button class="action-btn btn-decline" onclick="modalUpdateStatus('${id}', 'declined')" ${record.status === 'declined' ? 'disabled' : ''}>Decline</button>
+        <button class="action-btn btn-delete" onclick="modalUpdateStatus('${id}', 'deleted')" ${record.status === 'deleted' ? 'disabled' : ''}>Delete</button>
+      </div>
     `;
   } else if (currentTable === 'events') {
     // Enhanced event detail view
@@ -1167,7 +1192,7 @@ async function viewRecord(id) {
   detailModal.classList.add('show');
 }
 
-// Render email settings form
+// Render email settings form - vertical layout instead of horizontal table
 function renderEmailSettingsForm() {
   const record = allRecords[0] || {
     candidate_application_email: 'elihsa@gmail.com',
@@ -1180,34 +1205,43 @@ function renderEmailSettingsForm() {
     event_signature: ''
   };
 
+  // Render as vertical form instead of table row
   const visibleCols = getVisibleColumns(currentTable);
-  let headersHtml = '<tr>';
+  
+  // Build form fields
+  let formHtml = '<div class="email-settings-form">';
+  
   visibleCols.forEach(colKey => {
     const col = tableSchemas.email_settings.allColumns.find(c => c.key === colKey);
-    if (col) headersHtml += `<th>${col.label}</th>`;
-  });
-  headersHtml += '<th>Actions</th></tr>';
-  tableHead.innerHTML = headersHtml;
-
-  let cellsHtml = '';
-  visibleCols.forEach(colKey => {
+    if (!col) return;
+    
     const value = record[colKey];
+    const label = col.label;
+    
+    formHtml += `<div class="form-group">`;
+    formHtml += `<label>${label}</label>`;
+    
     if (colKey === 'send_all_to_same') {
-      cellsHtml += `<td><input type="checkbox" id="settings_send_all_to_same" ${value ? 'checked' : ''} onchange="toggleGlobalEmail()"></td>`;
+      formHtml += `<div class="checkbox-wrapper"><input type="checkbox" id="settings_send_all_to_same" ${value ? 'checked' : ''} onchange="toggleGlobalEmail()"><span>Send all notification types to the same global email address</span></div>`;
     } else if (colKey === 'candidate_signature' || colKey === 'venue_signature' || colKey === 'event_signature') {
-      cellsHtml += `<td><textarea id="settings_${colKey}" class="settings-input" style="width:100%; min-height:80px; padding:8px 12px; background:var(--black); border:1px solid var(--gold-dark); border-radius:6px; color:var(--cream); font-family:inherit; resize:vertical;">${value || ''}</textarea></td>`;
+      formHtml += `<textarea id="settings_${colKey}" class="settings-input" style="width:100%; min-height:100px; padding:8px 12px; background:var(--black); border:1px solid var(--gold-dark); border-radius:6px; color:var(--cream); font-family:inherit; resize:vertical;">${value || ''}</textarea>`;
     } else {
-      cellsHtml += `<td><input type="email" id="settings_${colKey}" value="${value || ''}" class="settings-input" style="width:100%; padding:8px 12px; background:var(--black); border:1px solid var(--gold-dark); border-radius:6px; color:var(--cream); font-family:inherit;"></td>`;
+      const inputType = colKey.includes('email') ? 'email' : 'text';
+      formHtml += `<input type="${inputType}" id="settings_${colKey}" value="${value || ''}" class="settings-input" style="width:100%; padding:8px 12px; background:var(--black); border:1px solid var(--gold-dark); border-radius:6px; color:var(--cream); font-family:inherit;">`;
     }
+    
+    formHtml += `</div>`;
   });
-
-  const actionsHtml = `
-    <div class="action-btns">
+  
+  formHtml += `
+    <div class="form-group form-actions">
       <button class="action-btn btn-primary" onclick="saveEmailSettings()">Save Settings</button>
     </div>
-  `;
-
-  tableBody.innerHTML = `<tr>${cellsHtml}<td>${actionsHtml}</td></tr>`;
+  </div>`;
+  
+  // Clear table and show form
+  tableHead.innerHTML = '';
+  tableBody.innerHTML = `<tr><td colspan="100%" style="padding:0;">${formHtml}</td></tr>`;
 
   // Show/hide global email field based on send_all_to_same
   const globalEmailField = document.getElementById('settings_global_email');
@@ -1215,6 +1249,50 @@ function renderEmailSettingsForm() {
     globalEmailField.style.display = record.send_all_to_same ? 'block' : 'none';
   }
 }
+
+// Add CSS for email settings form vertical layout
+const style = document.createElement('style');
+style.textContent = `
+  .email-settings-form {
+    padding: 1.5rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .email-settings-form .form-group {
+    margin-bottom: 1.25rem;
+  }
+  .email-settings-form .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--cream);
+    font-size: 0.9rem;
+  }
+  .email-settings-form .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .email-settings-form .checkbox-wrapper input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gold);
+  }
+  .email-settings-form .checkbox-wrapper span {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--cream);
+  }
+  .email-settings-form .form-actions {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gold-dark);
+  }
+  .email-settings-form .settings-input {
+    box-sizing: border-box;
+  }
+`;
+document.head.appendChild(style);
 
 // Toggle global email field visibility
 function toggleGlobalEmail() {
@@ -1247,7 +1325,11 @@ async function saveEmailSettings() {
     }
   }
 
-  const btn = document.querySelector('.btn-primary');
+  const btn = document.querySelector('.email-settings-form .btn-primary');
+  if (!btn) {
+    alert('Save button not found');
+    return;
+  }
   btn.textContent = 'Saving...';
   btn.disabled = true;
 
@@ -1275,6 +1357,22 @@ async function saveEmailSettings() {
 
 modalClose.addEventListener('click', () => detailModal.classList.remove('show'));
 detailModal.addEventListener('click', (e) => { if (e.target === detailModal) detailModal.classList.remove('show'); });
+
+// Close detail modal helper
+function closeDetailModal() {
+  detailModal.classList.remove('show');
+}
+
+// Modal action wrappers - close modal then perform action
+function modalEditRecord(id) {
+  closeDetailModal();
+  setTimeout(() => editRecord(id), 150);
+}
+
+function modalUpdateStatus(id, newStatus) {
+  closeDetailModal();
+  setTimeout(() => updateStatus(id, newStatus), 150);
+}
 
 // Open media in new tab modal
 function openMediaModal(url, isVideo) {
@@ -1308,7 +1406,7 @@ function editRecord(id) {
           </select>
         </div>
       `;
-    } else if (col.key === 'event_id') {
+    } else if (col.key === 'event_id' && (currentTable === 'interested_parties' || currentTable === 'event_interest_subscriptions')) {
       fieldsHtml += `
         <div class="form-group">
           <label>${col.label}</label>
@@ -1325,6 +1423,28 @@ function editRecord(id) {
           <textarea name="${col.key}" rows="3">${value}</textarea>
         </div>
       `;
+    } else if (col.key === 'event_date') {
+      fieldsHtml += `
+        <div class="form-group">
+          <label>${col.label}</label>
+          <input type="date" name="${col.key}" value="${value}" ${col.required ? 'required' : ''}>
+        </div>
+      `;
+    } else if (col.key === 'event_time') {
+      fieldsHtml += `
+        <div class="form-group">
+          <label>${col.label}</label>
+          <input type="time" name="${col.key}" value="${value}" ${col.required ? 'required' : ''}>
+        </div>
+      `;
+    } else if (col.key === 'poster_url') {
+      fieldsHtml += `
+        <div class="form-group full-width">
+          <label>${col.label}</label>
+          <input type="text" name="${col.key}" value="${value}" ${col.required ? 'required' : ''} placeholder="https://...">
+          <div class="media-preview" id="editPosterPreview"></div>
+        </div>
+      `;
     } else {
       fieldsHtml += `
         <div class="form-group">
@@ -1337,6 +1457,16 @@ function editRecord(id) {
 
   editFormFields.innerHTML = fieldsHtml;
   editModal.classList.add('show');
+
+  // Poster URL preview for edit form (events table)
+  const editPosterInput = document.querySelector('input[name="poster_url"]');
+  const editPosterPreview = document.getElementById('editPosterPreview');
+  if (editPosterInput && editPosterPreview) {
+    editPosterInput.addEventListener('input', (e) => {
+      const url = e.target.value;
+      editPosterPreview.innerHTML = url ? `<img src="${url}" alt="Poster preview" style="max-width:200px; max-height:120px; border-radius:6px; border:1px solid var(--gold-dark);">` : '';
+    });
+  }
 }
 
 editModalClose.addEventListener('click', () => editModal.classList.remove('show'));
@@ -1821,6 +1951,10 @@ window.saveEmailSettings = saveEmailSettings;
 window.toggleGlobalEmail = toggleGlobalEmail;
 window.openMediaModal = openMediaModal;
 window.openBulkEmailModal = openBulkEmailModal;
+
+// Expose new modal wrapper functions
+window.modalEditRecord = modalEditRecord;
+window.modalUpdateStatus = modalUpdateStatus;
 window.updateRecipientSelection = updateRecipientSelection;
 window.insertEmailImage = insertEmailImage;
 window.handleEmailImageUpload = handleEmailImageUpload;
@@ -1839,6 +1973,40 @@ window.insertEmailLink = insertEmailLink;
     }
   });
 </script>
+
+<!-- Build info footer -->
+<footer style="text-align:center; padding:1rem; color:#888; font-size:0.75rem; border-top:1px solid #333; margin-top:2rem;">
+  <div id="buildInfo">Loading build info...</div>
+</footer>
+
 <script src="scripts/build-info-runtime.js"></script>
+<script>
+// Expose build-info fetch for admin panel (in case runtime script fails)
+(function() {
+  var el = document.getElementById('buildInfo');
+  if (!el) return;
+  fetch('/api/build-info', { cache: 'no-store' })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(info) {
+      if (info && info.build) {
+        el.textContent = 'Built ' + info.build + ' · ' + (info.buildTimeLocal || info.buildTime || '') + ' (SAST) · commit ' + (info.commit || '?');
+        el.title = 'Build ' + info.build + ' generated ' + (info.buildTime || '');
+      }
+    })
+    .catch(function() {
+      // Fallback to build-info.json
+      fetch('build-info.json', { cache: 'no-store' })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(info) {
+          if (info && info.build) {
+            el.textContent = 'Built ' + info.build + ' · ' + (info.buildTimeLocal || info.buildTime || '') + ' (SAST) · commit ' + (info.commit || '?');
+          } else {
+            el.textContent = 'Build info unavailable.';
+          }
+        })
+        .catch(function() { el.textContent = 'Build info unavailable.'; });
+    });
+})();
+</script>
 </body>
 </html>

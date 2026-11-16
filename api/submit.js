@@ -30,7 +30,7 @@ async function getEmailSettings() {
       .select('value')
       .eq('key', 'email_settings')
       .single();
-    
+
     if (error || !data) {
       return {
         candidate_application_email: process.env.CANDIDATE_EMAIL || 'elihsa@gmail.com',
@@ -53,10 +53,10 @@ async function getEmailSettings() {
   }
 }
 
+const { setCors } = require('./cors');
+
 function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setCors(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -73,8 +73,8 @@ async function sendAdminNotification(emailData, settings) {
   if (!resendClient) return;
 
   // Determine recipient
-  const recipient = settings.send_all_to_same 
-    ? settings.global_email 
+  const recipient = settings.send_all_to_same
+    ? settings.global_email
     : settings.candidate_application_email;
 
   const subject = `Miss Club Model SA: New Candidate Application - ${emailData.full_name}`;
@@ -111,7 +111,7 @@ async function sendUserConfirmationEmail(emailData) {
   const settings = await getEmailSettings();
   const signature = settings.candidate_signature || '';
 
-  const subject = `👑 Application Received - Miss Club Model SA`;
+  const subject = '👑 Application Received - Miss Club Model SA';
   const html = `
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #c9a84c;">🎭 Application Confirmed!</h2>
@@ -141,7 +141,7 @@ async function sendUserConfirmationEmail(emailData) {
 async function submitApplication(req, res) {
   try {
     const data = req.body;
-    
+
     // Add timestamp
     data.created_at = new Date().toISOString();
     // Default status for new applications
@@ -168,9 +168,9 @@ async function submitApplication(req, res) {
 
     if (error) {
       console.error('Supabase insert error:', error);
-      return res.status(500).json({ 
-        status: 'error', 
-        message: error.message 
+      return res.status(500).json({
+        status: 'error',
+        message: error.message
       });
     }
 
@@ -205,17 +205,17 @@ async function submitApplication(req, res) {
       event_name: eventName
     }).catch(err => console.error('User email error:', err));
 
-    return res.status(200).json({ 
-      status: 'success', 
+    return res.status(200).json({
+      status: 'success',
       message: 'Application submitted successfully',
-      data: result 
+      data: result
     });
 
   } catch (err) {
     console.error('Submission error:', err);
-    return res.status(500).json({ 
-      status: 'error', 
-      message: err.message 
+    return res.status(500).json({
+      status: 'error',
+      message: err.message
     });
   }
 }

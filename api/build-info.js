@@ -1,0 +1,32 @@
+const path = require('path');
+const { setCors } = require('./cors');
+
+function handler(req, res) {
+  setCors(req, res);
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  try {
+    const jsonPath = path.join(__dirname, '..', 'build-info.json');
+    const info = require(jsonPath);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.json(info);
+  } catch {
+    res.setHeader('Content-Type', 'application/json');
+    res.json({
+      build: 'unknown',
+      buildNumber: 0,
+      version: '1.0.0',
+      commit: 'unknown',
+      branch: 'unknown',
+      commitDate: new Date().toISOString(),
+      buildTime: new Date().toISOString(),
+      buildTimeLocal: new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' }),
+      generatedBy: 'api/build-info.js'
+    });
+  }
+}
+
+module.exports = handler;

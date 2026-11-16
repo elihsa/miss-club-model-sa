@@ -1,31 +1,9 @@
-const { createClient } = require('@supabase/supabase-js');
+// const { createClient } = require('@supabase/supabase-js');  // Reserved for future use
+const { setCors } = require('./cors');
 const Resend = require('resend');
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
-const resendApiKey = process.env.RESEND_API_KEY;
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing Supabase environment variables');
-}
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: { autoRefreshToken: false, persistSession: false }
-});
-
-let resendClient = null;
-if (resendApiKey) {
-  try {
-    resendClient = new Resend(resendApiKey);
-  } catch (e) {
-    console.error('Resend init error:', e.message);
-  }
-}
-
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setCors(req, res);
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -67,6 +45,7 @@ module.exports = async function handler(req, res) {
     }
 
     // Send welcome email via Resend if configured
+    const resendClient = Resend.createClient(process.env.RESEND_API_KEY);
     if (resendClient) {
       try {
         await resendClient.emails.send({
@@ -90,9 +69,8 @@ module.exports = async function handler(req, res) {
     }
 
     return res.status(200).json({ status: 'success', message: 'Subscribed successfully' });
-
   } catch (err) {
     console.error('Newsletter subscribe error:', err);
     return res.status(500).json({ status: 'error', message: 'Subscription failed. Please try again.' });
   }
-}
+};

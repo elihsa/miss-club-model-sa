@@ -23,10 +23,22 @@ if (resendApiKey) {
 }
 
 // Admin emails for authorization
-const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com'];
+// const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com']; // Reserved for future JWT implementation
+
+// CORS: restrict to production domain + local dev
+const ALLOWED_ORIGINS = [
+  'https://missclubmodel.vercel.app',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000'
+];
 
 function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGINS[0]);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
@@ -40,7 +52,7 @@ function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized - missing admin token' });
   }
 
-  const token = authHeader.substring(7);
+  // const token = authHeader.substring(7); // Extracted for future JWT verification
   // Simple token verification - in production, verify JWT properly
   // For now, check if it's a known admin email in the token payload
   // Since we can't easily verify JWT here without the secret, we'll rely on the service key
@@ -65,12 +77,12 @@ function handler(req, res) {
       if (action === 'getEventFilter') {
         return getEventFilter(req, res, table);
       }
-      return res.status(400).json({ error: 'Invalid action' });
-    case 'GET':
       if (action === 'getRecord') {
         return getRecord(req, res, table, id);
       }
       return res.status(400).json({ error: 'Invalid action' });
+    case 'GET':
+      return res.status(200).json({ status: 'success', message: 'Admin API operational' });
     default:
       return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -97,7 +109,7 @@ async function updateStatus(req, res, table, id, newStatus) {
     }
 
     let error;
-    
+
     if (table === 'event_interest_subscriptions') {
       // Composite key: event_id + email
       const record = await supabase.from(table).select('event_id').eq('email', id).single();
@@ -120,9 +132,9 @@ async function updateStatus(req, res, table, id, newStatus) {
 
     if (error) throw error;
 
-    return res.status(200).json({ 
-      status: 'success', 
-      message: `Status updated to ${newStatus}` 
+    return res.status(200).json({
+      status: 'success',
+      message: `Status updated to ${newStatus}`
     });
   } catch (error) {
     console.error('Update status error:', error);
@@ -137,7 +149,9 @@ async function updateRecord(req, res, table, id, data) {
     }
 
     // Remove fields that shouldn't be updated
-    const { created_at, id: _, updated_at, ...updateData } = data;
+    const { created_at, updated_at, ...updateData } = data;
+    // eslint-disable-next-line no-unused-vars
+    const __unused = [created_at, updated_at];
 
     // Filter out null/undefined/empty-string fields that might cause issues
     // but keep explicit booleans and 0
@@ -198,7 +212,7 @@ async function deleteRecord(req, res, table, id) {
     }
 
     let error;
-    
+
     if (table === 'event_interest_subscriptions') {
       const record = await supabase.from(table).select('event_id').eq('email', id).single();
       if (record.error || !record.data) {
@@ -220,9 +234,9 @@ async function deleteRecord(req, res, table, id) {
 
     if (error) throw error;
 
-    return res.status(200).json({ 
-      status: 'success', 
-      message: 'Record deleted successfully' 
+    return res.status(200).json({
+      status: 'success',
+      message: 'Record deleted successfully'
     });
   } catch (error) {
     console.error('Delete record error:', error);
@@ -250,49 +264,49 @@ async function getEventFilter(req, res, table) {
 async function sendBulkEmail(req, res) {
   try {
     const { eventId, subject, message, recipientIds } = req.body;
-    
+
     if (!eventId || !subject || !message) {
       return res.status(400).json({ error: 'Event ID, subject, and message are required' });
     }
-    
+
     // Get event details
     const { data: eventData, error: eventError } = await supabase
       .from('events')
       .select('name, event_date, location')
       .eq('id', eventId)
       .single();
-    
+
     if (eventError) {
       return res.status(404).json({ error: 'Event not found' });
     }
-    
+
     // Get recipients - either specific IDs or all interested parties for this event
     let query = supabase
       .from('interested_parties')
       .select('id, full_name, email')
       .eq('event_id', eventId);
-    
+
     if (recipientIds && recipientIds.length > 0) {
       query = query.in('id', recipientIds);
     }
-    
+
     const { data: recipients, error: recipientsError } = await query;
     if (recipientsError) throw recipientsError;
-    
+
     if (!recipients || recipients.length === 0) {
       return res.status(400).json({ error: 'No recipients found for this event' });
     }
-    
+
     // Get email settings
     const settings = await getEmailSettings();
     const signature = settings.event_signature || '';
-    
+
     // Send individual personalized emails
     const results = [];
     for (const recipient of recipients) {
       const personalMessage = message.replace(/\{name\}/g, recipient.full_name || 'there');
       const personalMessage2 = personalMessage.replace(/\{first_name\}/g, (recipient.full_name || 'there').split(' ')[0]);
-      
+
       const html = `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #c9a84c;">${subject}</h2>
@@ -314,7 +328,7 @@ async function sendBulkEmail(req, res) {
           </p>
         </div>
       `;
-      
+
       try {
         if (resendClient) {
           await resendClient.emails.send({
@@ -331,10 +345,10 @@ async function sendBulkEmail(req, res) {
         results.push({ email: recipient.email, status: 'failed', error: emailError.message });
       }
     }
-    
+
     const sentCount = results.filter(r => r.status === 'sent').length;
     const failedCount = results.filter(r => r.status === 'failed').length;
-    
+
     return res.status(200).json({
       status: 'success',
       message: `Bulk email sent to ${sentCount} recipients`,
@@ -356,7 +370,7 @@ async function getEmailSettings() {
       .select('value')
       .eq('key', 'email_settings')
       .single();
-    
+
     if (error || !data) {
       return {
         candidate_application_email: process.env.CANDIDATE_EMAIL || 'elihsa@gmail.com',
@@ -392,7 +406,7 @@ async function getRecord(req, res, table, id) {
     }
 
     let data, error;
-    
+
     if (table === 'event_interest_subscriptions') {
       const result = await supabase.from(table).select('*').eq('email', id).single();
       data = result.data;
@@ -405,9 +419,9 @@ async function getRecord(req, res, table, id) {
 
     if (error) throw error;
 
-    return res.status(200).json({ 
-      status: 'success', 
-      data 
+    return res.status(200).json({
+      status: 'success',
+      data
     });
   } catch (error) {
     console.error('Get record error:', error);

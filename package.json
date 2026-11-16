@@ -4,8 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'Static site - no build step required'",
-    "deploy": "vercel --prod"
+    "build": "node scripts/build-info.js",
+    "deploy": "vercel --prod",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "jest --config=jest.config.js --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:api": "jest --testPathPattern=api",
+    "lint": "eslint scripts/**/*.js api/**/*.js",
+    "lint:fix": "eslint scripts/**/*.js api/**/*.js --fix"
   },
   "description": "",
   "main": "index.js",
@@ -17,5 +25,11 @@
     "@supabase/supabase-js": "^2.119.0",
     "busboy": "^1.6.0",
     "resend": "^3.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^20.19.43",
+    "jest": "^29.7.0",
+    "typescript": "^5.9.3"
   }
 }

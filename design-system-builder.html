@@ -854,6 +854,9 @@
             <option value="'Outfit', sans-serif">Outfit (Contemporary)</option>
           </select>
           <div class="control-hint">Used for: .btn, .form-submit, primary CTAs</div>
++          <div class="button-preview" style="margin-top:10px;">
++            <button class="btn-primary" style="font-family: var(--font-button);">Button Sample</button>
++          </div>
         </div>
       </div>
 
@@ -2144,7 +2147,14 @@ function renderPresets() {
   Object.entries(presets).forEach(([name, values]) => {
     const card = document.createElement('div');
     card.className = 'preset-card';
+    
+    // Generate a visual thumbnail using the preset's colors
+    const thumbnail = generatePresetThumbnail(name, values);
+    
     card.innerHTML = `
+      <div class="preset-thumbnail" style="width:100%; height:80px; border-radius:8px; overflow:hidden; margin-bottom:10px; border:1px solid var(--builder-border); background: ${values.colorBlack}; display:flex; align-items:center; justify-content:center; position:relative;">
+        ${thumbnail}
+      </div>
       <div class="preset-swatch">
         <div class="preset-color" style="background: ${values.colorGold}"></div>
         <div class="preset-color" style="background: ${values.colorGoldLight}"></div>
@@ -2157,6 +2167,22 @@ function renderPresets() {
     card.addEventListener('click', () => applyPreset(name, values));
     grid.appendChild(card);
   });
+}
+
+function generatePresetThumbnail(name, values) {
+  // Create a mini preview showing: heading text, a button, and card
+  const shortName = name.split(' ')[0];
+  return `
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:8px; text-align:center;">
+      <div style="font-family: ${values.fontHeading}; font-size:14px; color: ${values.colorGold}; font-weight:600; margin-bottom:4px; line-height:1.2;">
+        ${shortName}
+      </div>
+      <div style="width:30px; height:3px; background:${values.colorGold}; border-radius:2px; margin-bottom:4px;"></div>
+      <div style="width:50px; height:14px; background:${values.colorGold}; border-radius:3px; font-family: ${values.fontButton}; font-size:7px; color:${values.colorBlack}; display:flex; align-items:center; justify-content:center; font-weight:600;">
+        -btn
+      </div>
+    </div>
+  `;
 }
 
 const missSaPresets = {
@@ -2193,7 +2219,14 @@ function renderMissSaPresets() {
   Object.entries(missSaPresets).forEach(([name, values]) => {
     const card = document.createElement('div');
     card.className = 'preset-card';
+    
+    // Generate a visual thumbnail using the preset's colors
+    const thumbnail = generatePresetThumbnail(name, values);
+    
     card.innerHTML = `
+      <div class="preset-thumbnail" style="width:100%; height:80px; border-radius:8px; overflow:hidden; margin-bottom:10px; border:1px solid var(--builder-border); background: ${values.colorBlack}; display:flex; align-items:center; justify-content:center; position:relative;">
+        ${thumbnail}
+      </div>
       <div class="preset-swatch">
         <div class="preset-color" style="background: ${values.colorGold}"></div>
         <div class="preset-color" style="background: ${values.colorError || values.colorGoldLight}"></div>
@@ -2241,6 +2274,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
 console.log('Design System Builder loaded. All tokens mapped to CSS custom properties.');
 </script>
+
+<!-- Build info footer -->
+<footer style="text-align:center; padding:1rem; color:#888; font-size:0.75rem; border-top:1px solid #333; margin-top:2rem;">
+  <div id="buildInfo">Loading build info...</div>
+</footer>
+
 <script src="scripts/build-info-runtime.js"></script>
+<script>
+// Expose build-info fetch for design system builder
+(function() {
+  var el = document.getElementById('buildInfo');
+  if (!el) return;
+  fetch('/api/build-info', { cache: 'no-store' })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(info) {
+      if (info && info.build) {
+        el.textContent = 'Built ' + info.build + ' · ' + (info.buildTimeLocal || info.buildTime || '') + ' (SAST) · commit ' + (info.commit || '?');
+        el.title = 'Build ' + info.build + ' generated ' + (info.buildTime || '');
+      }
+    })
+    .catch(function() {
+      fetch('build-info.json', { cache: 'no-store' })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(info) {
+          if (info && info.build) {
+            el.textContent = 'Built ' + info.build + ' · ' + (info.buildTimeLocal || info.buildTime || '') + ' (SAST) · commit ' + (info.commit || '?');
+          } else {
+            el.textContent = 'Build info unavailable.';
+          }
+        })
+        .catch(function() { el.textContent = 'Build info unavailable.'; });
+    });
+})();
+</script>
 </body>
 </html>
