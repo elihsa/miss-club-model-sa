@@ -142,6 +142,29 @@ async function submitApplication(req, res) {
   try {
     const data = req.body;
 
+    // Handle missing/invalid request body (prevents "Cannot set properties of undefined")
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid request body'
+      });
+    }
+
+    // Validate required fields up front — these map to NOT NULL columns in the DB.
+    // Return 4xx here so a missing field never surfaces as a 500 DB constraint error.
+    const missing = [];
+    if (!data.fullName && !data.full_name) missing.push('fullName');
+    if (!data.platform) missing.push('platform');
+    if (!data.essay) missing.push('essay');
+
+    if (missing.length > 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: `Missing required field(s): ${missing.join(', ')}`,
+        missing
+      });
+    }
+
     // Add timestamp
     data.created_at = new Date().toISOString();
     // Default status for new applications
@@ -213,10 +236,32 @@ async function submitApplication(req, res) {
 
   } catch (err) {
     console.error('Submission error:', err);
-    return res.status(500).json({
-      status: 'error',
-      message: err.message
-    });
+
+    // Classify Postgres constraint violations as client errors, not 5xx.
+    // Even if frontend validation is bypassed, a bad/missing field must never
+    // surface as a 500 server crash.
+    const code = err && err.code;
+    const message = (err && err.message) || 'Internal server error';
+
+    if (code === '23502') {
+      // not_null_violation -> missing required field
+      return res.status(400).json({ status: 'error', message });
+    }
+    if (code === '23505') {
+      // unique_violation -> duplicate submission
+      return res.status(409).json({ status: 'error', message });
+    }
+    if (code === '23503') {
+      // foreign_key_violation -> invalid reference (e.g. bad event_id)
+      return res.status(400).json({ status: 'error', message });
+    }
+    if (code === '22P02') {
+      // invalid_text_representation -> e.g. bad UUID
+      return res.status(400).json({ status: 'error', message });
+    }
+
+    // Genuine server fault (network, infra, unexpected) -> 500
+    return res.status(500).json({ status: 'error', message });
   }
 }
 
