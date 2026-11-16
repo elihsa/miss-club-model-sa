@@ -5,26 +5,20 @@ test.describe('Events Page', () => {
   test('events page loads and displays event listings', async ({ page }) => {
     await page.goto('/events.html');
     await expect(page).toHaveTitle(/Events/);
-    
-    // Event cards should be visible
-    const eventCards = page.locator('.event-card');
-    await expect(eventCards.first()).toBeVisible({ timeout: 5000 });
-    
-    // Event registration form should exist
-    const registrationForm = page.locator('#eventInterestForm');
-    await expect(registrationForm).toBeVisible();
+
+    // Event cards render into the grid after events load from the API (async)
+    const eventCards = page.locator('#eventsGrid .event-card');
+    await expect(eventCards.first()).toBeVisible({ timeout: 15000 });
   });
 
-  test('event interest form submission works', async ({ page }) => {
+  test('event interest form exists', async ({ page }) => {
     await page.goto('/events.html');
-    
-    // Fill form
-    await page.fill('[name="email"]', 'test@example.com');
-    await page.fill('[name="full_name"]', 'Test User');
-    
-    // Note: We don't actually submit in tests to avoid spamming the DB
-    // Just verify the form elements exist
-    const submitButton = page.locator('button[type="submit"]');
-    await expect(submitButton).toBeVisible();
+
+    // The event interest form is the "Tell Me More" modal (static, in the DOM)
+    const tellMeMore = page.locator('#tellMeMoreForm');
+    await expect(tellMeMore).toBeAttached({ timeout: 10000 });
+    // Contains email input and a submit button
+    await expect(tellMeMore.locator('input[name="email"]')).toBeAttached();
+    await expect(tellMeMore.locator('button[type="submit"]')).toBeAttached();
   });
 });

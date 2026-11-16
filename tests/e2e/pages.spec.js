@@ -6,7 +6,7 @@ test.describe('All Pages - Basic Load Tests', () => {
     await page.goto('/');
     await expect(page).toHaveTitle(/Miss Club/);
     // Verify hero section exists
-    await expect(page.locator('header h1')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('section.hero')).toBeVisible({ timeout: 10000 });
     // Verify navigation
     const nav = page.locator('nav');
     await expect(nav).toBeVisible();
@@ -15,7 +15,7 @@ test.describe('All Pages - Basic Load Tests', () => {
   test('events.html loads correctly', async ({ page }) => {
     await page.goto('/events.html');
     await expect(page).toHaveTitle(/Events/);
-    await expect(page.locator('.event-card').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.event-card').first()).toBeVisible({ timeout: 15000 });
   });
 
   test('admin.html loads correctly', async ({ page }) => {
@@ -65,18 +65,21 @@ test.describe('Navigation', () => {
 test.describe('Forms', () => {
   test('candidate application form has required fields', async ({ page }) => {
     await page.goto('/');
-    // Form fields that should exist
+    // The application form is the primary candidate submission form
+    const form = page.locator('#applicationForm');
+    await expect(form).toBeVisible({ timeout: 10000 });
+    // Form fields that should exist (scoped to the form to avoid other email inputs)
     const fields = [
-      '[name="fullName"]',
-      '[name="dob"]',
-      '[name="email"]',
-      '[name="phone"]',
-      '[name="platform"]',
-      '[name="essay"]'
+      'input[name="fullName"]',
+      'input[name="dob"]',
+      'input[name="email"]',
+      'input[name="phone"]',
+      'textarea[name="platform"]',
+      'textarea[name="essay"]'
     ];
     
     for (const field of fields) {
-      await expect(page.locator(field)).toBeVisible();
+      await expect(form.locator(field)).toBeVisible();
     }
   });
 });

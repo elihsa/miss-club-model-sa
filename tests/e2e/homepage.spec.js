@@ -6,16 +6,16 @@ const { test, expect } = require('@playwright/test');
  */
 test('homepage loads with hero and events preview', async ({ page }) => {
   await page.goto('/');
-  // Hero title contains "Miss Club Model"
-  const hero = await page.locator('header h1');
-  await expect(hero).toBeVisible();
-  await expect(hero).toContainText('Miss Club Model', { timeout: 5000 });
+  // Hero section contains the brand
+  const hero = page.locator('section.hero');
+  await expect(hero).toBeVisible({ timeout: 10000 });
+  await expect(hero.locator('img.logo')).toHaveAttribute('alt', /Miss Club Model/);
 
-  // Events preview section should have at least one event card
-  const eventCards = page.locator('.event-card');
-  await expect(eventCards.first()).toBeVisible({ timeout: 5000 });
+  // Events preview section should have at least one event card (renders async)
+  const eventCards = page.locator('#eventsGrid .event-card');
+  await expect(eventCards.first()).toBeVisible({ timeout: 15000 });
 
   // Footer build info present
   const footer = page.locator('#buildInfo');
-  await expect(footer).toBeVisible();
+  await expect(footer).toBeVisible({ timeout: 10000 });
 });

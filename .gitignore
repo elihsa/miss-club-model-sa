@@ -4,3 +4,7 @@ node_modules/
 *.log
 .DS_Store
 .last-build-info.json
+.appcheck/
+playwright-report/
+test-results/
+coverage/
