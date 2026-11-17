@@ -1144,6 +1144,7 @@ async function viewRecord(id) {
     `;
   } else if (currentTable === 'events') {
     // Enhanced event detail view
+    const status = record.status || 'pending';
     html = `
       <div class="detail-header" style="flex-direction:column; align-items:center; text-align:center;">
         ${record.poster_url ? `<img src="${record.poster_url}" alt="${record.name}" style="max-width:100%; max-height:300px; border-radius:8px; border:1px solid var(--gold-dark); margin-bottom:20px;">` : ''}
@@ -1157,10 +1158,15 @@ async function viewRecord(id) {
         <div class="detail-field"><label>Poster URL</label><span>${record.poster_url ? `<a href="${record.poster_url}" target="_blank">${record.poster_url}</a>` : '—'}</span></div>
         <div class="detail-field"><label>Created</label><span>${record.created_at ? new Date(record.created_at).toLocaleString() : '—'}</span></div>
       </div>
+      <div class="detail-actions">
+        <button class="action-btn btn-edit" onclick="modalEditRecord('${id}')">Edit</button>
+        <button class="action-btn btn-delete" onclick="modalUpdateStatus('${id}', 'deleted')" ${status === 'deleted' ? 'disabled' : ''}>Delete</button>
+      </div>
     `;
   } else if (currentTable === 'event_interest_subscriptions') {
     // Event Interest List detail view
     const event = eventCache.find(e => e.id === record.event_id);
+    const subStatus = record.status || 'active';
     html = `
       <div class="detail-header" style="flex-direction:column; align-items:center; text-align:center;">
         <div class="detail-info" style="max-width:600px;">
@@ -1172,12 +1178,16 @@ async function viewRecord(id) {
         <div class="detail-field"><label>Email</label><span>${record.email || '—'}</span></div>
         <div class="detail-field"><label>Phone</label><span>${record.phone || '—'}</span></div>
         <div class="detail-field"><label>Favorite Candidate</label><span>${record.favorite_candidate || '—'}</span></div>
-        <div class="detail-field"><label>Status</label><span><span class="status-badge status-${record.status || 'active'}">${record.status || 'active'}</span></span></div>
+        <div class="detail-field"><label>Status</label><span><span class="status-badge status-${subStatus}">${subStatus}</span></span></div>
         <div class="detail-field"><label>Subscribed</label><span>${record.subscribed_at ? new Date(record.subscribed_at).toLocaleString() : '—'}</span></div>
+      </div>
+      <div class="detail-actions">
+        <button class="action-btn btn-approve" onclick="modalUpdateStatus('${record.email}', 'active')" ${subStatus === 'active' ? 'disabled' : ''}>Mark Active</button>
+        <button class="action-btn btn-decline" onclick="modalUpdateStatus('${record.email}', 'unsubscribed')" ${subStatus === 'unsubscribed' ? 'disabled' : ''}>Unsubscribe</button>
       </div>
     `;
   } else {
-    // Standard detail view for other tables
+    // Standard detail view for other tables (event_organizers, etc.)
     for (const [key, value] of Object.entries(record)) {
       if (value === null || value === undefined) continue;
       if (key === 'headshot_url' || key === 'fullbody_url' || key === 'video_url' || key === 'poster_url') {
@@ -1185,6 +1195,19 @@ async function viewRecord(id) {
       } else {
         html += `<div class="modal-row"><span class="modal-label">${key}</span><span class="modal-value">${value}</span></div>`;
       }
+    }
+    // Add action buttons for tables that support status updates
+    const status = record.status || 'pending';
+    const allowedStatusTables = ['event_organizers', 'applications', 'candidates', 'interested_parties'];
+    if (allowedStatusTables.includes(currentTable) && schema.hasStatus) {
+      html += `
+        <div class="detail-actions">
+          ${currentTable !== 'interested_parties' ? `<button class="action-btn btn-edit" onclick="modalEditRecord('${id}')">Edit</button>` : ''}
+          <button class="action-btn btn-approve" onclick="modalUpdateStatus('${id}', 'approved')" ${status === 'approved' ? 'disabled' : ''}>${currentTable === 'interested_parties' ? 'Approve' : 'Approve'}</button>
+          <button class="action-btn btn-decline" onclick="modalUpdateStatus('${id}', 'declined')" ${status === 'declined' ? 'disabled' : ''}>${currentTable === 'interested_parties' ? 'Decline' : 'Decline'}</button>
+          <button class="action-btn btn-delete" onclick="modalUpdateStatus('${id}', 'deleted')" ${status === 'deleted' ? 'disabled' : ''}>Delete</button>
+        </div>
+      `;
     }
   }
 

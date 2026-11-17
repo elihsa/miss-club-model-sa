@@ -99,7 +99,7 @@ async function updateStatus(req, res, table, id, newStatus) {
       'applications': ['undecided', 'approved', 'declined', 'deleted'],
       'candidates': ['undecided', 'approved', 'declined', 'deleted'],
       'event_organizers': ['pending', 'approved', 'declined', 'deleted'],
-      'interested_parties': ['pending', 'approved', 'declined', 'confirmed', 'cancelled'],
+      'interested_parties': ['pending', 'approved', 'declined', 'confirmed', 'cancelled', 'deleted'],
       'event_interest_subscriptions': ['active', 'unsubscribed'],
       'events': ['pending', 'launched']
     };
