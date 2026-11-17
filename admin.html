@@ -1429,7 +1429,7 @@ function editRecord(id) {
           </select>
         </div>
       `;
-    } else if (col.key === 'event_id' && (currentTable === 'interested_parties' || currentTable === 'event_interest_subscriptions')) {
+    } else if (col.key === 'event_id' && (currentTable === 'applications' || currentTable === 'interested_parties' || currentTable === 'event_interest_subscriptions')) {
       fieldsHtml += `
         <div class="form-group">
           <label>${col.label}</label>
