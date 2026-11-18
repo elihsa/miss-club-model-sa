@@ -144,6 +144,7 @@ function handler(req, res) {
 
 function matchesMimeForBucket(allowlist, mime) {
   if (!mime) return true; // Supabase Storage will validate server-side
+  if (mime === 'application/octet-stream') return true; // Common for webp, let Supabase validate
   return allowlist.some((rule) => matchesMime(rule, mime));
 }
 
