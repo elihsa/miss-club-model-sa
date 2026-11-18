@@ -92,6 +92,7 @@ function handler(req, res) {
   busboy.on('finish', async () => {
     if (handled) return;
     handled = true;
+    console.log('UPLOAD finish: bucket=', bucket, 'file=', fileName, 'mime=', fileMime, 'size=', fileBuffer ? fileBuffer.length : 0);
     if (rejectError) {
       return res.status(400).json({ status: 'error', message: rejectError });
     }
@@ -102,6 +103,7 @@ function handler(req, res) {
 
     const cleanName = fileName.replace(/[^\w.\-]+/g, '_');
     const path = `${folder}/${Date.now()}-${cleanName}`;
+    console.log('UPLOAD path:', path);
 
     try {
       const { error } = await supabase.storage
@@ -112,7 +114,10 @@ function handler(req, res) {
           upsert: false
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('UPLOAD supabase error:', error);
+        throw error;
+      }
 
       const { data: urlData } = supabase.storage
         .from(bucket)
