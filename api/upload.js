@@ -12,7 +12,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
-const { setCors } = require('./cors');
+const { setCors } = require('../lib/cors');
 
 // Allowed buckets -> MIME allowlist (mirrors SPEC Section 5)
 const BUCKET_MIME = {

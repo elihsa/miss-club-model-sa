@@ -1,4 +1,4 @@
-const { setCors } = require('./cors');
+const { setCors } = require('../lib/cors');
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = process.env.SUPABASE_URL;

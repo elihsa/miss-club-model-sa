@@ -20,7 +20,7 @@ describe('New SPEC endpoints: /api/upload and /api/events_create', () => {
     });
 
     test('sets CORS via shared helper', () => {
-      expect(content).toMatch(/require\(['"]\.\/cors['"]\)/);
+      expect(content).toMatch(/require\(['"]\.\.\/lib\/cors['"]\)/);
       expect(content).toMatch(/setCors\(req, res\)/);
     });
 
@@ -64,7 +64,7 @@ describe('New SPEC endpoints: /api/upload and /api/events_create', () => {
     });
 
     test('sets CORS via shared helper', () => {
-      expect(content).toMatch(/require\(['"]\.\/cors['"]\)/);
+      expect(content).toMatch(/require\(['"]\.\.\/lib\/cors['"]\)/);
       expect(content).toMatch(/setCors\(req, res\)/);
     });
 

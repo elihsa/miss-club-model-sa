@@ -15,7 +15,7 @@ describe('API Endpoints', () => {
     // Verify it exports a handler (CommonJS or ESM)
     expect(content).toMatch(/(module\.exports|export default)/);
     // Verify Supabase client setup (only for files that use it, not shared helpers)
-    if (!['cms.js', 'events_create.js', 'candidates.js', 'build-info.js', ...helperFiles].includes(file)) {
+    if (!['cms.js', 'candidates.js', 'build-info.js', ...helperFiles].includes(file)) {
       expect(content).toMatch(/createClient.*supabase-js/);
     }
   });
@@ -37,7 +37,7 @@ describe('API Endpoints', () => {
       const content = fs.readFileSync(filePath, 'utf8');
       // Either inline the header directly OR delegate to the shared ./cors helper
       const hasInline = content.includes('Access-Control-Allow-Origin');
-      const usesSharedHelper = /require\(\s*['"]\.\/cors['"]\s*\)/.test(content) && /setCors/.test(content);
+      const usesSharedHelper = /require\(\s*['"]\.\.\/lib\/cors['"]\s*\)/.test(content) && /setCors/.test(content);
       expect(hasInline || usesSharedHelper).toBe(true);
     });
   });

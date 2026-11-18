@@ -53,7 +53,7 @@ async function getEmailSettings() {
   }
 }
 
-const { setCors } = require('./cors');
+const { setCors } = require('../lib/cors');
 
 function handler(req, res) {
   setCors(req, res);

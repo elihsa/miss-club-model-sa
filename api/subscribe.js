@@ -1,5 +1,5 @@
 // const { createClient } = require('@supabase/supabase-js');  // Reserved for future use
-const { setCors } = require('./cors');
+const { setCors } = require('../lib/cors');
 const Resend = require('resend');
 
 module.exports = async function handler(req, res) {

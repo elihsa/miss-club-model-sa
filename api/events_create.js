@@ -12,7 +12,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
-const { setCors } = require('./cors');
+const { setCors } = require('../lib/cors');
 
 // Alternative event creation endpoint (SPEC Section 6).
 // Accepts either:

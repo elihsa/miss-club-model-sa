@@ -2300,7 +2300,7 @@ console.log('Design System Builder loaded. All tokens mapped to CSS custom prope
 (function() {
   var el = document.getElementById('buildInfo');
   if (!el) return;
-  fetch('/api/build-info', { cache: 'no-store' })
+  fetch('/lib/build-info', { cache: 'no-store' })
     .then(function(r) { return r.ok ? r.json() : null; })
     .then(function(info) {
       if (info && info.build) {
