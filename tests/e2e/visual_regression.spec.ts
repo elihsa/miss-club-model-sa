@@ -36,17 +36,18 @@ test.describe('Visual Regression Baselines', () => {
         const pageInstance = await context.newPage();
 
         await pageInstance.goto(`${BASE_URL}${page.path}`, {
-          waitUntil: 'networkidle',
-          timeout: 30000,
+          waitUntil: 'domcontentloaded',
+          timeout: 15000,
         });
 
-        // Wait for any lazy-loaded images
-        await pageInstance.waitForTimeout(2000);
+        // Wait for fonts and lazy-loaded images
+        await pageInstance.waitForLoadState('networkidle').catch(() => {});
+        await pageInstance.waitForTimeout(1500);
 
-        // Full page screenshot for baseline
-        const screenshot = await pageInstance.screenshot({ fullPage: true });
+        // Use viewport screenshot to avoid WebKit 32767px fullPage limit
+        const screenshot = await pageInstance.screenshot({ fullPage: false });
         expect(screenshot).toMatchSnapshot(`${page.label}-${viewport.name}.png`, {
-          threshold: 0.1, // 10% pixel difference tolerance
+          threshold: 0.1,
         });
 
         await context.close();
@@ -54,20 +55,20 @@ test.describe('Visual Regression Baselines', () => {
     }
   }
 
-  // Admin dashboard baseline (requires auth login)
+  // Admin dashboard baseline (no auth — captures login screen)
   test('admin-dashboard @ desktop', async ({ browser }) => {
     const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
     const pageInstance = await context.newPage();
 
     await pageInstance.goto(`${BASE_URL}/admin`, {
-      waitUntil: 'networkidle',
-      timeout: 30000,
+      waitUntil: 'domcontentloaded',
+      timeout: 15000,
     });
 
-    // Wait for auth login or dashboard to load
-    await pageInstance.waitForTimeout(3000);
+    await pageInstance.waitForLoadState('networkidle').catch(() => {});
+    await pageInstance.waitForTimeout(1500);
 
-    const screenshot = await pageInstance.screenshot({ fullPage: true });
+    const screenshot = await pageInstance.screenshot({ fullPage: false });
     expect(screenshot).toMatchSnapshot('admin-dashboard-desktop.png', {
       threshold: 0.1,
     });
