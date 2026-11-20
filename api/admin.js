@@ -5,8 +5,10 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 const resendApiKey = process.env.RESEND_API_KEY;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing Supabase environment variables');
+// Fail fast if the service key is missing or a placeholder
+const PLACEHOLDER = /your[_-]?service[_-]?role[_-]?key|placeholder|example|xxxx|REPLACE_ME/i;
+if (!supabaseUrl || !supabaseServiceKey || PLACEHOLDER.test(supabaseServiceKey)) {
+  throw new Error('Missing or placeholder Supabase environment variables');
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
