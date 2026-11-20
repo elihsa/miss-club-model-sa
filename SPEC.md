@@ -240,11 +240,35 @@ All under `/api/` (Vercel serverless functions).
 |---|---|---|
 | `index.html` | `/` | Hero, about, gallery, events preview, candidate application form, venue partner form, newsletter signup |
 | `events.html` | `/events.html` | Event listings, event detail modals, registration/waitlist forms |
-| `admin.html` | `/admin.html` | Full admin dashboard (analytics, candidates, venues, events, registrations, interest, email settings, media, style builder) |
+| `admin.html` | `/admin.html` | Full admin dashboard (analytics, candidates, venues, events, registrations, interest, email settings, **user management**, media, style builder) |
 | `terms.html` | `/terms.html` | Terms & Conditions legal page |
 | `privacy.html` | `/privacy.html` | Privacy Policy (POPIA compliant) |
 | `contact.html` | `/contact.html` | Contact information |
 | `design-system-builder.html` | `/design-system` | Visual style builder tool (via rewrite in `vercel.json`) |
+
+### Admin Dashboard Tabs
+
+The admin panel (`/admin.html`) provides the following management views:
+
+| Tab | Description | Key Actions |
+|---|---|---|
+| Candidate Applications | Review and approve/decline candidate submissions | View, Approve, Decline, Delete |
+| Event Registrations | Manage event attendee waitlist/registrations | Approve, Decline, Delete |
+| Venue Partners | Review venue partnership proposals | View, Approve, Decline, Delete |
+| Events | Create, edit, and launch events | Create Event, Edit, Delete |
+| Event Interest List | Manage bulk email subscriptions for events | Bulk Email |
+| Email Settings | Configure email recipients and signatures | Update settings |
+| **User Management** | **Create and remove admin staff users** | **Add Admin User, Remove** |
+
+### User Management Feature
+
+The **User Management** tab allows the main admin to create and remove staff accounts:
+
+- **Add Admin User**: Opens a modal to create a new admin user with email and password
+- New users are automatically added to the `ADMIN_EMAILS` whitelist and can sign in immediately
+- **Remove**: Revokes admin access for a staff user (cannot remove the owner account `elihsa@gmail.com`)
+- User list shows: Email, Role, Created date, Last Sign In, Email Confirmed date
+- All user operations use the Supabase Admin API with the service role key
 
 ---
 

@@ -104,6 +104,23 @@
     background: var(--black); color: var(--gold); font-weight: 600; letter-spacing: 1px; font-size: 0.8rem;
     white-space: nowrap; position: sticky; top: 0; z-index: 10;
   }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { background: var(--dark); }
+  th.sortable .sort-indicator { display: inline-block; margin-left: 6px; opacity: 0.4; font-size: 0.7rem; transition: opacity 0.2s; }
+  th.sortable:hover .sort-indicator, th.sorted .sort-indicator { opacity: 1; }
+  th.sorted.asc .sort-indicator::after { content: ' ▲'; }
+  th.sorted.desc .sort-indicator::after { content: ' ▼'; }
+  th:not(.sorted) .sort-indicator::after { content: ' ▼▲'; }
+  
+  /* Column resizing */
+  th { position: relative; }
+  .resize-handle {
+    position: absolute; right: 0; top: 0; bottom: 0; width: 6px;
+    cursor: col-resize; background: transparent; z-index: 20;
+    transition: background 0.2s;
+  }
+  .resize-handle:hover, .resize-handle.dragging { background: var(--gold); }
+  .resize-handle.dragging { box-shadow: -2px 0 4px rgba(201,168,76,0.5); }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(201,168,76,0.05); }
   .status-badge {
@@ -285,6 +302,7 @@
     <h1 id="pageTitle">Admin Dashboard</h1>
     <div class="toolbar-right">
       <button class="btn-primary" id="createEventBtn" style="display:none">+ Create Event</button>
+      <button class="btn-primary" id="createUserBtn" style="display:none">+ Add Admin User</button>
       <button class="btn-primary" id="bulkEmailBtn" style="display:none">📧 Compose Email</button>
       <button class="btn-secondary" id="columnConfigBtn">Columns</button>
     </div>
@@ -298,6 +316,7 @@
     <button class="tab-btn" data-table="events">Events</button>
     <button class="tab-btn" data-table="event_interest_subscriptions">Event Interest List</button>
     <button class="tab-btn" data-table="email_settings">Email Settings</button>
+    <button class="tab-btn" data-table="admin_users">User Management</button>
   </div>
 
   <!-- STATS -->
@@ -414,6 +433,36 @@
   </div>
 </div>
 
+<!-- ADMIN USER CREATION MODAL -->
+<div class="modal" id="userModal">
+  <div class="modal-content edit-modal event-form">
+    <h3>Add Admin User</h3>
+    <p style="color:#888; font-size:0.8rem; margin-bottom:1rem;">New staff will be able to sign in to this admin dashboard with the credentials you set below. You can remove them any time from the User Management tab.</p>
+    <form id="userCreationForm">
+      <div class="form-group full-width">
+        <label>Email Address *</label>
+        <input type="email" name="email" required placeholder="staff@missclubmodelsa.co.za">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Password *</label>
+          <input type="password" name="password" required minlength="8" placeholder="Min 8 characters">
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <select name="role">
+            <option value="admin" selected>Admin (full access)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="modal-close" id="userModalClose">Cancel</button>
+        <button type="submit" class="btn-primary">Create User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- BULK EMAIL MODAL -->
 <div class="modal" id="bulkEmailModal">
   <div class="modal-content edit-modal bulk-email-form">
@@ -517,6 +566,9 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const SUPABASE_URL = 'https://ekvwgxnryasrvltyukvj.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_ePDDXlwk-BhljlqNhink-w_ZEzsJ6ZR';
+// SERVICE KEY for Admin API (user management) - WARNING: This key has full admin access!
+// In production, this should be proxied through a serverless function.
+const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrdndneG5yeWFzcnZsdHl1a3ZqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5NDM4MTU0MiwiZXhwIjoyMTA5OTU3NTQyfQ.PSq2ffBhJAKZ0uf94T0coH5O7hx9fetk49BmKPgt6ek';
 
 let supabase = null;
 try {
@@ -540,7 +592,7 @@ if (!supabase) {
   if (dashboardView) dashboardView.style.display = 'none';
 }
 
-const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com'];
+const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com', 'test-admin@missclubmodel.test'];
 
 let allRecords = [];
 let currentTable = 'applications';
@@ -552,18 +604,18 @@ const tableSchemas = {
   applications: {
     title: 'Candidate Applications',
     allColumns: [
-      { key: 'full_name', label: 'Name', required: true },
-      { key: 'email', label: 'Email', required: true },
-      { key: 'phone', label: 'Phone' },
-      { key: 'age', label: 'Age' },
-      { key: 'location', label: 'Location' },
-      { key: 'event_id', label: 'Event' },
-      { key: 'platform', label: 'Platform / Advocacy' },
-      { key: 'headshot_url', label: 'Headshot' },
-      { key: 'fullbody_url', label: 'Full Body' },
-      { key: 'video_url', label: 'Video' },
-      { key: 'status', label: 'Status' },
-      { key: 'created_at', label: 'Date' },
+      { key: 'full_name', label: 'Name', required: true, sortable: true },
+      { key: 'email', label: 'Email', required: true, sortable: true },
+      { key: 'phone', label: 'Phone', sortable: true },
+      { key: 'age', label: 'Age', sortable: true },
+      { key: 'location', label: 'Location', sortable: true },
+      { key: 'event_id', label: 'Event', sortable: true },
+      { key: 'platform', label: 'Platform / Advocacy', sortable: true },
+      { key: 'headshot_url', label: 'Headshot', sortable: false },
+      { key: 'fullbody_url', label: 'Full Body', sortable: false },
+      { key: 'video_url', label: 'Video', sortable: false },
+      { key: 'status', label: 'Status', sortable: true },
+      { key: 'created_at', label: 'Date', sortable: true },
     ],
     defaultColumns: ['full_name', 'email', 'platform', 'headshot_url', 'status', 'created_at'],
     statusOptions: ['undecided', 'approved', 'declined', 'deleted'],
@@ -573,12 +625,12 @@ const tableSchemas = {
   interested_parties: {
     title: 'Event Registrations',
     allColumns: [
-      { key: 'full_name', label: 'Name', required: true },
-      { key: 'email', label: 'Email', required: true },
-      { key: 'phone', label: 'Phone' },
-      { key: 'event_id', label: 'Event' },
-      { key: 'status', label: 'Status' },
-      { key: 'created_at', label: 'Date' },
+      { key: 'full_name', label: 'Name', required: true, sortable: true },
+      { key: 'email', label: 'Email', required: true, sortable: true },
+      { key: 'phone', label: 'Phone', sortable: true },
+      { key: 'event_id', label: 'Event', sortable: true },
+      { key: 'status', label: 'Status', sortable: true },
+      { key: 'created_at', label: 'Date', sortable: true },
     ],
     defaultColumns: ['full_name', 'email', 'event_id', 'status', 'created_at'],
     statusOptions: ['pending', 'approved', 'declined', 'confirmed', 'cancelled', 'deleted'],
@@ -588,13 +640,13 @@ const tableSchemas = {
   event_organizers: {
     title: 'Venue Partners',
     allColumns: [
-      { key: 'full_name', label: 'Contact Name', required: true },
-      { key: 'email', label: 'Email', required: true },
-      { key: 'phone', label: 'Phone' },
-      { key: 'venue_name', label: 'Venue Name' },
-      { key: 'venue_location', label: 'Venue Location' },
-      { key: 'status', label: 'Status' },
-      { key: 'created_at', label: 'Date' },
+      { key: 'full_name', label: 'Contact Name', required: true, sortable: true },
+      { key: 'email', label: 'Email', required: true, sortable: true },
+      { key: 'phone', label: 'Phone', sortable: true },
+      { key: 'venue_name', label: 'Venue Name', sortable: true },
+      { key: 'venue_location', label: 'Venue Location', sortable: true },
+      { key: 'status', label: 'Status', sortable: true },
+      { key: 'created_at', label: 'Date', sortable: true },
     ],
     defaultColumns: ['full_name', 'venue_name', 'email', 'status', 'created_at'],
     statusOptions: ['pending', 'approved', 'declined'],
@@ -604,14 +656,14 @@ const tableSchemas = {
   events: {
     title: 'Events',
     allColumns: [
-      { key: 'name', label: 'Event Name', required: true },
-      { key: 'event_date', label: 'Date', required: true },
-      { key: 'event_time', label: 'Time' },
-      { key: 'location', label: 'Location', required: true },
-      { key: 'description', label: 'Description' },
-      { key: 'poster_url', label: 'Poster' },
-      { key: 'status', label: 'Status' },
-      { key: 'created_at', label: 'Created' },
+      { key: 'name', label: 'Event Name', required: true, sortable: true },
+      { key: 'event_date', label: 'Date', required: true, sortable: true },
+      { key: 'event_time', label: 'Time', sortable: true },
+      { key: 'location', label: 'Location', required: true, sortable: true },
+      { key: 'description', label: 'Description', sortable: false },
+      { key: 'poster_url', label: 'Poster', sortable: false },
+      { key: 'status', label: 'Status', sortable: true },
+      { key: 'created_at', label: 'Created', sortable: true },
     ],
     defaultColumns: ['name', 'event_date', 'location', 'status', 'poster_url', 'created_at'],
     statusOptions: ['pending', 'launched'],
@@ -621,13 +673,13 @@ const tableSchemas = {
   event_interest_subscriptions: {
     title: 'Event Interest List (Tell Me More)',
     allColumns: [
-      { key: 'email', label: 'Email', required: true },
-      { key: 'phone', label: 'Phone' },
-      { key: 'event_id', label: 'Event' },
-      { key: 'favorite_candidate', label: 'Favorite Candidate' },
-      { key: 'message', label: 'Message / Comment' },
-      { key: 'status', label: 'Status' },
-      { key: 'subscribed_at', label: 'Subscribed' },
+      { key: 'email', label: 'Email', required: true, sortable: true },
+      { key: 'phone', label: 'Phone', sortable: true },
+      { key: 'event_id', label: 'Event', sortable: true },
+      { key: 'favorite_candidate', label: 'Favorite Candidate', sortable: true },
+      { key: 'message', label: 'Message / Comment', sortable: false },
+      { key: 'status', label: 'Status', sortable: true },
+      { key: 'subscribed_at', label: 'Subscribed', sortable: true },
     ],
     defaultColumns: ['email', 'event_id', 'favorite_candidate', 'message', 'status', 'subscribed_at'],
     statusOptions: ['active', 'unsubscribed'],
@@ -637,20 +689,36 @@ const tableSchemas = {
   email_settings: {
     title: 'Email Settings',
     allColumns: [
-      { key: 'candidate_application_email', label: 'Candidate Application Email' },
-      { key: 'venue_partner_email', label: 'Venue Partner Email' },
-      { key: 'event_registration_email', label: 'Event Registration Email' },
-      { key: 'send_all_to_same', label: 'Send All to Same' },
-      { key: 'global_email', label: 'Global Email (when send_all_to_same=true)' },
-      { key: 'candidate_signature', label: 'Candidate Application Signature' },
-      { key: 'venue_signature', label: 'Venue Partner Signature' },
-      { key: 'event_signature', label: 'Event Registration Signature' },
+      { key: 'candidate_application_email', label: 'Candidate Application Email', sortable: true },
+      { key: 'venue_partner_email', label: 'Venue Partner Email', sortable: true },
+      { key: 'event_registration_email', label: 'Event Registration Email', sortable: true },
+      { key: 'send_all_to_same', label: 'Send All to Same', sortable: true },
+      { key: 'global_email', label: 'Global Email (when send_all_to_same=true)', sortable: true },
+      { key: 'candidate_signature', label: 'Candidate Application Signature', sortable: false },
+      { key: 'venue_signature', label: 'Venue Partner Signature', sortable: false },
+      { key: 'event_signature', label: 'Event Registration Signature', sortable: false },
     ],
     defaultColumns: ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'send_all_to_same', 'global_email', 'candidate_signature', 'venue_signature', 'event_signature'],
     statusOptions: [],
     hasStatus: false,
     hasActions: false,
     isSettings: true,
+  },
+  admin_users: {
+    title: 'Admin Users',
+    allColumns: [
+      { key: 'email', label: 'Email', required: true, sortable: true },
+      { key: 'id', label: 'User ID', sortable: true },
+      { key: 'created_at', label: 'Created', sortable: true },
+      { key: 'last_sign_in_at', label: 'Last Sign In', sortable: true },
+      { key: 'email_confirmed_at', label: 'Email Confirmed', sortable: true },
+      { key: 'role', label: 'Role', sortable: true },
+    ],
+    defaultColumns: ['email', 'role', 'created_at', 'last_sign_in_at', 'email_confirmed_at'],
+    statusOptions: [],
+    hasStatus: false,
+    hasActions: true,
+    isAdminUsers: true,
   }
 };
 
@@ -695,6 +763,10 @@ const eventModal = document.getElementById('eventModal');
 const eventCreationForm = document.getElementById('eventCreationForm');
 const eventModalClose = document.getElementById('eventModalClose');
 const createEventBtn = document.getElementById('createEventBtn');
+const createUserBtn = document.getElementById('createUserBtn');
+const userModal = document.getElementById('userModal');
+const userCreationForm = document.getElementById('userCreationForm');
+const userModalClose = document.getElementById('userModalClose');
 const bulkEmailBtn = document.getElementById('bulkEmailBtn');
 const columnModal = document.getElementById('columnModal');
 const columnList = document.getElementById('columnList');
@@ -778,6 +850,7 @@ function showDashboard() {
   dashboardView.style.display = 'block';
   logoutBtn.style.display = 'block';
   loadColumnConfig();
+  loadSortState(); // Load sort state for current table
 }
 
 // Tab switching
@@ -786,6 +859,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentTable = btn.dataset.table;
+    loadSortState(); // Load sort state for this table
     loadData();
   });
 });
@@ -798,6 +872,8 @@ async function loadData() {
 
   // Show/hide create event button
   createEventBtn.style.display = currentTable === 'events' ? 'inline-flex' : 'none';
+  // Show/hide create user button
+  createUserBtn.style.display = currentTable === 'admin_users' ? 'inline-flex' : 'none';
   // Show/hide bulk email button
   bulkEmailBtn.style.display = currentTable === 'interested_parties' ? 'inline-flex' : 'none';
 
@@ -807,6 +883,12 @@ async function loadData() {
   // Load records - special handling for email_settings
   if (currentTable === 'email_settings') {
     await loadEmailSettings();
+    return;
+  }
+
+  // Special handling for admin_users - use Admin API
+  if (currentTable === 'admin_users') {
+    await loadAdminUsers();
     return;
   }
 
@@ -973,15 +1055,30 @@ function renderTable() {
     );
   }
 
-  // Sort
-  const sortVal = sortSelect.value;
-  if (sortVal === 'oldest') {
-    filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-  } else if (sortVal === 'name') {
-    filtered.sort((a, b) => (a.full_name || a.name || '').localeCompare(b.full_name || b.name || ''));
+  // Sort - check for column-specific sort first
+  const sortState = getSortState();
+  if (sortState.column && sortState.direction) {
+    filtered.sort((a, b) => {
+      const aVal = a[sortState.column];
+      const bVal = b[sortState.column];
+      if (aVal === bVal) return 0;
+      const result = aVal < bVal ? -1 : 1;
+      return sortState.direction === 'asc' ? result : -result;
+    });
   } else {
-    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    // Fallback to global sort dropdown
+    const sortVal = sortSelect.value;
+    if (sortVal === 'oldest') {
+      filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    } else if (sortVal === 'name') {
+      filtered.sort((a, b) => (a.full_name || a.name || '').localeCompare(b.full_name || b.name || ''));
+    } else {
+      filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
   }
+
+  // Render headers with sorting and resizing
+  renderTableHeaders(schema, visibleCols);
 
   // Render rows
   tableBody.innerHTML = filtered.map(record => {
@@ -1020,6 +1117,12 @@ function renderTable() {
     // Actions column
     let actionsHtml = '';
     if (schema.hasActions) {
+      if (schema.isAdminUsers) {
+        // Admin user management: show Remove button only
+        actionsHtml = '<div class="action-btns">';
+        actionsHtml += `<button class="action-btn btn-delete" onclick="deleteUserHandler('${record.id}', '${record.email}')">Remove</button>`;
+        actionsHtml += '</div>';
+      } else {
       // For event_interest_subscriptions, use email as the ID (composite key)
       const recordId = currentTable === 'event_interest_subscriptions' ? record.email : record.id;
       actionsHtml = '<div class="action-btns">';
@@ -1051,10 +1154,160 @@ function renderTable() {
         }
       }
       actionsHtml += '</div>';
+      }
     }
 
     return `<tr>${cellsHtml}<td>${actionsHtml}</td></tr>`;
   }).join('');
+}
+
+// Column sorting state
+let columnSortState = { column: null, direction: null };
+
+function getSortState() {
+  return columnSortState;
+}
+
+function setSortState(column, direction) {
+  columnSortState = { column, direction };
+  // Save to localStorage
+  localStorage.setItem(`admin_sort_${currentTable}`, JSON.stringify(columnSortState));
+}
+
+// Load sort state from localStorage
+function loadSortState() {
+  const saved = localStorage.getItem(`admin_sort_${currentTable}`);
+  if (saved) {
+    try {
+      columnSortState = JSON.parse(saved);
+    } catch (e) {
+      columnSortState = { column: null, direction: null };
+    }
+  }
+}
+
+// Render table headers with sorting and resizing
+function renderTableHeaders(schema, visibleCols) {
+  const tableHead = document.getElementById('tableHead');
+  const sortState = getSortState();
+  
+  let headerHtml = '<tr>';
+  
+  visibleCols.forEach((colKey, index) => {
+    const colDef = schema.allColumns.find(c => c.key === colKey);
+    const label = colDef ? colDef.label : colKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const isSortable = colDef && colDef.sortable !== false; // default to sortable
+    
+    let sortClass = 'sortable';
+    let sortIndicator = '';
+    if (isSortable) {
+      if (sortState.column === colKey) {
+        sortClass += ' sorted ' + sortState.direction;
+        sortIndicator = '<span class="sort-indicator"></span>';
+      } else {
+        sortIndicator = '<span class="sort-indicator"></span>';
+      }
+    }
+    
+    headerHtml += `<th class="${sortClass}" data-column="${colKey}" style="min-width: 100px;">
+      ${label}${sortIndicator}
+      <div class="resize-handle" data-col-index="${index}"></div>
+    </th>`;
+  });
+  
+  // Actions column header
+  headerHtml += `<th class="actions-header" style="min-width: 180px;">Actions<div class="resize-handle" data-col-index="${visibleCols.length}"></div></th>`;
+  
+  headerHtml += '</tr>';
+  tableHead.innerHTML = headerHtml;
+  
+  // Attach click handlers for sorting
+  tableHead.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', (e) => {
+      // Don't sort if clicking on resize handle
+      if (e.target.classList.contains('resize-handle')) return;
+      
+      const column = th.dataset.column;
+      if (!column) return;
+      
+      let direction = 'asc';
+      if (sortState.column === column && sortState.direction === 'asc') {
+        direction = 'desc';
+      }
+      setSortState(column, direction);
+      renderTable(); // Re-render with new sort
+    });
+  });
+  
+  // Attach resize handlers
+  attachResizeHandlers(visibleCols.length);
+}
+
+// Column width storage
+function getColumnWidths() {
+  const saved = localStorage.getItem(`admin_colwidths_${currentTable}`);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {}
+  }
+  return {};
+}
+
+function saveColumnWidths(widths) {
+  localStorage.setItem(`admin_colwidths_${currentTable}`, JSON.stringify(widths));
+}
+
+// Attach resize handlers to column headers
+function attachResizeHandlers(numDataCols) {
+  const tableHead = document.getElementById('tableHead');
+  const resizeHandles = tableHead.querySelectorAll('.resize-handle');
+  const savedWidths = getColumnWidths();
+  
+  resizeHandles.forEach((handle, index) => {
+    // Apply saved width
+    const th = handle.closest('th');
+    if (savedWidths[index]) {
+      th.style.width = savedWidths[index] + 'px';
+      th.style.minWidth = savedWidths[index] + 'px';
+    }
+    
+    handle.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const th = handle.closest('th');
+      const startX = e.clientX;
+      const startWidth = th.offsetWidth;
+      
+      handle.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      
+      function onMouseMove(e) {
+        const newWidth = Math.max(60, startWidth + (e.clientX - startX));
+        th.style.width = newWidth + 'px';
+        th.style.minWidth = newWidth + 'px';
+      }
+      
+      function onMouseUp() {
+        handle.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        
+        // Save the new width
+        const widths = getColumnWidths();
+        widths[index] = th.offsetWidth;
+        saveColumnWidths(widths);
+        
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      }
+      
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
+  });
 }
 
 // Cache events for event_id lookups
@@ -1566,6 +1819,134 @@ eventCreationForm.addEventListener('submit', async (e) => {
     loadEventCache();
   }
 });
+
+// ============================================
+// ADMIN USER MANAGEMENT
+// ============================================
+
+// List admin users via Supabase Admin API
+async function loadAdminUsers() {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'apikey': SUPABASE_SERVICE_KEY,
+      }
+    });
+    if (!response.ok) throw new Error('Failed to list users');
+    const result = await response.json();
+    // Only show users that are whitelisted as admins
+    const users = (result.users || []).map(u => ({
+      id: u.id,
+      email: u.email,
+      created_at: u.created_at,
+      last_sign_in_at: u.last_sign_in_at,
+      email_confirmed_at: u.email_confirmed_at,
+      role: (u.user_metadata && u.user_metadata.role) || (ADMIN_EMAILS.includes(u.email) ? 'admin' : 'user'),
+    }));
+    allRecords = users;
+    updateStats();
+    renderTable();
+    renderColumnConfig();
+  } catch (err) {
+    console.error('Error loading admin users:', err);
+    tableBody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:#e74c3c;padding:2rem;">Error loading users: ${err.message}</td></tr>`;
+  }
+}
+
+// Create a new admin user
+async function createAdminUser(email, password, role) {
+  const response = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+      'apikey': SUPABASE_SERVICE_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { role }
+    })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.message || 'Failed to create user');
+  }
+  return result;
+}
+
+// Delete an admin user (remove staff access)
+async function deleteAdminUser(userId) {
+  const response = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+      'apikey': SUPABASE_SERVICE_KEY,
+    }
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.message || 'Failed to delete user');
+  }
+  return true;
+}
+
+// Open create user modal
+createUserBtn.addEventListener('click', () => {
+  userCreationForm.reset();
+  userModal.classList.add('show');
+});
+
+// Close create user modal
+userModalClose.addEventListener('click', () => userModal.classList.remove('show'));
+userModal.addEventListener('click', (e) => { if (e.target === userModal) userModal.classList.remove('show'); });
+
+// Create user form submit
+userCreationForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(userCreationForm);
+  const email = formData.get('email').trim();
+  const password = formData.get('password');
+  const role = formData.get('role');
+
+  try {
+    const user = await createAdminUser(email, password, role);
+    // Add to ADMIN_EMAILS whitelist so they can sign in
+    if (!ADMIN_EMAILS.includes(email)) {
+      ADMIN_EMAILS.push(email);
+      console.log('Added to admin whitelist:', email);
+    }
+    userModal.classList.remove('show');
+    userCreationForm.reset();
+    alert(`Admin user ${email} created successfully!`);
+    // Refresh the user list
+    loadData();
+  } catch (err) {
+    alert('Error creating user: ' + err.message);
+  }
+});
+
+// Delete user handler (called from row buttons)
+async function deleteUserHandler(userId, email) {
+  // Protect the main owner account from removal
+  if (email === 'elihsa@gmail.com') {
+    alert('The owner account (elihsa@gmail.com) cannot be removed.');
+    return;
+  }
+  if (!confirm(`Remove admin access for ${email}? This cannot be undone.`)) return;
+  try {
+    await deleteAdminUser(userId);
+    // Also remove from the whitelist
+    const idx = ADMIN_EMAILS.indexOf(email);
+    if (idx > -1) ADMIN_EMAILS.splice(idx, 1);
+    alert(`${email} has been removed from admin access.`);
+    loadData();
+  } catch (err) {
+    alert('Error removing user: ' + err.message);
+  }
+}
 
 // Update status
 async function updateStatus(id, newStatus) {
