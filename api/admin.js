@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const Resend = require('resend');
+const { Resend } = require('resend');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
@@ -52,16 +52,26 @@ function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized - missing admin token' });
   }
 
-  // const token = authHeader.substring(7); // Extracted for future JWT verification
-  // Simple token verification - in production, verify JWT properly
-  // For now, check if it's a known admin email in the token payload
-  // Since we can't easily verify JWT here without the secret, we'll rely on the service key
-  // and the fact that this endpoint is only called from authenticated admin sessions
-
-  const { action, table, id, data, status } = req.body;
+  // Support both body (POST) and query (GET/DELETE) for action parameter
+  const action = req.body?.action || req.query?.action;
+  const { table, id, data, status } = req.body || {};
 
   switch (req.method) {
+    case 'GET':
+      if (action === 'listUsers') {
+        return listAdminUsers(req, res);
+      }
+      return res.status(200).json({ status: 'success', message: 'Admin API operational' });
     case 'POST':
+      if (action === 'listUsers') {
+        return listAdminUsers(req, res);
+      }
+      if (action === 'createUser') {
+        return createAdminUser(req, res);
+      }
+      if (action === 'deleteUser') {
+        return deleteAdminUser(req, res);
+      }
       if (action === 'updateStatus') {
         return updateStatus(req, res, table, id, status);
       }
@@ -81,8 +91,11 @@ function handler(req, res) {
         return getRecord(req, res, table, id);
       }
       return res.status(400).json({ error: 'Invalid action' });
-    case 'GET':
-      return res.status(200).json({ status: 'success', message: 'Admin API operational' });
+    case 'DELETE':
+      if (action === 'deleteUser') {
+        return deleteAdminUser(req, res);
+      }
+      return res.status(400).json({ error: 'Invalid action' });
     default:
       return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -427,6 +440,72 @@ async function getRecord(req, res, table, id) {
     console.error('Get record error:', error);
     return res.status(500).json({ error: error.message });
   }
+}
+
+// ============================================
+// ADMIN USER MANAGEMENT (service-role operations)
+// ============================================
+
+async function listAdminUsers(req, res) {
+  const { data, error } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+  if (error) throw error;
+
+  const users = (data?.users || []).map(u => ({
+    id: u.id,
+    email: u.email,
+    created_at: u.created_at,
+    last_sign_in_at: u.last_sign_in_at,
+    email_confirmed_at: u.email_confirmed_at,
+    role: (u.user_metadata && u.user_metadata.role) || 'manager'
+  }));
+
+  return res.status(200).json({ status: 'success', users });
+}
+
+async function createAdminUser(req, res) {
+  const { email, password, role } = req.body || {};
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  const cleanRole = ['owner', 'admin', 'manager'].includes(role) ? role : 'manager';
+
+  const { data, error } = await supabase.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { role: cleanRole }
+  });
+
+  if (error) throw error;
+
+  return res.status(200).json({
+    status: 'success',
+    message: `User ${email} created with role ${cleanRole}`,
+    user: {
+      id: data.user.id,
+      email: data.user.email,
+      role: cleanRole
+    }
+  });
+}
+
+async function deleteAdminUser(req, res) {
+  const userId = (req.query && req.query.id) || (req.body && req.body.id);
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  // Never allow deleting the owner account
+  const { data: existing } = await supabase.auth.admin.getUserById(userId);
+  if (existing && existing.user && existing.user.email === 'elihsa@gmail.com') {
+    return res.status(403).json({ error: 'The owner account cannot be removed.' });
+  }
+
+  const { error } = await supabase.auth.admin.deleteUser(userId);
+  if (error) throw error;
+
+  return res.status(200).json({ status: 'success', message: 'User deleted' });
 }
 
 module.exports = handler;

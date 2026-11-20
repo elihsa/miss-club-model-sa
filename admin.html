@@ -293,6 +293,9 @@
     </div>
     <button type="submit" class="login-btn">Sign In</button>
     <div class="error-msg" id="loginError"></div>
+    <p class="forgot-password-link" style="margin-top:1rem; text-align:center;">
+      <a href="#" id="forgotPasswordLink">Forgot password?</a>
+    </p>
   </form>
 </div>
 
@@ -305,6 +308,7 @@
       <button class="btn-primary" id="createUserBtn" style="display:none">+ Add Admin User</button>
       <button class="btn-primary" id="bulkEmailBtn" style="display:none">📧 Compose Email</button>
       <button class="btn-secondary" id="columnConfigBtn">Columns</button>
+      <button class="btn-secondary" id="statsToggleBtn" title="Toggle Statistics">📊 Stats</button>
     </div>
   </div>
 
@@ -451,13 +455,33 @@
         <div class="form-group">
           <label>Role</label>
           <select name="role">
-            <option value="admin" selected>Admin (full access)</option>
+            <option value="owner">Owner (full access, cannot be removed)</option>
+            <option value="admin">Admin (full access, can manage users)</option>
+            <option value="manager" selected>Manager (view/edit data, no user management)</option>
           </select>
         </div>
       </div>
       <div class="modal-actions">
         <button type="button" class="modal-close" id="userModalClose">Cancel</button>
         <button type="submit" class="btn-primary">Create User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal" id="forgotPasswordModal">
+  <div class="modal-content edit-modal">
+    <h3>Reset Password</h3>
+    <p style="color:#888; font-size:0.8rem; margin-bottom:1rem;">Enter your admin email to receive a password reset link.</p>
+    <form id="forgotPasswordForm">
+      <div class="form-group full-width">
+        <label>Email Address *</label>
+        <input type="email" id="forgotPasswordEmail" required placeholder="admin@missclubmodelsa.co.za">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="modal-close" id="forgotPasswordClose">Cancel</button>
+        <button type="submit" class="btn-primary">Send Reset Link</button>
       </div>
     </form>
   </div>
@@ -566,13 +590,12 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const SUPABASE_URL = 'https://ekvwgxnryasrvltyukvj.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_ePDDXlwk-BhljlqNhink-w_ZEzsJ6ZR';
-// SERVICE KEY for Admin API (user management) - WARNING: This key has full admin access!
-// In production, this should be proxied through a serverless function.
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrdndneG5yeWFzcnZsdHl1a3ZqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5NDM4MTU0MiwiZXhwIjoyMTA5OTU3NTQyfQ.PSq2ffBhJAKZ0uf94T0coH5O7hx9fetk49BmKPgt6ek';
+// SERVICE KEY notice: Admin user actions are handled via /api/admin-users serverless API
 
 let supabase = null;
 try {
   supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.supabase = supabase; // Expose globally for token access
   console.log('Supabase client initialized:', !!supabase);
 } catch (err) {
   console.error('Supabase init failed:', err);
@@ -593,6 +616,20 @@ if (!supabase) {
 }
 
 const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com', 'test-admin@missclubmodel.test'];
+
+// Role hierarchy: owner > admin > manager
+const ROLES = {
+  OWNER: 'owner',      // Full access + cannot be removed
+  ADMIN: 'admin',      // Full access + can manage users
+  MANAGER: 'manager'   // View/edit data, NO user management
+};
+// Map email to role (default is 'manager' for new users)
+const USER_ROLES = {
+  'elihsa@gmail.com': ROLES.OWNER,
+  'admin@missclubmodelsa.co.za': ROLES.ADMIN,
+  'kiyanoschoonraad98@gmail.com': ROLES.ADMIN,
+  'test-admin@missclubmodel.test': ROLES.ADMIN,
+};
 
 let allRecords = [];
 let currentTable = 'applications';
@@ -786,9 +823,16 @@ async function checkSession() {
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
     console.log('checkSession result:', { session: !!session, user: session?.user?.email, error });
-    if (session && ADMIN_EMAILS.includes(session.user.email)) {
-      showDashboard();
-      loadData();
+    if (session && session.user?.email) {
+      const authorized = await isAuthorizedAdmin(session.user.email, session.access_token);
+      if (authorized) {
+        showDashboard();
+        loadData();
+      } else {
+        // Valid session but not an admin user — sign out
+        await supabase.auth.signOut();
+        showLogin();
+      }
     } else {
       showLogin();
     }
@@ -801,11 +845,106 @@ async function checkSession() {
 // Auth state listener
 supabase.auth.onAuthStateChange((event, session) => {
   console.log('Auth state change:', event, session?.user?.email);
-  if (event === 'SIGNED_IN' && session && ADMIN_EMAILS.includes(session.user.email)) {
-    showDashboard();
-    loadData();
+  if (event === 'SIGNED_IN' && session && session.user?.email) {
+    isAuthorizedAdmin(session.user.email, session.access_token).then(authorized => {
+      if (authorized) {
+        showDashboard();
+        loadData();
+      } else {
+        supabase.auth.signOut();
+        showLogin();
+      }
+    });
   } else if (event === 'SIGNED_OUT') {
     showLogin();
+  }
+});
+
+// Helper to get current user's access token for API calls
+async function getAccessToken() {
+  const { data: { session } } = await window.supabase.auth.getSession();
+  return session?.access_token || null;
+}
+
+// Verify an email is an authorized admin by querying the server-side user
+// list. This makes the authorization dynamic so admins/managers created via
+// the API (which stores their role in Supabase) can sign in after a reload,
+// instead of relying on the static ADMIN_EMAILS array baked into this page.
+async function isAuthorizedAdmin(email, token) {
+  // Fast-path: known static admins are always authorized
+  if (ADMIN_EMAILS.includes(email)) {
+    // Ensure sessionStorage role reflects any server-side role override
+    const metaRole = (await getCurrentUserMetadata()) || USER_ROLES[email] || ROLES.MANAGER;
+    sessionStorage.setItem('userRole', metaRole);
+    sessionStorage.setItem('userEmail', email);
+    return true;
+  }
+  try {
+    if (!token) return false;
+    const response = await fetch('/api/admin?action=listUsers', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) return false;
+    const result = await response.json();
+    const found = (result.users || []).find(u => u.email === email);
+    if (found) {
+      sessionStorage.setItem('userRole', found.role || ROLES.MANAGER);
+      sessionStorage.setItem('userEmail', email);
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error('isAuthorizedAdmin error:', err);
+    return false;
+  }
+}
+
+async function getCurrentUserMetadata() {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user?.user_metadata?.role;
+  } catch (err) {
+    return null;
+  }
+}
+
+// Forgot password handler
+const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+const forgotPasswordClose = document.getElementById('forgotPasswordClose');
+
+forgotPasswordLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  forgotPasswordForm.reset();
+  forgotPasswordModal.classList.add('show');
+});
+
+forgotPasswordClose.addEventListener('click', () => forgotPasswordModal.classList.remove('show'));
+forgotPasswordModal.addEventListener('click', (e) => { if (e.target === forgotPasswordModal) forgotPasswordModal.classList.remove('show'); });
+
+forgotPasswordForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('forgotPasswordEmail').value.trim();
+  
+  // Don't hard-block on ADMIN_EMAILS — the server only sends a reset
+  // email if the address actually exists in Supabase auth, so this is
+  // safe for all admin roles (owner/admin/manager) including ones
+  // created via the API after this page was deployed.
+  if (!email) {
+    alert('Please enter your email address.');
+    return;
+  }
+  
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password.html`
+    });
+    if (error) throw error;
+    alert('Password reset email sent! Check your inbox.');
+    forgotPasswordModal.classList.remove('show');
+  } catch (err) {
+    alert('Error sending reset email: ' + err.message);
   }
 });
 
@@ -817,12 +956,8 @@ loginForm.addEventListener('submit', async (e) => {
 
   console.log('Login attempt for:', email);
 
-  if (!ADMIN_EMAILS.includes(email)) {
-    loginError.textContent = 'Unauthorized email';
-    loginError.classList.add('show');
-    return;
-  }
-
+  // Don't hard-block here — let Supabase authenticate first, then verify the
+  // user is an authorized admin (handles API-created admins/managers too).
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   console.log('Login result:', { data: !!data?.user, error });
   if (error) {
@@ -830,12 +965,22 @@ loginForm.addEventListener('submit', async (e) => {
     loginError.classList.add('show');
   } else {
     loginError.classList.remove('show');
+    const authorized = await isAuthorizedAdmin(email, data.session?.access_token);
+    if (!authorized) {
+      // Signed in with a valid account but it's not an admin user
+      await supabase.auth.signOut();
+      loginError.textContent = 'This account is not authorized for the admin dashboard.';
+      loginError.classList.add('show');
+      return;
+    }
   }
 });
 
 // Logout
 logoutBtn.addEventListener('click', async () => {
   await supabase.auth.signOut();
+  sessionStorage.removeItem('userRole');
+  sessionStorage.removeItem('userEmail');
   showLogin();
 });
 
@@ -849,6 +994,16 @@ function showDashboard() {
   loginView.style.display = 'none';
   dashboardView.style.display = 'block';
   logoutBtn.style.display = 'block';
+  
+  // Check user role and hide User Management tab for Managers
+  const userRole = sessionStorage.getItem('userRole') || ROLES.MANAGER;
+  const userMgmtTab = document.querySelector('[data-table="admin_users"]');
+  if (userMgmtTab && userRole === ROLES.MANAGER) {
+    userMgmtTab.style.display = 'none';
+  } else if (userMgmtTab) {
+    userMgmtTab.style.display = 'inline-flex';
+  }
+  
   loadColumnConfig();
   loadSortState(); // Load sort state for current table
 }
@@ -869,6 +1024,17 @@ async function loadData() {
   const schema = tableSchemas[currentTable];
   pageTitle.textContent = schema.title;
   document.title = `Admin - ${schema.title} - Miss Club Model SA`;
+
+  // Permission check: Managers cannot access User Management
+  const userRole = sessionStorage.getItem('userRole') || ROLES.MANAGER;
+  if (currentTable === 'admin_users' && userRole === ROLES.MANAGER) {
+    alert('You do not have permission to manage users.');
+    // Switch back to first available tab
+    currentTable = 'applications';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-table="applications"]').classList.add('active');
+    return loadData(); // Recursive call with new table
+  }
 
   // Show/hide create event button
   createEventBtn.style.display = currentTable === 'events' ? 'inline-flex' : 'none';
@@ -984,6 +1150,13 @@ function updateStats() {
   });
 
   const statCards = statsGrid.querySelectorAll('.stat-card');
+  // Hide the entire stats pane for tables without meaningful statistics
+  if (currentTable === 'email_settings' || currentTable === 'admin_users') {
+    statsGrid.style.display = 'none';
+    return;
+  }
+  statsGrid.style.display = 'grid';
+
   if (currentTable === 'applications') {
     statCards[0].querySelector('h3').textContent = stats.total;
     statCards[0].querySelector('p').textContent = 'Total';
@@ -1025,7 +1198,7 @@ function updateStats() {
     statCards[2].querySelector('h3').textContent = stats.unsubscribed;
     statCards[2].querySelector('p').textContent = 'Unsubscribed';
     statCards[3].style.display = 'none';
-  } else if (currentTable === 'email_settings') {
+  } else if (currentTable === 'email_settings' || currentTable === 'admin_users') {
     statCards.forEach(c => c.style.display = 'none');
   }
 }
@@ -1824,27 +1997,17 @@ eventCreationForm.addEventListener('submit', async (e) => {
 // ADMIN USER MANAGEMENT
 // ============================================
 
-// List admin users via Supabase Admin API
+// List admin users via serverless API
 async function loadAdminUsers() {
   try {
-    const response = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'apikey': SUPABASE_SERVICE_KEY,
-      }
+    const token = await getAccessToken();
+    if (!token) throw new Error('No active session');
+    const response = await fetch('/api/admin?action=listUsers', {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     if (!response.ok) throw new Error('Failed to list users');
     const result = await response.json();
-    // Only show users that are whitelisted as admins
-    const users = (result.users || []).map(u => ({
-      id: u.id,
-      email: u.email,
-      created_at: u.created_at,
-      last_sign_in_at: u.last_sign_in_at,
-      email_confirmed_at: u.email_confirmed_at,
-      role: (u.user_metadata && u.user_metadata.role) || (ADMIN_EMAILS.includes(u.email) ? 'admin' : 'user'),
-    }));
-    allRecords = users;
+    allRecords = result.users || [];
     updateStats();
     renderTable();
     renderColumnConfig();
@@ -1854,43 +2017,42 @@ async function loadAdminUsers() {
   }
 }
 
-// Create a new admin user
+// Create a new admin user via serverless API
 async function createAdminUser(email, password, role) {
-  const response = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+  const token = await getAccessToken();
+  if (!token) throw new Error('No active session');
+  const response = await fetch('/api/admin?action=createUser', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-      'apikey': SUPABASE_SERVICE_KEY,
+    headers: { 
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { role }
-    })
+    body: JSON.stringify({ email, password, role })
   });
   const result = await response.json();
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to create user');
+    throw new Error(result.error || result.message || 'Failed to create user');
   }
   return result;
 }
 
-// Delete an admin user (remove staff access)
+// Delete an admin user via serverless API
 async function deleteAdminUser(userId) {
-  const response = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+  const token = await getAccessToken();
+  if (!token) throw new Error('No active session');
+  const response = await fetch(`/api/admin?action=deleteUser`, {
     method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-      'apikey': SUPABASE_SERVICE_KEY,
-    }
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ id: userId })
   });
+  const result = await response.json();
   if (!response.ok) {
-    const result = await response.json().catch(() => ({}));
-    throw new Error(result.message || 'Failed to delete user');
+    throw new Error(result.error || 'Failed to remove user');
   }
-  return true;
+  return result;
 }
 
 // Open create user modal
@@ -1916,11 +2078,12 @@ userCreationForm.addEventListener('submit', async (e) => {
     // Add to ADMIN_EMAILS whitelist so they can sign in
     if (!ADMIN_EMAILS.includes(email)) {
       ADMIN_EMAILS.push(email);
-      console.log('Added to admin whitelist:', email);
+      USER_ROLES[email] = role; // Store role
+      console.log('Added to admin whitelist:', email, 'with role:', role);
     }
     userModal.classList.remove('show');
     userCreationForm.reset();
-    alert(`Admin user ${email} created successfully!`);
+    alert(`Admin user ${email} created successfully with role: ${role}!`);
     // Refresh the user list
     loadData();
   } catch (err) {
