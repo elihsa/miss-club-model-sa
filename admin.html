@@ -131,6 +131,11 @@
   .status-declined { background: var(--red); color: var(--cream); }
   .status-deleted { background: #555; color: #aaa; text-decoration: line-through; }
   .status-pending { background: var(--blue); color: var(--cream); }
+  .role-badge { display: inline-block; padding: 3px 10px; border-radius: 14px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; }
+  .role-owner { background: #9b59b6; color: #fff; }
+  .role-admin { background: #c9a84c; color: #000; }
+  .role-manager { background: #555; color: #ddd; }
+  .role-select { background: #1a1a1a; color: var(--cream); border: 1px solid var(--gold-dark); border-radius: 4px; padding: 4px 8px; font-size: 0.75rem; font-family: inherit; cursor: pointer; }
   .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
   .action-btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; }
   .btn-approve { background: var(--green); color: var(--black); }
@@ -633,6 +638,7 @@ const USER_ROLES = {
 
 let allRecords = [];
 let currentTable = 'applications';
+let currentUserRole = null;  // set in renderTable() from sessionStorage
 let currentRecordId = null;
 let columnConfig = {};
 
@@ -1207,6 +1213,7 @@ function renderTable() {
   const schema = tableSchemas[currentTable];
   const visibleCols = getVisibleColumns(currentTable);
   let filtered = [...allRecords];
+  currentUserRole = sessionStorage.getItem('userRole') || ROLES.MANAGER;
 
   // Special handling for email_settings - render as a form
   if (currentTable === 'email_settings') {
@@ -1280,6 +1287,17 @@ function renderTable() {
         cellsHtml += `<td class="event-col">${event?.name || value}</td>`;
       } else if (colKey === 'status') {
         cellsHtml += `<td><span class="status-badge status-${status}">${status}</span></td>`;
+      } else if (colKey === 'role') {
+        const isOwner = record.email === 'elihsa@gmail.com' || record.role === 'owner';
+        const canChange = (currentUserRole === 'owner' || currentUserRole === 'admin') && !isOwner;
+        if (canChange) {
+          cellsHtml += `<td><select class=\"role-select\" onchange=\"changeUserRole('${record.id}', this.value)\">
+            <option value=\"admin\" ${record.role === 'admin' ? 'selected' : ''}>Admin</option>
+            <option value=\"manager\" ${record.role === 'manager' ? 'selected' : ''}>Manager</option>
+          </select></td>`;
+        } else {
+          cellsHtml += `<td><span class=\"role-badge role-${record.role}\">${record.role}</span></td>`;
+        }
       } else if (colKey === 'created_at') {
         cellsHtml += `<td class="date-col">${date}</td>`;
       } else {
@@ -2111,6 +2129,30 @@ async function deleteUserHandler(userId, email) {
   }
 }
 
+// Change user role (owner/admin only)
+async function changeUserRole(userId, newRole) {
+  const currentUserRole = sessionStorage.getItem('userRole') || ROLES.MANAGER;
+  if (currentUserRole !== 'owner' && currentUserRole !== 'admin') {
+    alert('Only an owner or admin can change user roles.');
+    return;
+  }
+  try {
+    const response = await fetch('/api/admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer admin-session' },
+      body: JSON.stringify({ action: 'updateUser', id: userId, role: newRole })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      alert('Error: ' + (result.error || 'Failed to update role'));
+      return;
+    }
+    loadData();
+  } catch (err) {
+    alert('Error changing role: ' + err.message);
+  }
+}
+
 // Update status
 async function updateStatus(id, newStatus) {
   // Call the admin API endpoint (uses service role key server-side)
@@ -2518,6 +2560,9 @@ window.saveEmailSettings = saveEmailSettings;
 window.toggleGlobalEmail = toggleGlobalEmail;
 window.openMediaModal = openMediaModal;
 window.openBulkEmailModal = openBulkEmailModal;
+window.deleteUserHandler = deleteUserHandler;
+window.changeUserRole = changeUserRole;
+window.createAdminUser = createAdminUser;
 
 // Expose new modal wrapper functions
 window.modalEditRecord = modalEditRecord;

@@ -69,6 +69,9 @@ function handler(req, res) {
       if (action === 'createUser') {
         return createAdminUser(req, res);
       }
+      if (action === 'updateUser') {
+        return updateAdminUser(req, res);
+      }
       if (action === 'deleteUser') {
         return deleteAdminUser(req, res);
       }
@@ -488,6 +491,50 @@ async function createAdminUser(req, res) {
       role: cleanRole
     }
   });
+}
+
+async function updateAdminUser(req, res) {
+  const { id, role } = req.body || {};
+  if (!id || !role) {
+    return res.status(400).json({ error: 'User ID and role are required' });
+  }
+  if (!['owner', 'admin', 'manager'].includes(role)) {
+    return res.status(400).json({ error: 'Invalid role. Must be owner, admin, or manager.' });
+  }
+
+  try {
+    const { data: existing, error: getError } = await supabase.auth.admin.getUserById(id);
+    if (getError || !existing || !existing.user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const currentRole = (existing.user.user_metadata && existing.user.user_metadata.role) || 'manager';
+    const targetEmail = existing.user.email;
+
+    // Prevent changing owner's role
+    if (targetEmail === 'elihsa@gmail.com' || currentRole === 'owner') {
+      return res.status(403).json({ error: 'The owner account role cannot be changed.' });
+    }
+
+    // Prevent assigning owner role - only elihsa@gmail.com can be owner
+    if (role === 'owner' && targetEmail !== 'elihsa@gmail.com') {
+      return res.status(403).json({ error: 'Only elihsa@gmail.com can have the owner role.' });
+    }
+
+    const { error: updateError } = await supabase.auth.admin.updateUserById(id, {
+      user_metadata: { ...existing.user.user_metadata, role }
+    });
+    if (updateError) throw updateError;
+
+    return res.status(200).json({
+      status: 'success',
+      message: `User ${targetEmail} updated to role ${role}`,
+      user: { id: existing.user.id, email: targetEmail, role }
+    });
+  } catch (error) {
+    console.error('Update user error:', error);
+    return res.status(500).json({ error: error.message });
+  }
 }
 
 async function deleteAdminUser(req, res) {
