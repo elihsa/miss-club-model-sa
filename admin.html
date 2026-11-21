@@ -120,7 +120,19 @@
     transition: background 0.2s;
   }
   .resize-handle:hover, .resize-handle.dragging { background: var(--gold); }
-  .resize-handle.dragging { box-shadow: -2px 0 4px rgba(201,168,76,0.5); }
+  .sub-tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+  }
+  .sub-tab-btn:hover { color: var(--cream); }
+  .sub-tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(201,168,76,0.05); }
   .status-badge {
@@ -178,6 +190,9 @@
   .login-btn:hover { background: var(--gold-light); }
   .error-msg { color: var(--red); margin-top: 15px; display: none; }
   .error-msg.show { display: block; }
+  .forgot-password-link { color: var(--muted); font-size: 0.9rem; }
+  .forgot-password-link a { color: var(--gold-light); text-decoration: none; font-weight: 600; }
+  .forgot-password-link a:hover { color: var(--gold); text-decoration: underline; }
 
   /* MODAL */
   .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
@@ -317,13 +332,19 @@
     </div>
   </div>
 
+  <!-- Event sub-tabs: Registrations + Interest List live under the Events tab -->
+  <div class="event-subtabs" id="eventSubTabs" style="display:none; margin-bottom:1rem; border-bottom:1px solid var(--gold-dark); padding-bottom:0.5rem;">
+    <button class="sub-tab-btn active" data-event-view="events">Events</button>
+    <button class="sub-tab-btn" data-event-view="interested_parties">Event Registrations</button>
+    <button class="sub-tab-btn" data-event-view="event_interest_subscriptions">Event Interest List</button>
+  </div>
+
   <!-- TABS -->
   <div class="tabs" id="tabs">
     <button class="tab-btn active" data-table="applications">Candidate Applications</button>
     <button class="tab-btn" data-table="interested_parties">Event Registrations</button>
     <button class="tab-btn" data-table="event_organizers">Venue Partners</button>
     <button class="tab-btn" data-table="events">Events</button>
-    <button class="tab-btn" data-table="event_interest_subscriptions">Event Interest List</button>
     <button class="tab-btn" data-table="email_settings">Email Settings</button>
     <button class="tab-btn" data-table="admin_users">User Management</button>
   </div>
@@ -1009,6 +1030,10 @@ function showDashboard() {
   } else if (userMgmtTab) {
     userMgmtTab.style.display = 'inline-flex';
   }
+
+  // Hide event-related tabs from the main menu (they now live under the Events tab group)
+  const eventTabs = document.querySelectorAll('[data-table="event_interest_subscriptions"]');
+  eventTabs.forEach(t => t.style.display = 'none');
   
   loadColumnConfig();
   loadSortState(); // Load sort state for current table
@@ -1022,6 +1047,20 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     currentTable = btn.dataset.table;
     loadSortState(); // Load sort state for this table
     loadData();
+  });
+});
+
+// Event sub-tab switching (Registrations + Interest List under the Events tab)
+document.querySelectorAll('.sub-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTable = btn.dataset.eventView;
+    loadSortState();
+    loadData();
+    // When viewing a sub-tab, un-highlight the main Events tab (active is on the sub-tab)
+    const mainActive = document.querySelector('.tab-btn.active');
+    if (mainActive) mainActive.classList.remove('active');
   });
 });
 
@@ -1048,6 +1087,17 @@ async function loadData() {
   createUserBtn.style.display = currentTable === 'admin_users' ? 'inline-flex' : 'none';
   // Show/hide bulk email button
   bulkEmailBtn.style.display = currentTable === 'interested_parties' ? 'inline-flex' : 'none';
+
+  // Show/hide event sub-tabs (only visible under the Events main tab)
+  const eventSubTabs = document.getElementById('eventSubTabs');
+  if (eventSubTabs) {
+    eventSubTabs.style.display = currentTable === 'events' ? 'flex' : 'none';
+    if (currentTable === 'events') {
+      // Reset active sub-tab to Events view
+      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.sub-tab-btn[data-event-view="events"]').classList.add('active');
+    }
+  }
 
   // Update filters
   updateFilters(schema);
@@ -2563,6 +2613,9 @@ window.openBulkEmailModal = openBulkEmailModal;
 window.deleteUserHandler = deleteUserHandler;
 window.changeUserRole = changeUserRole;
 window.createAdminUser = createAdminUser;
+window.deleteEvent = deleteEvent;
+window.editRecord = editRecord;
+window.createEvent = () => createEventBtn.click();
 
 // Expose new modal wrapper functions
 window.modalEditRecord = modalEditRecord;
