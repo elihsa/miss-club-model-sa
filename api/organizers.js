@@ -94,12 +94,13 @@ async function sendOrganizerNotification(emailData, settings) {
   `;
 
   try {
-    await resendClient.emails.send({
+    const sendResult = await resendClient.emails.send({
       from: EMAIL_FROM,
       to: recipient,
       subject,
       html,
     });
+    if (sendResult && sendResult.error) { throw new Error('Resend API error: ' + (sendResult.error.message || JSON.stringify(sendResult.error))); }
     console.log('Organizer notification sent to:', recipient);
   } catch (error) {
     console.error('Failed to send organizer notification:', error.message);
@@ -127,12 +128,13 @@ async function sendOrganizerConfirmation(emailData) {
   `;
 
   try {
-    await resendClient.emails.send({
+    const sendResult = await resendClient.emails.send({
       from: EMAIL_FROM,
       to: emailData.email,
       subject,
       html,
     });
+    if (sendResult && sendResult.error) { throw new Error('Resend API error: ' + (sendResult.error.message || JSON.stringify(sendResult.error))); }
     console.log('Organizer confirmation email sent to:', emailData.email);
   } catch (error) {
     console.error('Failed to send organizer confirmation email:', error.message);

@@ -49,7 +49,7 @@ module.exports = async function handler(req, res) {
     const resendClient = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
     if (resendClient) {
       try {
-        await resendClient.emails.send({
+        const sendResult = await resendClient.emails.send({
           from: EMAIL_FROM,
           to: email.toLowerCase().trim(),
           subject: '🎭 Welcome to Miss Club Model SA Newsletter!',
@@ -63,6 +63,7 @@ module.exports = async function handler(req, res) {
             </div>
           `
         });
+    if (sendResult && sendResult.error) { throw new Error('Resend API error: ' + (sendResult.error.message || JSON.stringify(sendResult.error))); }
         console.log('Newsletter welcome email sent to:', email);
       } catch (err) {
         console.error('Failed to send welcome email:', err.message);

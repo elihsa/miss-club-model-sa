@@ -350,12 +350,13 @@ async function sendBulkEmail(req, res) {
 
       try {
         if (resendClient) {
-          await resendClient.emails.send({
+          const sendResult = await resendClient.emails.send({
             from: EMAIL_FROM,
             to: recipient.email,
             subject,
             html,
           });
+    if (sendResult && sendResult.error) { throw new Error('Resend API error: ' + (sendResult.error.message || JSON.stringify(sendResult.error))); }
           results.push({ email: recipient.email, status: 'sent' });
         } else {
           results.push({ email: recipient.email, status: 'skipped_no_resend' });

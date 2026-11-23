@@ -93,12 +93,13 @@ async function sendUserConfirmationEmail(emailData) {
   `;
 
   try {
-    await resendClient.emails.send({
+    const sendResult = await resendClient.emails.send({
       from: EMAIL_FROM,
       to: emailData.email,
       subject,
       html,
     });
+    if (sendResult && sendResult.error) { throw new Error('Resend API error: ' + (sendResult.error.message || JSON.stringify(sendResult.error))); }
     console.log('Event interest confirmation sent to:', emailData.email);
   } catch (error) {
     console.error('Failed to send confirmation email:', error.message);
@@ -129,12 +130,13 @@ async function sendAdminNotification(emailData, settings) {
   `;
 
   try {
-    await resendClient.emails.send({
+    const sendResult = await resendClient.emails.send({
       from: EMAIL_FROM,
       to: recipient,
       subject,
       html,
     });
+    if (sendResult && sendResult.error) { throw new Error('Resend API error: ' + (sendResult.error.message || JSON.stringify(sendResult.error))); }
     console.log('Event interest admin notification sent to:', recipient);
   } catch (error) {
     console.error('Failed to send admin notification:', error.message);
