@@ -2632,18 +2632,13 @@ window.handleEmailImageUpload = handleEmailImageUpload;
 window.insertEmailLink = insertEmailLink;
 </script>
 
-<!-- Fallback non-module script for immediate login display -->
-<script>
-  // Immediate fallback - runs before module scripts
-  document.addEventListener('DOMContentLoaded', () => {
-    const loginView = document.getElementById('loginView');
-    const dashboardView = document.getElementById('dashboardView');
-    if (loginView && dashboardView) {
-      loginView.style.display = 'block';
-      dashboardView.style.display = 'none';
-    }
-  });
-</script>
+<!-- Fallback note: the initial markup already shows the login view and hides
+     the dashboard, so no DOMContentLoaded clobber is needed. The old fallback
+     forced the login view on DOMContentLoaded even when checkSession had
+     already resolved a valid cached session to the dashboard (a race: fast
+     session resolution completes before DOMContentLoaded, slow resolution
+     after), which intermittently left signed-in admins staring at the login
+     form. The 2s timeout fallback below remains for the both-hidden case. -->
 
 <!-- Build info footer -->
 <footer style="text-align:center; padding:1rem; color:#888; font-size:0.75rem; border-top:1px solid #333; margin-top:2rem;">
