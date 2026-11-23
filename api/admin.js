@@ -130,17 +130,27 @@ async function updateStatus(req, res, table, id, newStatus) {
     let error;
 
     if (table === 'event_interest_subscriptions') {
-      // Composite key: event_id + email
-      const record = await supabase.from(table).select('event_id').eq('email', id).single();
-      if (record.error || !record.data) {
-        return res.status(404).json({ error: 'Record not found' });
+      // Row UUID key (email is not unique across events). Fall back to the
+      // legacy email+event_id path only when the id is not a row UUID.
+      const byId = await supabase.from(table).select('id').eq('id', id).maybeSingle();
+      if (byId.data) {
+        const { error: updateError } = await supabase
+          .from(table)
+          .update({ status: newStatus })
+          .eq('id', id);
+        error = updateError;
+      } else {
+        const record = await supabase.from(table).select('event_id').eq('email', id).maybeSingle();
+        if (record.error || !record.data) {
+          return res.status(404).json({ error: 'Record not found' });
+        }
+        const { error: updateError } = await supabase
+          .from(table)
+          .update({ status: newStatus })
+          .eq('event_id', record.data.event_id)
+          .eq('email', id);
+        error = updateError;
       }
-      const { error: updateError } = await supabase
-        .from(table)
-        .update({ status: newStatus })
-        .eq('event_id', record.data.event_id)
-        .eq('email', id);
-      error = updateError;
     } else {
       const { error: updateError } = await supabase
         .from(table)
@@ -233,16 +243,25 @@ async function deleteRecord(req, res, table, id) {
     let error;
 
     if (table === 'event_interest_subscriptions') {
-      const record = await supabase.from(table).select('event_id').eq('email', id).single();
-      if (record.error || !record.data) {
-        return res.status(404).json({ error: 'Record not found' });
+      const byId = await supabase.from(table).select('id').eq('id', id).maybeSingle();
+      if (byId.data) {
+        const { error: deleteError } = await supabase
+          .from(table)
+          .delete()
+          .eq('id', id);
+        error = deleteError;
+      } else {
+        const record = await supabase.from(table).select('event_id').eq('email', id).maybeSingle();
+        if (record.error || !record.data) {
+          return res.status(404).json({ error: 'Record not found' });
+        }
+        const { error: deleteError } = await supabase
+          .from(table)
+          .delete()
+          .eq('event_id', record.data.event_id)
+          .eq('email', id);
+        error = deleteError;
       }
-      const { error: deleteError } = await supabase
-        .from(table)
-        .delete()
-        .eq('event_id', record.data.event_id)
-        .eq('email', id);
-      error = deleteError;
     } else {
       const { error: deleteError } = await supabase
         .from(table)

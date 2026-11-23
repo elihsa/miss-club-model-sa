@@ -1371,8 +1371,9 @@ function renderTable() {
         actionsHtml += `<button class="action-btn btn-delete" onclick="deleteUserHandler('${record.id}', '${record.email}')">Remove</button>`;
         actionsHtml += '</div>';
       } else {
-      // For event_interest_subscriptions, use email as the ID (composite key)
-      const recordId = currentTable === 'event_interest_subscriptions' ? record.email : record.id;
+      // Every table uses its row UUID (event_interest_subscriptions has one too;
+      // email is not unique across events, so it cannot key updates)
+      const recordId = record.id;
       actionsHtml = '<div class="action-btns">';
       actionsHtml += `<button class="action-btn btn-view" onclick="viewRecord('${recordId}')">View</button>`;
       if (schema.hasStatus) {
@@ -1569,13 +1570,7 @@ loadEventCache();
 
 // View record details - enhanced for candidates with carousel
 async function viewRecord(id) {
-  // For event_interest_subscriptions, find by email
-  let record;
-  if (currentTable === 'event_interest_subscriptions') {
-    record = allRecords.find(r => r.email === id);
-  } else {
-    record = allRecords.find(r => r.id === id);
-  }
+  const record = allRecords.find(r => r.id === id);
   if (!record) return;
   currentRecordId = id;
 
@@ -1683,8 +1678,8 @@ async function viewRecord(id) {
         <div class="detail-field"><label>Subscribed</label><span>${record.subscribed_at ? new Date(record.subscribed_at).toLocaleString() : '—'}</span></div>
       </div>
       <div class="detail-actions">
-        <button class="action-btn btn-approve" onclick="modalUpdateStatus('${record.email}', 'active')" ${subStatus === 'active' ? 'disabled' : ''}>Mark Active</button>
-        <button class="action-btn btn-decline" onclick="modalUpdateStatus('${record.email}', 'unsubscribed')" ${subStatus === 'unsubscribed' ? 'disabled' : ''}>Unsubscribe</button>
+        <button class="action-btn btn-approve" onclick="modalUpdateStatus('${record.id}', 'active')" ${subStatus === 'active' ? 'disabled' : ''}>Mark Active</button>
+        <button class="action-btn btn-decline" onclick="modalUpdateStatus('${record.id}', 'unsubscribed')" ${subStatus === 'unsubscribed' ? 'disabled' : ''}>Unsubscribe</button>
       </div>
     `;
   } else {
