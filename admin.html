@@ -2055,16 +2055,32 @@ eventCreationForm.addEventListener('submit', async (e) => {
     if (data[key] === '') delete data[key];
   });
 
-  const { error } = await supabase
-    .from('events')
-    .insert(data);
-
-  if (error) {
-    alert('Error creating event: ' + error.message);
-  } else {
+  // Route through the admin-guarded serverless endpoint: direct browser
+  // inserts are blocked by row-level security on the events table.
+  try {
+    const token = await getAccessToken();
+    if (!token) {
+      alert('Your admin session has expired. Please sign in again.');
+      return;
+    }
+    const response = await fetch('/api/events_create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok || result.error) {
+      alert('Error creating event: ' + (result.error || result.message || 'Unknown error'));
+      return;
+    }
     eventModal.classList.remove('show');
     loadData();
     loadEventCache();
+  } catch (err) {
+    alert('Error creating event: ' + err.message);
   }
 });
 

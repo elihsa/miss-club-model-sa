@@ -55,6 +55,7 @@ function buildEventData(body) {
     location: body.location,
     description: body.description,
     status: body.status || 'pending',
+    poster_url: body.poster_url,
     created_at: new Date().toISOString()
   };
 }
