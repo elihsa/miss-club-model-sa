@@ -601,7 +601,7 @@
 <div class="modal" id="columnModal">
   <div class="modal-content column-modal">
     <h3>Configure Columns</h3>
-    <p style="color:#aaa; margin-bottom:20px; font-size:0.9rem;">Drag to reorder, check/uncheck to show/hide</p>
+    <p style="color:#aaa; margin-bottom:20px; font-size:0.9rem;">Drag to reorder, check/uncheck to show/hide. Required columns can be reordered but not hidden.</p>
     <div class="column-list" id="columnList"></div>
     <div class="modal-actions">
       <button class="modal-close" id="columnModalClose">Done</button>
@@ -2279,7 +2279,7 @@ function renderColumnConfig() {
     const isVisible = visibleCols.includes(col.key);
     const isRequired = col.required || false;
     return `
-      <div class="column-item" data-key="${col.key}" style="${isRequired ? 'opacity:0.7;' : ''}" draggable="${!isRequired}">
+      <div class="column-item" data-key="${col.key}" style="${isRequired ? 'opacity:0.7;' : ''}" draggable="true">
         <span class="drag-handle">⋮⋮</span>
         <input type="checkbox" id="col_${col.key}" ${isVisible ? 'checked' : ''} ${isRequired ? 'disabled' : ''}>
         <label for="col_${col.key}">${col.label}${isRequired ? ' (required)' : ''}</label>
@@ -2307,7 +2307,6 @@ function renderColumnConfig() {
   let draggedItem = null;
   columnList.querySelectorAll('.column-item').forEach(item => {
     item.addEventListener('dragstart', (e) => {
-      if (item.querySelector('input').disabled) return;
       draggedItem = item;
       item.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
