@@ -92,10 +92,10 @@
 
   /* NAV */
   nav {
-    position: fixed; top: 0; width: 100%; z-index: 1000;
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
     background: rgba(10,10,10,0.98);
     border-bottom: 2px solid var(--gold);
-    padding: 16px 40px;
+    padding: 16px 24px;
     display: flex; justify-content: space-between; align-items: center;
     backdrop-filter: blur(10px);
   }
@@ -105,10 +105,10 @@
     font-style: italic;
     font-family: var(--font-heading);
   }
-  nav ul { list-style: none; display: flex; gap: 8px; }
+  nav ul { list-style: none; display: flex; gap: 4px; padding: 0; margin: 0; }
   nav a {
     color: var(--cream); text-decoration: none; font-size: 0.9rem;
-    transition: color 0.3s; padding: 8px 16px; border-radius: 6px;
+    transition: color 0.3s; padding: 8px 12px; border-radius: 6px;
   }
   nav a:hover { color: var(--gold); background: rgba(201,168,76,0.1); }
   .hamburger { display: none; cursor: pointer; font-size: 1.5rem; color: var(--gold); }
@@ -127,6 +127,54 @@
   .nav-admin-btn::before {
     content: '⚙';
     font-size: 0.9rem;
+  }
+
+  /* FIXED VERTICAL LOGO — left edge, stays still while page scrolls */
+  .vertical-logo {
+    position: fixed;
+    left: 18px;
+    top: 55%;
+    transform: translateY(-50%);
+    z-index: 900;
+    writing-mode: vertical-rl;
+    transform-origin: center;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .vertical-logo .vl-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.1rem;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--gold);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(201,168,76,0.35), 0 0 60px rgba(201,168,76,0.15);
+    white-space: nowrap;
+  }
+  .vertical-logo .vl-text .vl-accent {
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+  .vertical-logo .vl-line {
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(180deg, transparent, var(--gold), transparent);
+    flex-shrink: 0;
+  }
+  /* Give body a small left gutter so content doesn't collide with the logo on wide screens */
+  @media (min-width: 1024px) {
+    body { padding-left: 72px; }
+    /* Fixed nav otherwise starts at the body gutter and overflows right by 72px */
+    nav { left: 72px; width: calc(100% - 72px); }
+  }
+  /* Hide the vertical logo only on phones where it would overlap content */
+  @media (max-width: 767px) {
+    .vertical-logo { display: none; }
+    body { padding-left: 0; }
   }
 
   /* BUTTONS */
@@ -689,7 +737,7 @@
     <li><a href="#home" data-cms-key="navHome">Home</a></li>
     <li><a href="#about" data-cms-key="navAbout">About</a></li>
     <li><a href="#gallery" data-cms-key="navGallery">Gallery</a></li>
-    <li><a href="#events" data-cms-key="navEvents">Events</a></li>
+    <li><a href="/events" data-cms-key="navEvents">Events</a></li>
     <li><a href="#candidates" data-cms-key="navCandidates">Candidates</a></li>
     <li><a href="#apply" data-cms-key="navApply">Apply</a></li>
     <li><a href="#venue-partner" data-cms-key="navVenuePartner">Venue Partner</a></li>
@@ -697,6 +745,12 @@
   </ul>
   <a href="/admin.html" class="nav-admin-btn" data-cms-key="navAdmin" style="color: var(--gold); border: 1px solid var(--gold); padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.3s;">Admin</a>
 </nav>
+
+<!-- VERTICAL FIXED LOGO (left edge, stays still while page scrolls) -->
+<div class="vertical-logo" aria-hidden="true">
+  <span class="vl-text">Miss Club <span class="vl-accent">Model</span> SA</span>
+  <span class="vl-line"></span>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="home">
@@ -1243,7 +1297,10 @@
 <footer>
   <p>© 2026 Miss Club Model SA. All rights reserved. |
   <a href="https://missclubmodel.vercel.app/privacy" data-cms-key="footerPrivacy">Privacy Policy</a> | <a href="https://missclubmodel.vercel.app/terms" data-cms-key="footerTerms">Terms & Conditions</a></p>
+  <div id="buildInfo" style="font-size:0.7rem; color:#888; margin-top:6px;"></div>
 </footer>
+
+<script src="scripts/build-info-runtime.js"></script>
 
 <script type="module">
 // ============================================

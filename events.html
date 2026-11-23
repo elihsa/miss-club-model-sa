@@ -326,49 +326,6 @@
   <p style="text-align:center; margin-top:20px; color:#888;"><a href="#" onclick="toggleVenueForm(); return false;" style="color:var(--gold)" data-cms-key="venueLinkBack">← Back to Events</a></p>
 </section>
 
-<!-- EVENT CREATION SECTION (Admin) -->
-<section class="event-creation-section" id="eventCreationSection">
-  <h2 data-cms-key="eventCreationTitle">Create New Event</h2>
-  <p data-cms-key="eventCreationSubtitle">Admin only: Create a new event with description and poster.</p>
-
-  <form class="event-form" id="eventCreationForm" enctype="multipart/form-data">
-    <div class="form-row">
-      <div class="form-group">
-        <label data-cms-key="eventLabelName">Event Name <span style="color:var(--red)">*</span></label>
-        <input type="text" name="name" required placeholder="e.g., Miss Club Model SA Gala 2026" data-cms-key="eventPlaceholderName">
-      </div>
-      <div class="form-group">
-        <label data-cms-key="eventLabelDate">Event Date <span style="color:var(--red)">*</span></label>
-        <input type="date" name="event_date" required data-cms-key="eventPlaceholderDate">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label data-cms-key="eventLabelTime">Event Time</label>
-        <input type="time" name="event_time" data-cms-key="eventPlaceholderTime">
-      </div>
-      <div class="form-group">
-        <label data-cms-key="eventLabelLocation">Location <span style="color:var(--red)">*</span></label>
-        <input type="text" name="location" required placeholder="e.g., Sun City, South Africa" data-cms-key="eventPlaceholderLocation">
-      </div>
-    </div>
-    <div class="form-group">
-      <label data-cms-key="eventLabelDescription">Description</label>
-      <textarea name="description" placeholder="Describe the event, schedule, highlights, ticket info..." data-cms-key="eventPlaceholderDescription"></textarea>
-    </div>
-    <div class="form-group">
-      <label data-cms-key="eventLabelPoster">Poster Image URL</label>
-      <input type="text" name="poster_url" placeholder="https://... (or leave empty to upload later)" data-cms-key="eventPlaceholderPoster">
-      <div id="posterPreview" style="margin-top:10px;"></div>
-    </div>
-    <div class="form-message" id="eventCreationMessage"></div>
-    <button type="submit" class="form-submit" data-cms-key="eventBtnCreate">Create Event</button>
-  </form>
-  <p style="margin-top:15px; color:#888; font-size:0.9rem; text-align:center;">
-    <a href="#" onclick="toggleEventCreation(); return false;" style="color:var(--gold)" data-cms-key="eventLinkBack">← Back to Events</a>
-  </p>
-</section>
-
 <!-- TELL ME MORE MODAL -->
 <div class="modal" id="tellMeMoreModal">
   <div class="modal-content">
@@ -407,19 +364,16 @@
 </div>
 
 <script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-const SUPABASE_URL = 'https://ekvwgxnryasrvltyukvj.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_ePDDXlwk-BhljlqNhink-w_ZEzsJ6ZR';
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 let allEvents = [];
-let allApplications = [];
 
 // Load events on page load
+// Module scripts do not create globals; inline onclick handlers need these.
+window.toggleForm = toggleForm;
+window.openTellMeMore = openTellMeMore;
+window.toggleVenueForm = toggleVenueForm;
+
 document.addEventListener('DOMContentLoaded', async () => {
   await loadEvents();
-  await loadApplications();
   renderEvents();
   setupEventHandlers();
   loadCMSContent();
@@ -479,39 +433,16 @@ async function loadCMSContent() {
 // Load events from Supabase
 async function loadEvents() {
   try {
-    const { data, error } = await supabase
-      .from('events')
-      .select('*')
-      .order('event_date', { ascending: true });
-
-    if (error) {
-      console.error('Error loading events:', error);
-      allEvents = [];
-    } else {
-      allEvents = data || [];
-    }
+    // Load through the server API: the browser's anon key cannot read the
+    // events table under current RLS policies, so a direct client query
+    // silently returns zero rows and the page shows "No events found".
+    const response = await fetch('/api/events');
+    if (!response.ok) throw new Error('Failed to load events (' + response.status + ')');
+    const data = await response.json();
+    allEvents = Array.isArray(data) ? data : (data.data || []);
   } catch (err) {
-    console.error('Error:', err);
+    console.error('Error loading events:', err);
     allEvents = [];
-  }
-}
-
-// Load applications (for candidate data)
-async function loadApplications() {
-  try {
-    const { data, error } = await supabase
-      .from('applications')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error loading applications:', error);
-    } else {
-      allApplications = data || [];
-    }
-  } catch (err) {
-    console.error('Error:', err);
-    allApplications = [];
   }
 }
 
@@ -549,11 +480,6 @@ function renderEvents() {
     const location = event.location ? `<span>📍 ${event.location}</span>` : '';
     const hasPoster = event.poster_url && event.poster_url.trim() !== '';
 
-    // Get approved candidates for this event
-    const eventCandidates = allApplications.filter(app =>
-      app.event_id === event.id && (app.status === 'approved' || !app.status)
-    );
-
     return `
       <article class="event-card${hasPoster ? '' : ' no-poster'}">
         ${hasPoster ? `<img class="event-poster" src="${event.poster_url}" alt="${event.name} poster" loading="lazy">` : ''}
@@ -565,27 +491,6 @@ function renderEvents() {
             ${location}
           </div>
           ${desc}
-
-          ${eventCandidates.length > 0 ? `
-            <div class="candidates-section">
-              <h4 data-cms-key="approvedCandidatesLabel">Approved Candidates (${eventCandidates.length})</h4>
-              <div class="candidates-grid">
-                ${eventCandidates.map(app => {
-                  const photo = app.headshot_url || 'assets/photos/women_club_1.webp';
-                  return `
-                    <article class="candidate-item">
-                      <img src="${photo}" alt="${app.full_name || 'Candidate'}" loading="lazy">
-                      <div class="candidate-info">
-                        <h5>${app.full_name || 'Candidate'}</h5>
-                        <p>${app.city || ''}${app.city && app.province ? ', ' : ''}${app.province || ''}</p>
-                        <span class="approved-badge" data-cms-key="approvedBadge">✓ Approved</span>
-                      </div>
-                    </article>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-          ` : ''}
 
           <div class="event-actions" style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
             <button class="btn" onclick="toggleForm('${event.id}')" id="btn-${event.id}" data-cms-key="btnRegisterInterest">Register Interest</button>
@@ -611,13 +516,7 @@ function renderEvents() {
                   <label data-cms-key="joinLabelPhone">Phone Number</label>
                   <input type="tel" name="phone" placeholder="Your phone number" data-cms-key="joinPlaceholderPhone">
                 </div>
-                <div class="form-group">
-                  <label data-cms-key="joinLabelFavorite">Favorite Candidate</label>
-                  <select name="favorite_candidate">
-                    <option value="" data-cms-key="joinOptionSelect">Select your favorite candidate</option>
-                    ${eventCandidates.map(app => `<option value="${app.full_name}">${app.full_name}</option>`).join('')}
-                  </select>
-                </div>
+
               </div>
               <div class="form-group">
                 <label data-cms-key="joinLabelMessage">Leave us a message (Optional)</label>
@@ -744,44 +643,6 @@ function setupEventHandlers() {
     }
   });
 
-  // Event creation form
-  document.getElementById('eventCreationForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-    Object.keys(data).forEach(k => { if (data[k] === '') delete data[k]; });
-
-    const msgEl = document.getElementById('eventCreationMessage');
-    const btn = e.target.querySelector('.form-submit');
-    btn.textContent = 'Creating...'; btn.disabled = true;
-    msgEl.className = 'form-message'; msgEl.textContent = 'Creating event...'; msgEl.style.display = 'block';
-
-    try {
-      const response = await fetch('/api/events', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
-      });
-      const result = await response.json();
-      if (result.status === 'success') {
-        msgEl.className = 'form-message success';
-        msgEl.textContent = '✓ Event created successfully!';
-        e.target.reset();
-        document.getElementById('posterPreview').innerHTML = '';
-        setTimeout(() => location.reload(), 1500);
-      } else { throw new Error(result.message || 'Failed to create event'); }
-    } catch (err) {
-      msgEl.className = 'form-message error'; msgEl.textContent = '✗ ' + err.message;
-      btn.disabled = false;
-    }
-  });
-
-  // Poster preview
-  const posterInput = document.querySelector('input[name="poster_url"]');
-  if (posterInput) {
-    posterInput.addEventListener('input', (e) => {
-      const url = e.target.value;
-      document.getElementById('posterPreview').innerHTML = url ? `<img src="${url}" alt="Poster preview" style="max-width:300px; border-radius:8px; border:1px solid var(--gold-dark);">` : '';
-    });
-  }
 }
 
 // Toggle functions
@@ -794,29 +655,16 @@ function toggleVenueForm() {
   }
 }
 
-function toggleEventCreation() {
-  const section = document.getElementById('eventCreationSection');
-  if (section.classList.contains('active')) {
-    section.classList.remove('active');
-  } else {
-    section.classList.add('active');
-  }
-}
-
 // Tell Me More Modal functions
 function openTellMeMore(eventId, eventName) {
   document.getElementById('modalEventId').value = eventId;
   document.getElementById('modalEventName').textContent = eventName;
 
-  // Populate favorite candidate dropdown
+  // Favorite candidate stays a free-choice field; applicant records are not
+  // readable from the public page (RLS), so no dropdown list is populated.
   const select = document.getElementById('modalFavoriteCandidate');
-  const event = allEvents.find(e => e.id === eventId);
-  if (event) {
-    const eventCandidates = allApplications.filter(app =>
-      app.event_id === eventId && (app.status === 'approved' || !app.status)
-    );
-    select.innerHTML = '<option value="">Select a candidate or leave blank</option>' +
-      eventCandidates.map(app => `<option value="${app.full_name}">${app.full_name}</option>`).join('');
+  if (select) {
+    select.innerHTML = '<option value="">Select a candidate or leave blank</option>';
   }
 
   document.getElementById('tellMeMoreModal').classList.add('show');
