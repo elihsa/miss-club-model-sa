@@ -124,12 +124,13 @@
     background: transparent;
     border: none;
     color: var(--muted);
-    padding: 6px 14px;
+    padding: 12px 22px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    border-bottom: 2px solid transparent;
-    font-family: inherit;
+    letter-spacing: 0.5px;
+    border-bottom: 3px solid transparent;
+    font-family: 'Playfair Display', serif;
   }
   .sub-tab-btn:hover { color: var(--cream); }
   .sub-tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
@@ -332,13 +333,6 @@
     </div>
   </div>
 
-  <!-- Event sub-tabs: Registrations + Interest List live under the Events tab -->
-  <div class="event-subtabs" id="eventSubTabs" style="display:none; margin-bottom:1rem; border-bottom:1px solid var(--gold-dark); padding-bottom:0.5rem;">
-    <button class="sub-tab-btn active" data-event-view="events">Events</button>
-    <button class="sub-tab-btn" data-event-view="interested_parties">Event Registrations</button>
-    <button class="sub-tab-btn" data-event-view="event_interest_subscriptions">Event Interest List</button>
-  </div>
-
   <!-- TABS -->
   <div class="tabs" id="tabs">
     <button class="tab-btn active" data-table="applications">Candidate Applications</button>
@@ -346,6 +340,13 @@
     <button class="tab-btn" data-table="events">Events</button>
     <button class="tab-btn" data-table="email_settings">Email Settings</button>
     <button class="tab-btn" data-table="admin_users">User Management</button>
+  </div>
+
+  <!-- Event sub-tabs: Registrations + Interest List live under the Events tab (second row) -->
+  <div class="event-subtabs" id="eventSubTabs" style="display:none; margin-bottom:1rem; border-bottom:1px solid var(--gold-dark); padding-bottom:0.5rem;">
+    <button class="sub-tab-btn active" data-event-view="events">Events</button>
+    <button class="sub-tab-btn" data-event-view="interested_parties">Event Registrations</button>
+    <button class="sub-tab-btn" data-event-view="event_interest_subscriptions">Event Interest List</button>
   </div>
 
   <!-- STATS -->
@@ -952,7 +953,7 @@ forgotPasswordModal.addEventListener('click', (e) => { if (e.target === forgotPa
 forgotPasswordForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('forgotPasswordEmail').value.trim();
-  
+
   // Don't hard-block on ADMIN_EMAILS — the server only sends a reset
   // email if the address actually exists in Supabase auth, so this is
   // safe for all admin roles (owner/admin/manager) including ones
@@ -961,16 +962,25 @@ forgotPasswordForm.addEventListener('submit', async (e) => {
     alert('Please enter your email address.');
     return;
   }
-  
+
+  const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending...';
+
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password.html`
     });
     if (error) throw error;
+
     alert('Password reset email sent! Check your inbox.');
     forgotPasswordModal.classList.remove('show');
   } catch (err) {
     alert('Error sending reset email: ' + err.message);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
   }
 });
 
@@ -1020,6 +1030,7 @@ function showDashboard() {
   loginView.style.display = 'none';
   dashboardView.style.display = 'block';
   logoutBtn.style.display = 'block';
+  loadEventCache(); // refresh now that the authenticated session can read events
   
   // Check user role and hide User Management tab for Managers
   const userRole = sessionStorage.getItem('userRole') || ROLES.MANAGER;
@@ -1087,15 +1098,11 @@ async function loadData() {
   // Show/hide bulk email button
   bulkEmailBtn.style.display = (currentTable === 'interested_parties') ? 'inline-flex' : 'none';
 
-  // Show/hide event sub-tabs (only visible under the Events main tab)
+  // Show/hide event sub-tabs (only visible under the Events main tab / its sub-views)
   const eventSubTabs = document.getElementById('eventSubTabs');
   if (eventSubTabs) {
-    eventSubTabs.style.display = currentTable === 'events' ? 'flex' : 'none';
-    if (currentTable === 'events') {
-      // Reset active sub-tab to Events view
-      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelector('.sub-tab-btn[data-event-view="events"]').classList.add('active');
-    }
+    const inEventsGroup = (currentTable === 'events' || currentTable === 'interested_parties' || currentTable === 'event_interest_subscriptions');
+    eventSubTabs.style.display = inEventsGroup ? 'flex' : 'none';
   }
 
   // Update filters

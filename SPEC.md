@@ -1,9 +1,9 @@
 # SPECIFICATION DOCUMENT — Miss Club Model SA Website
 
 **Document Version:** 1.0.0
-**Build:** v1.0.0 #63
-**Last Updated:** 2026-11-14T10:08:35+02:00 (SAST)
-**Commit:** 7952146
+**Build:** v1.0.0 #90
+**Last Updated:** 2026-11-23T11:46:56+02:00 (SAST)
+**Commit:** branch fix/events-nav-admin-columns (hash in build-info.json at build time)
 **Branch:** master
 **Repository:** https://github.com/elihsa/miss-club-model-sa
 **Live URL:** https://missclubmodel.vercel.app/
@@ -397,7 +397,7 @@ Signatures are stored in `site_settings` table (`email_settings` key) as JSON wi
 - Runs on every Vercel build (see `vercel.json` `buildCommand`)
 - Outputs `build-info.json` with build number (commit count), version, commit hash, branch, build time
 - Read by `scripts/build-info-runtime.js` on every page load
-- Renders at bottom of every page: `Built v1.0.0 #63 · 14 Nov 2026, 10:08:35 (SAST) · commit 7952146`
+- Renders at bottom of every page: `Built v1.0.0 #90 · 23 Nov 2026, 11:46:56 (SAST) · commit 777a333`
 
 **To regenerate locally:** `node scripts/build-info.js`
 

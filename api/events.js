@@ -13,7 +13,25 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 const { setCors } = require('../lib/cors');
 
-function handler(req, res) {
+// Event creation/editing is admin-only: the admin panel is the only place
+// events may be created or changed. Mutations need a valid Supabase session
+// token for a known admin email; GET stays public.
+const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com', 'test-admin@missclubmodel.test'];
+
+async function isAdminRequest(req) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
+  const token = authHeader.slice('Bearer '.length);
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user || !user.email) return false;
+    return ADMIN_EMAILS.includes(user.email);
+  } catch (e) {
+    return false;
+  }
+}
+
+async function handler(req, res) {
   setCors(req, res);
 
   if (req.method === 'OPTIONS') {
@@ -24,15 +42,12 @@ function handler(req, res) {
     return getEvents(req, res);
   }
 
-  if (req.method === 'POST') {
-    return createEvent(req, res);
-  }
-
-  if (req.method === 'PUT') {
-    return updateEvent(req, res);
-  }
-
-  if (req.method === 'DELETE') {
+  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
+    if (!(await isAdminRequest(req))) {
+      return res.status(401).json({ error: 'Unauthorized - admin sign-in required to change events' });
+    }
+    if (req.method === 'POST') return createEvent(req, res);
+    if (req.method === 'PUT') return updateEvent(req, res);
     return deleteEvent(req, res);
   }
 

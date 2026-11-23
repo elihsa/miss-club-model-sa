@@ -173,6 +173,7 @@ async function submitEventInterest(req, res) {
       .upsert([{
         event_id: body.event_id,
         email: body.email,
+        full_name: body.full_name,
         phone: body.phone,
         favorite_candidate: body.favorite_candidate,
         message: body.message,

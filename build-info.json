@@ -1,11 +1,11 @@
 {
-  "build": "v1.0.0 #87",
-  "buildNumber": 87,
+  "build": "v1.0.0 #90",
+  "buildNumber": 90,
   "version": "1.0.0",
-  "commit": "b8d2de9",
-  "branch": "master",
-  "commitDate": "2026-11-20T23:47:06+02:00",
-  "buildTime": "2026-11-20T22:33:35.321Z",
-  "buildTimeLocal": "21 Nov 2026, 00:33:35",
+  "commit": "777a333",
+  "branch": "fix/events-nav-admin-columns",
+  "commitDate": "2026-11-21T03:09:16+02:00",
+  "buildTime": "2026-11-23T09:46:56.113Z",
+  "buildTimeLocal": "23 Nov 2026, 11:46:56",
   "generatedBy": "scripts/build-info.js"
 }
