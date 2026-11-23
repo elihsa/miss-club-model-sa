@@ -2330,10 +2330,15 @@ function renderColumnConfig() {
     });
     item.addEventListener('drop', (e) => {
       e.preventDefault();
-      // Update column order
-      const items = [...columnList.querySelectorAll('.column-item:not(.dragging)')];
+      // Update column order. Include the dragged item (it still carries the
+      // .dragging class here) and keep hidden columns hidden: previously the
+      // dragged column silently dropped out of the visible set and every
+      // hidden column was made visible again.
+      const items = [...columnList.querySelectorAll('.column-item')];
       const newOrder = items.map(i => i.dataset.key).filter(k => k);
-      setVisibleColumns(currentTable, newOrder);
+      const previouslyVisible = new Set(getVisibleColumns(currentTable));
+      const visibleInNewOrder = newOrder.filter(k => previouslyVisible.has(k));
+      setVisibleColumns(currentTable, visibleInNewOrder);
       renderTable();
       renderColumnConfig();
     });
