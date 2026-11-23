@@ -213,7 +213,7 @@ async function submitApplication(req, res) {
     }
 
     // Send admin notification (async)
-    sendAdminNotification({
+    const emailPromise1 = sendAdminNotification({
       full_name: data.fullName || data.full_name,
       email: data.email,
       phone: data.phone,
@@ -223,11 +223,13 @@ async function submitApplication(req, res) {
     }, settings).catch(err => console.error('Admin email error:', err));
 
     // Send user confirmation (async)
-    sendUserConfirmationEmail({
+    const emailPromise2 = sendUserConfirmationEmail({
       full_name: data.fullName || data.full_name,
       email: data.email,
       event_name: eventName
     }).catch(err => console.error('User email error:', err));
+
+    await Promise.all([emailPromise1, emailPromise2]);
 
     return res.status(200).json({
       status: 'success',

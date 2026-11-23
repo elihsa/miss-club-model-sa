@@ -46,7 +46,7 @@ module.exports = async function handler(req, res) {
     }
 
     // Send welcome email via Resend if configured
-    const resendClient = Resend.createClient(process.env.RESEND_API_KEY);
+    const resendClient = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
     if (resendClient) {
       try {
         await resendClient.emails.send({

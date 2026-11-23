@@ -187,7 +187,7 @@ async function submitOrganizer(req, res) {
     const settings = await getEmailSettings();
 
     // Send notification email to admin (async)
-    sendOrganizerNotification({
+    const emailPromise1 = sendOrganizerNotification({
       full_name: body.full_name,
       email: body.email,
       phone: body.phone,
@@ -197,11 +197,13 @@ async function submitOrganizer(req, res) {
     }, settings).catch(err => console.error('Email send error:', err));
 
     // Send user confirmation (async)
-    sendOrganizerConfirmation({
+    const emailPromise2 = sendOrganizerConfirmation({
       full_name: body.full_name,
       email: body.email,
       venue_name: body.venue_name
     }).catch(err => console.error('User email error:', err));
+
+    await Promise.all([emailPromise1, emailPromise2]);
 
     return res.status(201).json({
       status: 'success',

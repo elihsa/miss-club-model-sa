@@ -194,7 +194,7 @@ async function submitInterestedParty(req, res) {
     const settings = await getEmailSettings();
 
     // Send confirmation email to user (async)
-    sendUserConfirmationEmail({
+    const emailPromise1 = sendUserConfirmationEmail({
       full_name: body.full_name,
       email: body.email,
       event_name: eventName,
@@ -204,13 +204,15 @@ async function submitInterestedParty(req, res) {
     }).catch(err => console.error('Email send error:', err));
 
     // Send admin notification (async)
-    sendAdminNotification({
+    const emailPromise2 = sendAdminNotification({
       full_name: body.full_name,
       email: body.email,
       phone: body.phone,
       event_name: eventName,
       favorite_candidate: body.favorite_candidate
     }, settings).catch(err => console.error('Admin email error:', err));
+
+    await Promise.all([emailPromise1, emailPromise2]);
 
     return res.status(201).json({
       status: 'success',

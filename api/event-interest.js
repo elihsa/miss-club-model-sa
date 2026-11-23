@@ -201,8 +201,8 @@ async function submitEventInterest(req, res) {
     // Get email settings
     const settings = await getEmailSettings();
 
-    // Send confirmation email to user (async)
-    sendUserConfirmationEmail({
+    // Send confirmation email to user (awaited: serverless freezes after response)
+    const userEmailPromise = sendUserConfirmationEmail({
       full_name: body.full_name,
       email: body.email,
       event_name: eventName,
@@ -211,14 +211,16 @@ async function submitEventInterest(req, res) {
       favorite_candidate: body.favorite_candidate
     }).catch(err => console.error('Email send error:', err));
 
-    // Send admin notification (async)
-    sendAdminNotification({
+    // Send admin notification (awaited)
+    const adminEmailPromise = sendAdminNotification({
       full_name: body.full_name,
       email: body.email,
       phone: body.phone,
       event_name: eventName,
       favorite_candidate: body.favorite_candidate
     }, settings).catch(err => console.error('Admin email error:', err));
+
+    await Promise.all([userEmailPromise, adminEmailPromise]);
 
     return res.status(201).json({
       status: 'success',

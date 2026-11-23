@@ -352,8 +352,9 @@ Every text element on the site has a `data-cms-key` attribute. The frontend fetc
 
 ## 10. Email System — Resend
 
-**Provider:** Resend (`re_...` API key)
-**Sender Domain:** Verified domain on Resend (e.g., `noreply@missclubmodelsa.co.za`)
+**Provider:** Resend (`re_...` API key, v3: `const { Resend } = require('resend'); new Resend(key)`)
+**Sender Domain:** `RESEND_FROM` env var (e.g., `noreply@missclubmodelsa.co.za` once verified); defaults to Resend shared test sender `onboarding@resend.dev`, which delivers only to the Resend account owner
+**Serverless rule:** all email sends are awaited (`Promise.all`) before the response returns - unawaited sends are frozen when the function responds and never reach Resend
 
 | Trigger | Endpoint | Sends To |
 |---|---|---|
