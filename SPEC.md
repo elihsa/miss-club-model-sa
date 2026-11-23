@@ -257,6 +257,8 @@ The admin panel (`/admin.html`) provides the following management views:
 | Venue Partners | Review venue partnership proposals | View, Approve, Decline, Delete |
 | Events | Create, edit, and launch events | Create Event, Edit, Delete |
 | Event Interest List | Manage bulk email subscriptions for events | Bulk Email |
+
+**Column configuration (all admin tables):** per-table hide/show, drag-reorder (required columns reorderable, hide stays locked) and drag-width resize; persisted in localStorage (`admin_column_config`, `admin_colwidths_<table>`).
 | Email Settings | Configure email recipients and signatures | Update settings |
 | **User Management** | **Create and remove admin staff users** | **Add Admin User, Remove** |
 
@@ -355,6 +357,7 @@ Every text element on the site has a `data-cms-key` attribute. The frontend fetc
 **Provider:** Resend (`re_...` API key, v3: `const { Resend } = require('resend'); new Resend(key)`)
 **Sender Domain:** `RESEND_FROM` env var (e.g., `noreply@missclubmodelsa.co.za` once verified); defaults to Resend shared test sender `onboarding@resend.dev`, which delivers only to the Resend account owner
 **Serverless rule:** all email sends are awaited (`Promise.all`) before the response returns - unawaited sends are frozen when the function responds and never reach Resend
+**Error handling:** Resend v3 returns `{ data, error }` and never throws on API errors - every send site checks `sendResult.error` and treats it as failure (honest logs; bulk email records per-recipient failed status)
 
 | Trigger | Endpoint | Sends To |
 |---|---|---|
