@@ -54,6 +54,7 @@ async function getEmailSettings() {
 }
 
 const { setCors } = require('../lib/cors');
+const { EMAIL_FROM } = require('../lib/emailFrom');
 
 function handler(req, res) {
   setCors(req, res);
@@ -94,7 +95,7 @@ async function sendOrganizerNotification(emailData, settings) {
 
   try {
     await resendClient.emails.send({
-      from: 'Miss Club Model SA <noreply@missclubmodelsa.co.za>',
+      from: EMAIL_FROM,
       to: recipient,
       subject,
       html,
@@ -127,7 +128,7 @@ async function sendOrganizerConfirmation(emailData) {
 
   try {
     await resendClient.emails.send({
-      from: 'Miss Club Model SA <noreply@missclubmodelsa.co.za>',
+      from: EMAIL_FROM,
       to: emailData.email,
       subject,
       html,

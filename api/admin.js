@@ -1,5 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend');
+const { EMAIL_FROM } = require('../lib/emailFrom');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
@@ -350,7 +351,7 @@ async function sendBulkEmail(req, res) {
       try {
         if (resendClient) {
           await resendClient.emails.send({
-            from: 'Miss Club Model SA <noreply@missclubmodelsa.co.za>',
+            from: EMAIL_FROM,
             to: recipient.email,
             subject,
             html,

@@ -1,5 +1,6 @@
 // const { createClient } = require('@supabase/supabase-js');  // Reserved for future use
 const { setCors } = require('../lib/cors');
+const { EMAIL_FROM } = require('../lib/emailFrom');
 const Resend = require('resend');
 
 module.exports = async function handler(req, res) {
@@ -49,7 +50,7 @@ module.exports = async function handler(req, res) {
     if (resendClient) {
       try {
         await resendClient.emails.send({
-          from: 'Miss Club Model SA <noreply@missclubmodelsa.co.za>',
+          from: EMAIL_FROM,
           to: email.toLowerCase().trim(),
           subject: '🎭 Welcome to Miss Club Model SA Newsletter!',
           html: `
