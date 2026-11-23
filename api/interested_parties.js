@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const Resend = require('resend');
+const { Resend } = require('resend');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
