@@ -13,6 +13,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 const { setCors } = require('../lib/cors');
+const { isAdminRequest } = require('../lib/requireAdmin');
 
 // Alternative event creation endpoint (SPEC Section 6).
 // Accepts either:
@@ -22,11 +23,17 @@ const { setCors } = require('../lib/cors');
 
 const BUSBOY_MAX = 25 * 1024 * 1024;
 
-function handler(req, res) {
+async function handler(req, res) {
   setCors(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  // Admin-only: uploads/event creation happen from the admin panel, which
+  // sends the user's Supabase session token. Unauthenticated writes rejected.
+  if (!(await isAdminRequest(req))) {
+    return res.status(401).json({ status: 'error', message: 'Unauthorized - admin sign-in required' });
   }
 
   if (req.method !== 'POST') {

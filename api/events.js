@@ -12,24 +12,11 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 const { setCors } = require('../lib/cors');
+const { isAdminRequest } = require('../lib/requireAdmin');
 
 // Event creation/editing is admin-only: the admin panel is the only place
 // events may be created or changed. Mutations need a valid Supabase session
 // token for a known admin email; GET stays public.
-const ADMIN_EMAILS = ['elihsa@gmail.com', 'admin@missclubmodelsa.co.za', 'kiyanoschoonraad98@gmail.com', 'test-admin@missclubmodel.test'];
-
-async function isAdminRequest(req) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
-  const token = authHeader.slice('Bearer '.length);
-  try {
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user || !user.email) return false;
-    return ADMIN_EMAILS.includes(user.email);
-  } catch (e) {
-    return false;
-  }
-}
 
 async function handler(req, res) {
   setCors(req, res);
@@ -56,9 +43,10 @@ async function handler(req, res) {
 
 async function getEvents(req, res) {
   try {
-    // Public API - only show launched events
-    // Admin panel can pass ?admin=true to see all events
-    const isAdmin = req.query.admin === 'true';
+    // Public API - only show launched events.
+    // The admin panel can pass ?admin=true to see all events, but that view
+    // includes unpublished events, so it requires an admin session too.
+    const isAdmin = req.query.admin === 'true' && (await isAdminRequest(req));
 
     let query = supabase
       .from('events')
