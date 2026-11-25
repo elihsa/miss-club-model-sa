@@ -47,6 +47,7 @@ async function getSettings(req, res) {
           candidate_application_email: 'elihsa@gmail.com',
           venue_partner_email: 'elihsa@gmail.com',
           event_registration_email: 'elihsa@gmail.com',
+          contact_email: 'elihsa@gmail.com',
           send_all_to_same: false,
           global_email: 'elihsa@gmail.com',
           candidate_signature: '',
@@ -92,7 +93,7 @@ async function updateSettings(req, res) {
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const fields = ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'global_email'];
+    const fields = ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'contact_email', 'global_email'];
 
     for (const field of fields) {
       if (body[field] && !emailRegex.test(body[field])) {

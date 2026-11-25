@@ -757,13 +757,14 @@ const tableSchemas = {
       { key: 'candidate_application_email', label: 'Candidate Application Email', sortable: true },
       { key: 'venue_partner_email', label: 'Venue Partner Email', sortable: true },
       { key: 'event_registration_email', label: 'Event Registration Email', sortable: true },
+      { key: 'contact_email', label: 'Contact Form Email', sortable: true },
       { key: 'send_all_to_same', label: 'Send All to Same', sortable: true },
       { key: 'global_email', label: 'Global Email (when send_all_to_same=true)', sortable: true },
       { key: 'candidate_signature', label: 'Candidate Application Signature', sortable: false },
       { key: 'venue_signature', label: 'Venue Partner Signature', sortable: false },
       { key: 'event_signature', label: 'Event Registration Signature', sortable: false },
     ],
-    defaultColumns: ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'send_all_to_same', 'global_email', 'candidate_signature', 'venue_signature', 'event_signature'],
+    defaultColumns: ['candidate_application_email', 'venue_partner_email', 'event_registration_email', 'contact_email', 'send_all_to_same', 'global_email', 'candidate_signature', 'venue_signature', 'event_signature'],
     statusOptions: [],
     hasStatus: false,
     hasActions: false,
@@ -1717,6 +1718,7 @@ function renderEmailSettingsForm() {
     candidate_application_email: 'elihsa@gmail.com',
     venue_partner_email: 'elihsa@gmail.com',
     event_registration_email: 'elihsa@gmail.com',
+    contact_email: 'elihsa@gmail.com',
     send_all_to_same: false,
     global_email: 'elihsa@gmail.com',
     candidate_signature: '',
@@ -1725,7 +1727,8 @@ function renderEmailSettingsForm() {
   };
 
   // Render as vertical form instead of table row
-  const visibleCols = getVisibleColumns(currentTable);
+  // Settings are a form, not a table: always show every setting (a saved column config must not hide new fields)
+  const visibleCols = tableSchemas.email_settings.allColumns.map(c => c.key);
   
   // Build form fields
   let formHtml = '<div class="email-settings-form">';
@@ -1734,7 +1737,7 @@ function renderEmailSettingsForm() {
     const col = tableSchemas.email_settings.allColumns.find(c => c.key === colKey);
     if (!col) return;
     
-    const value = record[colKey];
+    const value = colKey === 'contact_email' ? (record.contact_email || 'elihsa@gmail.com') : record[colKey];
     const label = col.label;
     
     formHtml += `<div class="form-group">`;
@@ -1764,8 +1767,8 @@ function renderEmailSettingsForm() {
 
   // Show/hide global email field based on send_all_to_same
   const globalEmailField = document.getElementById('settings_global_email');
-  if (globalEmailField) {
-    globalEmailField.style.display = record.send_all_to_same ? 'block' : 'none';
+  if (globalEmailField && globalEmailField.parentElement) {
+    globalEmailField.parentElement.style.display = record.send_all_to_same ? 'block' : 'none';
   }
 }
 
@@ -1817,8 +1820,9 @@ document.head.appendChild(style);
 function toggleGlobalEmail() {
   const checkbox = document.getElementById('settings_send_all_to_same');
   const globalEmailField = document.getElementById('settings_global_email');
-  if (globalEmailField) {
-    globalEmailField.style.display = checkbox.checked ? 'block' : 'none';
+  if (globalEmailField && globalEmailField.parentElement) {
+    // hide label and input together so no orphan label remains
+    globalEmailField.parentElement.style.display = checkbox.checked ? 'block' : 'none';
   }
 }
 
@@ -1828,6 +1832,7 @@ async function saveEmailSettings() {
     candidate_application_email: document.getElementById('settings_candidate_application_email')?.value || 'elihsa@gmail.com',
     venue_partner_email: document.getElementById('settings_venue_partner_email')?.value || 'elihsa@gmail.com',
     event_registration_email: document.getElementById('settings_event_registration_email')?.value || 'elihsa@gmail.com',
+    contact_email: document.getElementById('settings_contact_email')?.value || 'elihsa@gmail.com',
     send_all_to_same: document.getElementById('settings_send_all_to_same')?.checked || false,
     global_email: document.getElementById('settings_global_email')?.value || 'elihsa@gmail.com',
     candidate_signature: document.getElementById('settings_candidate_signature')?.value || '',

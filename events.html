@@ -9,6 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
     --gold: #c9a84c;
     --gold-light: #f0d878;
     --gold-dark: #8b6914;
@@ -51,17 +53,103 @@
   }
 
   /* NAV */
+
+  /* SHARED SITE NAV (same as index.html) */
+  /* NAV */
   nav {
-    position: fixed; top: 0; width: 100%; z-index: 1000;
-    background: rgba(10,10,10,0.98); border-bottom: 2px solid var(--gold);
-    padding: 16px 40px; display: flex; justify-content: space-between; align-items: center;
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+    background: rgba(10,10,10,0.98);
+    border-bottom: 2px solid var(--gold);
+    padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center;
     backdrop-filter: blur(10px);
   }
-  nav .logo-text { font-size: 1.3rem; color: var(--gold); font-weight: 600; letter-spacing: 2px; text-decoration: none; }
-  nav ul { list-style: none; display: flex; gap: 8px; }
-  nav a { color: var(--cream); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; padding: 8px 16px; border-radius: 6px; }
+  nav .logo-text {
+    font-size: 1.3rem; color: var(--gold); font-weight: 400;
+    letter-spacing: 2px; text-decoration: none;
+    font-style: italic;
+    font-family: var(--font-heading);
+  }
+  nav ul { list-style: none; display: flex; gap: 4px; padding: 0; margin: 0; }
+  nav a {
+    color: var(--cream); text-decoration: none; font-size: 0.9rem;
+    transition: color 0.3s; padding: 8px 12px; border-radius: 6px;
+  }
   nav a:hover { color: var(--gold); background: rgba(201,168,76,0.1); }
   .hamburger { display: none; cursor: pointer; font-size: 1.5rem; color: var(--gold); }
+  
+  /* Admin button - always visible */
+  .nav-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 16px;
+  }
+  .nav-admin-btn:hover {
+    background: var(--gold);
+    color: var(--black);
+  }
+  .nav-admin-btn::before {
+    content: '⚙';
+    font-size: 0.9rem;
+  }
+
+  /* FIXED VERTICAL LOGO — left edge, stays still while page scrolls */
+  .vertical-logo {
+    position: fixed;
+    left: 18px;
+    top: 55%;
+    transform: translateY(-50%);
+    z-index: 900;
+    writing-mode: vertical-rl;
+    transform-origin: center;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .vertical-logo .vl-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.1rem;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--gold);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(201,168,76,0.35), 0 0 60px rgba(201,168,76,0.15);
+    white-space: nowrap;
+  }
+  .vertical-logo .vl-text .vl-accent {
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+  .vertical-logo .vl-line {
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(180deg, transparent, var(--gold), transparent);
+    flex-shrink: 0;
+  }
+  /* Give body a small left gutter so content doesn't collide with the logo on wide screens */
+  @media (min-width: 1024px) {
+    body { padding-left: 72px; }
+    /* Fixed nav otherwise starts at the body gutter and overflows right by 72px */
+    nav { left: 72px; width: calc(100% - 72px); }
+  }
+  /* Hide the vertical logo only on phones where it would overlap content */
+  @media (max-width: 767px) {
+    .vertical-logo { display: none; }
+    body { padding-left: 0; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 15px 20px; }
+    nav ul { display: none; position: absolute; top: 100%; left: 0; width: 100%;
+      background: var(--black); padding: 20px; gap: 15px; flex-direction: column;
+      border-bottom: 2px solid var(--gold); }
+    nav ul.open { display: flex; }
+    .hamburger { display: block; }
+  }
 
   /* MAIN */
   main { padding: 100px 40px 60px; max-width: 1400px; margin: 0 auto; }
@@ -192,10 +280,6 @@
 
   /* RESPONSIVE */
   @media (max-width: 768px) {
-    nav { padding: 15px 20px; }
-    nav ul { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--black); padding: 20px; gap: 15px; flex-direction: column; border-bottom: 2px solid var(--gold); }
-    nav ul.open { display: flex; }
-    .hamburger { display: block; }
     main { padding: 100px 20px 40px; }
     .form-row, .event-form .form-row { grid-template-columns: 1fr; }
     .venue-form-container { padding: 30px 20px; }
@@ -204,22 +288,44 @@
   }
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  /* shared nav is taller on phones (logo wraps): keep page title clear of it */
+  @media (max-width: 1100px) { main { padding-top: 140px !important; } }
+  /* Collapse the menu into the hamburger below 1100px (8 links + Admin wrapped to 4 lines on tablets) */
+  @media (max-width: 1100px) {
+    nav { padding: 15px 20px; }
+    nav ul { display: none; position: absolute; top: 100%; left: 0; width: 100%;
+      background: var(--black); padding: 20px; gap: 15px; flex-direction: column;
+      border-bottom: 2px solid var(--gold); }
+    nav ul.open { display: flex; }
+    .hamburger { display: block; }
+  }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- NAV (same as index.html; section links go to the home page) -->
 <nav>
-  <a href="/" class="logo-text" data-cms-key="siteTitle">Miss Club Model SA</a>
+  <a href="/#home" class="logo-text" data-cms-key="navLogo">Miss Club Model SA</a>
   <div class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('open')">☰</div>
   <ul>
-    <li><a href="/" data-cms-key="navHome">Home</a></li>
+    <li><a href="/#home" data-cms-key="navHome">Home</a></li>
+    <li><a href="/#about" data-cms-key="navAbout">About</a></li>
+    <li><a href="/#gallery" data-cms-key="navGallery">Gallery</a></li>
     <li><a href="/events" data-cms-key="navEvents">Events</a></li>
-    <li><a href="/apply" data-cms-key="navApply">Apply</a></li>
-    <li><a href="/admin" data-cms-key="navAdmin">Admin</a></li>
-    <li><a href="/contact" data-cms-key="navContact">Contact</a></li>
+    <li><a href="/#candidates" data-cms-key="navCandidates">Candidates</a></li>
+    <li><a href="/#apply" data-cms-key="navApply">Apply</a></li>
+    <li><a href="/#venue-partner" data-cms-key="navVenuePartner">Venue Partner</a></li>
+    <li><a href="/#contact" data-cms-key="navContact">Contact</a></li>
   </ul>
+  <a href="/admin.html" class="nav-admin-btn" data-cms-key="navAdmin" style="color: var(--gold); border: 1px solid var(--gold); padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.3s;">Admin</a>
 </nav>
+
+<!-- VERTICAL FIXED LOGO (left edge, stays still while page scrolls) -->
+<div class="vertical-logo" aria-hidden="true">
+  <span class="vl-text">Miss Club <span class="vl-accent">Model</span> SA</span>
+  <span class="vl-line"></span>
+</div>
+
 
 <!-- MAIN -->
 <main>

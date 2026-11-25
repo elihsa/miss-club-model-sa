@@ -2,11 +2,17 @@
 
 **Document Version:** 1.0.0
 **Build:** v1.0.0 #90
-**Last Updated:** 2026-11-23T11:46:56+02:00 (SAST)
+**Last Updated:** 2026-11-25T15:03:00+02:00 (SAST), shared navigation change (build number and time are stamped by `node scripts/build-info.js` at deploy)
 **Commit:** branch fix/events-nav-admin-columns (hash in build-info.json at build time)
 **Branch:** master
 **Repository:** https://github.com/elihsa/miss-club-model-sa
 **Live URL:** https://missclubmodel.vercel.app/
+
+---
+
+## Change log (latest first)
+
+- **2026-11-25 15:03 SAST, shared site navigation.** `events.html` and `contact.html` now use the same top menu, Admin button, left vertical logo and fonts as `index.html` (Home, About, Gallery, Events, Candidates, Apply, Venue Partner, Contact, Admin). Section links on those pages point to the home page anchors (`/#about`, `/#apply`, etc.), so the former dead `/apply` link is gone. `index.html` keeps `#section` links below the fixed menu (scroll padding = menu height) and re-aligns deep links while the layout settles after load (ResizeObserver, max 3 s, cancelled by any user scroll/touch/key). The menu collapses into the hamburger below 1100px on all three pages (it wrapped to 4 lines on tablets). Home now has a single build footer (removed the duplicate that called the missing `/api/build-info`). `contact.html` restyled to match the site: site fonts, dark bordered form controls like the Apply form, dark custom Subject select, inline SVG icons, gold footer links (Privacy now links to /privacy), build line inside the footer. Content and placeholder contact details unchanged. New `api/contact.js` (POST, public): validates name/email/message, honeypot field, sends one escaped email with reply-to. Recipient is editable in Admin > Email Settings > "Contact Form Email" (`contact_email` in the existing `email_settings` record; `global_email` is used instead when "Send all to same" is on). Fallbacks if the setting is missing/invalid: `CONTACT_RECIPIENT_EMAIL` env var, then elihsa@gmail.com (approved by Eli 25 Nov 2026 for now). 503 only when no mail provider key is configured. Admin Email Settings form now always shows every setting (a saved column config can no longer hide a field). Nothing stored. Unit tests in `tests/unit/contact.spec.js` use a stub mailer. Added `design-system.html` redirect to `/design-system-builder` because the `/design-system` rewrite returned 404 live. No data, API or form behaviour changed. Verified locally only until deployed.
 
 ---
 
@@ -212,6 +218,7 @@ All under `/api/` (Vercel serverless functions).
 | `/api/organizers` | `POST` | Public | Venue partner submission |
 | `/api/interested_parties` | `POST` | Public | Event registration |
 | `/api/subscribe` | `POST` | Public | Newsletter signup |
+| `/api/contact` | `POST` | Public | Contact form: emails the Email Settings contact address |
 | `/api/upload` | `POST` | Public | Generic file upload to Supabase Storage |
 | `/api/events` | `GET`, `POST`, `PUT`, `DELETE` | Service key | Event CRUD. `?admin=true` includes `pending` events |
 | `/api/events_create` | `POST` | Service key | Alternative event creation endpoint |

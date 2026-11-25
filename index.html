@@ -725,6 +725,15 @@
     .section-title { font-size: 1.8rem; }
     .metrics-grid { grid-template-columns: 1fr; }
   }
+  /* Collapse the menu into the hamburger below 1100px (8 links + Admin wrapped to 4 lines on tablets) */
+  @media (max-width: 1100px) {
+    nav { padding: 15px 20px; }
+    nav ul { display: none; position: absolute; top: 100%; left: 0; width: 100%;
+      background: var(--black); padding: 20px; gap: 15px; flex-direction: column;
+      border-bottom: 2px solid var(--gold); }
+    nav ul.open { display: flex; }
+    .hamburger { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -2056,8 +2065,35 @@ async function setSiteName() {
 setTimeout(setSiteName, 500);
 setInterval(setSiteName, 5000);
 </script>
-<div id="buildInfo" style="text-align:center;font-size:12px;color:var(--gold-light);margin-top:20px;">Build info pending. ← Update via CI.
-</div>
-<script src="/build-info-runtime.js"></script>
+<script>
+// Deep links (/#apply from other pages, or in-page): keep the section below the fixed menu and
+// re-align while the layout settles after load. Any user scroll/touch/key cancels it immediately.
+(function () {
+  var nav = document.querySelector('nav');
+  function pad() { document.documentElement.style.scrollPaddingTop = (nav ? nav.offsetHeight : 0) + 'px'; }
+  pad(); window.addEventListener('resize', pad);
+  var cancelled = false;
+  ['wheel', 'touchstart', 'touchmove', 'keydown', 'mousedown'].forEach(function (ev) {
+    window.addEventListener(ev, function () { cancelled = true; }, { passive: true });
+  });
+  window.addEventListener('hashchange', function () { cancelled = true; });
+  function target() {
+    if (location.hash.length < 2) return null;
+    return document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  }
+  function align() {
+    var t = target();
+    if (t && !cancelled) t.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
+  window.addEventListener('load', function () {
+    if (!target()) return;
+    pad(); align();
+    if (!window.ResizeObserver) return;
+    var ro = new ResizeObserver(function () { pad(); align(); });
+    ro.observe(document.body);
+    setTimeout(function () { ro.disconnect(); }, 3000);
+  });
+})();
+</script>
 </body>
 </html>
