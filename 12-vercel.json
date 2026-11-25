@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "buildCommand": "node scripts/build-info.js",
+  "devCommand": "vercel dev",
+  "installCommand": "npm install",
+  "framework": null,
+  "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/api/contact", "destination": "/api/settings?__route=contact" },
+    { "source": "/design-system", "destination": "/design-system-builder.html" }
+  ]
+}
